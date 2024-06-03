@@ -35,10 +35,10 @@ public class AgentDaoImpl implements AgentDao {
 
     private final Logger logger = LoggerFactory.getLogger(AgentDaoImpl.class);
 
-    @Value("{agentStatusApi}")
+    @Value("${agent.status.api}")
     private String agentStatusApi;
 
-    @Value("{holdmusicadd}")
+    @Value("${holdmusicadd}")
     private String holdmusicadd;
 
     @PersistenceContext(unitName = ApplicationConstant.FIRST_PERSISTENCE_UNIT_NAME)
@@ -258,6 +258,7 @@ public class AgentDaoImpl implements AgentDao {
                     "    \"action\": \"" + agentRequest.getAction() + "\",\n" +
                     "    \"actionid\": \"" + agentRequest.getPbxExt() + "\"\n" +
                     "}";
+             logger.info("Queue : "+jsonPayload);
     }
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {

@@ -138,10 +138,10 @@ public class UserManagementDaoImpl implements UserManagementDao {
         int insertValue = 0;
         boolean isCreated = false;
         try{
-            Query queryObj = firstEntityManager.createNativeQuery("INSERT INTO [appointment_remainder].[agent_skillset_mapping] ([SkillSet],[Proficiency],[QueueId],[Agent],[PbxExt])VALUES (:SkillSet,:Proficiency,:QueueId,:Agent,:PbxExt)");
+            Query queryObj = firstEntityManager.createNativeQuery("INSERT INTO [appointment_remainder].[agent_skillset_mapping] ([SkillSet],[Proficency],[QueueId],[Agent],[PbxExt])VALUES (:SkillSet,:Proficency,:QueueId,:Agent,:PbxExt)");
             for (SkillSetDetail skillSetDetail : userDetRequest.getSkillSetDetails()) {
                 queryObj.setParameter("SkillSet", skillSetDetail.getSkillSetName());
-                queryObj.setParameter("Proficiency",skillSetDetail.getProficiency());
+                queryObj.setParameter("Proficency",skillSetDetail.getProficiency());
                 queryObj.setParameter("QueueId",skillSetDetail.getQueueId());
                 queryObj.setParameter("Agent",userDetRequest.getUserId());
                 queryObj.setParameter("PbxExt",userDetRequest.getPbxExtn());

@@ -14,22 +14,20 @@ public class SkillsetRequest {
 	private String ShortAbandonedThreshold;
 	private String CountAbandonedSLA;
 	private String Disposition;
-
 	private boolean forceACW;
 	private String forceACWSec;
 	private boolean autoanswer;
 	private String autoanswersec;
-
 	private String noAnswer;
-	private String VDNQueueId;
+	private String vdnQueueId;
 	private String routingStrategy;
 
-	public String getVDNQueueId() {
-		return VDNQueueId;
+	public String getVdnQueueId() {
+		return vdnQueueId;
 	}
 
-	public void setVDNQueueId(String VDNQueueId) {
-		this.VDNQueueId = VDNQueueId;
+	public void setVdnQueueId(String vdnQueueId) {
+		this.vdnQueueId = vdnQueueId;
 	}
 
 	public boolean isForceACW() {
@@ -181,7 +179,7 @@ public class SkillsetRequest {
 				", autoanswer=" + autoanswer +
 				", autoanswersec='" + autoanswersec + '\'' +
 				", noAnswer='" + noAnswer + '\'' +
-				", VDNQueueId='" + VDNQueueId + '\'' +
+				", vdnQueueId='" + vdnQueueId + '\'' +
 				", routingStrategy='" + routingStrategy + '\'' +
 				'}';
 	}

@@ -116,7 +116,7 @@ public class SkillSetServiceImpl implements SkillSetService{
 				skillsetRequest.setForceACWSec(String.valueOf(obj[14]));
 				skillsetRequest.setAutoanswer(Boolean.parseBoolean(String.valueOf(obj[15])));
 				skillsetRequest.setAutoanswersec(String.valueOf(obj[16]));
-				skillsetRequest.setVDNQueueId(String.valueOf(obj[17]));
+				skillsetRequest.setVdnQueueId(String.valueOf(obj[17]));
 				skillsetRequest.setRoutingStrategy(String.valueOf(obj[18]));
 				skillsetRequest.setNoAnswer(String.valueOf(obj[19]));
 				skillSetDetList.add(skillsetRequest);
