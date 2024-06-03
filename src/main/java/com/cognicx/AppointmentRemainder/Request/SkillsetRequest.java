@@ -18,9 +18,19 @@ public class SkillsetRequest {
 	private boolean forceACW;
 	private String forceACWSec;
 	private boolean autoanswer;
-	private String autoanswerValue;
-	private String VVDNQueueId;
+	private String autoanswersec;
+
+	private String noAnswer;
+	private String VDNQueueId;
 	private String routingStrategy;
+
+	public String getVDNQueueId() {
+		return VDNQueueId;
+	}
+
+	public void setVDNQueueId(String VDNQueueId) {
+		this.VDNQueueId = VDNQueueId;
+	}
 
 	public boolean isForceACW() {
 		return forceACW;
@@ -46,20 +56,20 @@ public class SkillsetRequest {
 		this.autoanswer = autoanswer;
 	}
 
-	public String getAutoanswerValue() {
-		return autoanswerValue;
+	public String getAutoanswersec() {
+		return autoanswersec;
 	}
 
-	public void setAutoanswerValue(String autoanswerValue) {
-		this.autoanswerValue = autoanswerValue;
+	public void setAutoanswersec(String autoanswersec) {
+		this.autoanswersec = autoanswersec;
 	}
 
-	public String getVVDNQueueId() {
-		return VVDNQueueId;
+	public String getNoAnswer() {
+		return noAnswer;
 	}
 
-	public void setVVDNQueueId(String VVDNQueueId) {
-		this.VVDNQueueId = VVDNQueueId;
+	public void setNoAnswer(String noAnswer) {
+		this.noAnswer = noAnswer;
 	}
 
 	public String getRoutingStrategy() {
@@ -149,5 +159,30 @@ public class SkillsetRequest {
 	public void setCountAbandonedSLA(String countAbandonedSLA) {
 		CountAbandonedSLA = countAbandonedSLA;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "SkillsetRequest{" +
+				"skillsetId='" + skillsetId + '\'' +
+				", skillName='" + skillName + '\'' +
+				", Language='" + Language + '\'' +
+				", TimeZone='" + TimeZone + '\'' +
+				", ChannelType='" + ChannelType + '\'' +
+				", ServiceLevelThreshold='" + ServiceLevelThreshold + '\'' +
+				", ServiceLevelGoal='" + ServiceLevelGoal + '\'' +
+				", FirstCallResolution='" + FirstCallResolution + '\'' +
+				", AbandonedRateThreshold='" + AbandonedRateThreshold + '\'' +
+				", ShortCallThreshold='" + ShortCallThreshold + '\'' +
+				", ShortAbandonedThreshold='" + ShortAbandonedThreshold + '\'' +
+				", CountAbandonedSLA='" + CountAbandonedSLA + '\'' +
+				", Disposition='" + Disposition + '\'' +
+				", forceACW=" + forceACW +
+				", forceACWSec='" + forceACWSec + '\'' +
+				", autoanswer=" + autoanswer +
+				", autoanswersec='" + autoanswersec + '\'' +
+				", noAnswer='" + noAnswer + '\'' +
+				", VDNQueueId='" + VDNQueueId + '\'' +
+				", routingStrategy='" + routingStrategy + '\'' +
+				'}';
+	}
 }

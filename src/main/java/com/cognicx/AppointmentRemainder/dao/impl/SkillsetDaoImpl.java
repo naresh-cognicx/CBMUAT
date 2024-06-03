@@ -63,6 +63,15 @@ public class SkillsetDaoImpl implements SkillsetDao {
 			queryObj.setParameter("CountAbandonedSLA", skillSetRequest.getCountAbandonedSLA());
 			queryObj.setParameter("Disposition", skillSetRequest.getDisposition());
 
+			queryObj.setParameter("ForceACW",skillSetRequest.isForceACW());
+			queryObj.setParameter("ForceACWSec",skillSetRequest.getForceACWSec());
+			queryObj.setParameter("AutoAnswer",skillSetRequest.isAutoanswer());
+			queryObj.setParameter("AutoAnswerSec",skillSetRequest.getAutoanswersec());
+			queryObj.setParameter("NoAnswer",skillSetRequest.getNoAnswer());
+			queryObj.setParameter("VVDNQueueId",skillSetRequest.getVDNQueueId());
+			queryObj.setParameter("RoutingStrategy",skillSetRequest.getRoutingStrategy());
+			queryObj.setParameter("NoAnswer",skillSetRequest.getNoAnswer());
+
 			insertVal = queryObj.executeUpdate();
 			if (insertVal > 0) {
 				boolean success = createQueuebySkillSet(skillSetRequest);
@@ -111,7 +120,7 @@ public class SkillsetDaoImpl implements SkillsetDao {
 			 */
 
 			queryObj.setParameter("actionid", actionId);
-			queryObj.setParameter("name", skillSetRequest.getSkillsetId()); // queue id
+			queryObj.setParameter("name", skillSetRequest.getVDNQueueId()); // queue id
 			queryObj.setParameter("queue_name", skillSetRequest.getSkillName());
 			queryObj.setParameter("customer_code", "tenantId");
 			queryObj.setParameter("musiconhold", "test");
@@ -141,7 +150,7 @@ public class SkillsetDaoImpl implements SkillsetDao {
 		String status = "Failure";
 		String jsonPayload = "{\n" +
 				"    \"actionid\": \"" + actionId + "\",\n" +
-				"    \"name\": \"" + skillSetRequest.getSkillsetId() + "\",\n" +
+				"    \"name\": \"" + skillSetRequest.getVDNQueueId() + "\",\n" +
 				"    \"queue_name\": \"" + skillSetRequest.getSkillName() + "\",\n" +
 				"    \"customer_code\": \"test\",\n" + //tenantID
 				"    \"musiconhold\": \"test\",\n" +
@@ -240,6 +249,14 @@ public class SkillsetDaoImpl implements SkillsetDao {
 			queryObj.setParameter("CountAbandonedSLA", skillSetRequest.getCountAbandonedSLA());
 			queryObj.setParameter("skillsetId", skillSetRequest.getSkillsetId());
 			queryObj.setParameter("Disposition", skillSetRequest.getDisposition());
+			queryObj.setParameter("ForceACW",skillSetRequest.isForceACW());
+			queryObj.setParameter("ForceACWSec",skillSetRequest.getForceACWSec());
+			queryObj.setParameter("AutoAnswer",skillSetRequest.isAutoanswer());
+			queryObj.setParameter("AutoAnswerSec",skillSetRequest.getAutoanswersec());
+			queryObj.setParameter("NoAnswer",skillSetRequest.getNoAnswer());
+			queryObj.setParameter("VVDNQueueId",skillSetRequest.getVDNQueueId());
+			queryObj.setParameter("RoutingStrategy",skillSetRequest.getRoutingStrategy());
+
 			insertVal = queryObj.executeUpdate();
 			if (insertVal > 0) {
 					return true;

@@ -238,10 +238,6 @@ public class AgentDaoImpl implements AgentDao {
     @Override
     public boolean agentAsteriskMultiaction(AgentRequest agentRequest) {
         boolean isUpdate = false;
-        List<Object> resultList = new ArrayList<>();
-        Query queryObj = firstEntityManager.createNativeQuery("SELECT SKILL from appointment_remainder.");
-        queryObj.setParameter("scheduledDate", agentRequest.getPbxExt());
-        resultList = queryObj.getResultList();
         String jsonPayload = null;
         List<String> queueList = new ArrayList<>();
         try {
@@ -252,6 +248,7 @@ public class AgentDaoImpl implements AgentDao {
             logger.info("Error on getting Queue Id for this Agent pbxExt : " +agentRequest.getPbxExt());
         }
 
+        logger.info("Queue List for this Agent PbxExt : "+agentRequest.getPbxExt()+" is "+queueList);
         for (String queueId : queueList){
              jsonPayload= "{\n" +
                     "    \"queue\": \"" + queueId + "\",\n" +

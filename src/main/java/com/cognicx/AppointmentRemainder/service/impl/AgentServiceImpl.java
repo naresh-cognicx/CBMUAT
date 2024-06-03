@@ -197,7 +197,7 @@ public class AgentServiceImpl implements AgentService {
             } else {
                 genericResponse.setStatus(400);
                 genericResponse.setValue("Failure");
-                genericResponse.setMessage("Error occurred while "+status+" the agent from Asterisk");
+                genericResponse.setMessage("Error occurred while "+status+" the agent ");
             }
         } catch (Exception e) {
             logger.error("Error in AgentServiceImpl::agent Asterisk: ", e);

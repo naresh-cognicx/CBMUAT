@@ -14,6 +14,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import com.cognicx.AppointmentRemainder.Request.CampaignWeekDetRequest;
+import com.cognicx.AppointmentRemainder.model.SkillSetDetail;
 import com.cognicx.AppointmentRemainder.response.FeatureResponse;
 import com.cognicx.AppointmentRemainder.util.CommonUtil;
 import com.cognicx.AppointmentRemainder.util.FileDecryptor;
@@ -100,12 +102,12 @@ public class UserManagementDaoImpl implements UserManagementDao {
             if (insertVal > 0) {
                 if (userDetRequest.getRole() != null && userDetRequest.getRole().equalsIgnoreCase("Agent")) {
                     boolean success = createPbxExtinAsterisk(userDetRequest.getPbxExtn());
-                    if (success) {
+                    if (success && createSkillSetforAgent(userDetRequest)) {
+//                        createSkillSetforAgent(userDetRequest)
                             Query queryUserMapObj = firstEntityManager.createNativeQuery(UserManagementQueryConstant.INSERT_AGENT_DET);
                             queryUserMapObj.setParameter("Agent", userDetRequest.getUserId());
                             queryUserMapObj.executeUpdate();
 //                            String skillset = userDetRequest.getSkillSet();
-
                         }
                     } else {
                         logger.info("Pbx Ext is not created for Agent");
@@ -130,6 +132,29 @@ public class UserManagementDaoImpl implements UserManagementDao {
             logger.error("Error occured in UserManagementDaoImpl::createuser" + e);
             return null;
         }
+    }
+
+    public boolean createSkillSetforAgent(UserManagementDetRequest userDetRequest) {
+        int insertValue = 0;
+        boolean isCreated = false;
+        try{
+            Query queryObj = firstEntityManager.createNativeQuery("INSERT INTO [appointment_remainder].[agent_skillset_mapping] ([SkillSet],[Proficiency],[QueueId],[Agent],[PbxExt])VALUES (:SkillSet,:Proficiency,:QueueId,:Agent,:PbxExt)");
+            for (SkillSetDetail skillSetDetail : userDetRequest.getSkillSetDetails()) {
+                queryObj.setParameter("SkillSet", skillSetDetail.getSkillSetName());
+                queryObj.setParameter("Proficiency",skillSetDetail.getProficiency());
+                queryObj.setParameter("QueueId",skillSetDetail.getQueueId());
+                queryObj.setParameter("Agent",userDetRequest.getUserId());
+                queryObj.setParameter("PbxExt",userDetRequest.getPbxExtn());
+                insertValue = queryObj.executeUpdate();
+                if (insertValue>0){
+                    isCreated= true;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error occured in CampaignDaoImpl::createCampaignWeek" + e);
+            isCreated = false;
+        }
+        return isCreated;
     }
 
     private boolean createPbxExtinAsterisk(String pbxExtn) {

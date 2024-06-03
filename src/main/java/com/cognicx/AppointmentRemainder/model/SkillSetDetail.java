@@ -4,7 +4,7 @@ public class SkillSetDetail {
 
     private String skillSetName;
 
-    private String proficency;
+    private String proficiency;
 
     private String queueId;
 
@@ -24,11 +24,11 @@ public class SkillSetDetail {
         this.skillSetName = skillSetName;
     }
 
-    public String getProficency() {
-        return proficency;
+    public String getProficiency() {
+        return proficiency;
     }
 
-    public void setProficency(String proficency) {
-        this.proficency = proficency;
+    public void setProficiency(String proficiency) {
+        this.proficiency = proficiency;
     }
 }
