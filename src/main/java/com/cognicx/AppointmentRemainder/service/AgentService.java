@@ -11,9 +11,7 @@ import java.util.List;
 public interface AgentService {
     ResponseEntity<GenericResponse> createCallbackSchedule(CallBackScheduleRequest callBackScheduleRequest);
 
-    ResponseEntity<GenericResponse> agentAsteriskLogout(AgentRequest agentRequest);
-
-    ResponseEntity<GenericResponse> agentAsteriskLogin(AgentRequest agentRequest);
+    ResponseEntity<GenericResponse> agentAsteriskCampaignbasedLogin(AgentRequest agentRequest);
 
     ResponseEntity<GenericResponse> holdMusicAdd(MusicAddRequest musicAddRequest);
 

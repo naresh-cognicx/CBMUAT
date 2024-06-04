@@ -49,6 +49,9 @@ public class SkillsetDaoImpl implements SkillsetDao {
     @Value("${queueCreateAPI}")
     private String queueCreateAPI;
 
+    @Value("${queueUpdateAPI}")
+    private String queueUpdateAPI;
+
     @Override
     public String createSkillset(SkillsetRequest skillSetRequest) throws Exception {
         String skillSetId = null;
@@ -114,20 +117,18 @@ public class SkillsetDaoImpl implements SkillsetDao {
         return seq;
     }
 
-    private static final OkHttpClient client = new OkHttpClient();
-
     private boolean createQueuebySkillSet(SkillsetRequest skillSetRequest) {
         String actionId;
         actionId = getActionSequence();
         String strategy = skillSetRequest.getRoutingStrategy();
-        if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Least Recent") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("leastrecent") ){
-            strategy="leastrecent";
-        }else if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Fewest Calls") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("fewestcalls") ){
-            strategy="fewestcalls";
-        }else if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Linear") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("linear") ){
-            strategy="linear";
-        }else if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Round Robin (M)") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("rrmemory") ){
-            strategy="rrmemory";
+        if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Least Recent") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("leastrecent")) {
+            strategy = "leastrecent";
+        } else if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Fewest Calls") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("fewestcalls")) {
+            strategy = "fewestcalls";
+        } else if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Linear") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("linear")) {
+            strategy = "linear";
+        } else if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Round Robin (M)") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("rrmemory")) {
+            strategy = "rrmemory";
         }
 
         boolean isCreated = false;
@@ -172,10 +173,10 @@ public class SkillsetDaoImpl implements SkillsetDao {
                         Query queryObj = firstEntityManager.createNativeQuery("INSERT INTO appointment_remainder.queue_Skillset (" +
                                 "actionid, name, queue_name, customer_code, musiconhold, timeout, ringinuse, " +
                                 "retry, wrapuptime, autofill, maxlen, strategy, joinempty, leavewhenempty, " +
-                                "reportholdtime, announcementstatus, annoucement_path) " +
+                                "reportholdtime, announcementstatus, annoucement_path,skillsetid) " +
                                 "VALUES (:actionid, :name, :queue_name, :customer_code, :musiconhold, :timeout, :ringinuse, " +
                                 ":retry, :wrapuptime, :autofill, :maxlen, :strategy, :joinempty, :leavewhenempty, " +
-                                ":reportholdtime, :announcementstatus, :annoucement_path)");
+                                ":reportholdtime, :announcementstatus, :annoucement_path,:skillsetid)");
 
 
 
@@ -203,6 +204,7 @@ public class SkillsetDaoImpl implements SkillsetDao {
                         queryObj.setParameter("reportholdtime", "no");
                         queryObj.setParameter("announcementstatus", "yes");
                         queryObj.setParameter("annoucement_path", "www.test.com/announcement");
+                        queryObj.setParameter("skillsetid",skillSetRequest.getSkillsetId());
 
                         int insertVal = queryObj.executeUpdate();
                         if (insertVal > 0) {
@@ -248,6 +250,19 @@ public class SkillsetDaoImpl implements SkillsetDao {
         }
         return Integer.valueOf(maxVal) + 1;
     }
+    private String getskillSetId(String  skiilsetId) {
+        String maxVal = null;
+        try {
+            Query queryObj = firstEntityManager.createNativeQuery("select actionid from appointment_remainder.queue_Skillset where skillsetid=:skiilsetId");
+            queryObj.setParameter("skiilsetId",skiilsetId);
+            maxVal = (String) queryObj.getSingleResult();
+        } catch (Exception e) {
+            logger.error("Error occured in SkillsetDaoImpl::getActionbyskillSetId" + e);
+            return maxVal;
+        }
+        return maxVal;
+    }
+
 
     @Override
     public List<Object[]> getSkillsetDetail() {
@@ -291,7 +306,10 @@ public class SkillsetDaoImpl implements SkillsetDao {
 
             insertVal = queryObj.executeUpdate();
             if (insertVal > 0) {
-                return true;
+                boolean success = updateQueuebySkillSet(skillSetRequest);
+                if (success) {
+                    return true;
+                }
             }
         } catch (Exception e) {
             logger.error("Error occured in SkillsetDaoImpl::updateSkillset" + e);
@@ -299,4 +317,135 @@ public class SkillsetDaoImpl implements SkillsetDao {
         }
         return false;
     }
-}
+
+    private boolean updateQueuebySkillSet(SkillsetRequest skillSetRequest) {
+            String actionId;
+            actionId = getskillSetId(skillSetRequest.getSkillsetId());
+            String strategy = skillSetRequest.getRoutingStrategy();
+            if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Least Recent") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("leastrecent")) {
+                strategy = "leastrecent";
+            } else if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Fewest Calls") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("fewestcalls")) {
+                strategy = "fewestcalls";
+            } else if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Linear") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("linear")) {
+                strategy = "linear";
+            } else if (skillSetRequest.getRoutingStrategy().equalsIgnoreCase("Round Robin (M)") || skillSetRequest.getRoutingStrategy().equalsIgnoreCase("rrmemory")) {
+                strategy = "rrmemory";
+            }
+
+            boolean isCreated = false;
+            String status = "Failure";
+            String jsonPayload = "{\n" +
+                    "    \"actionid\": \"" + actionId + "\",\n" +
+                    "    \"name\": \"" + skillSetRequest.getVdnQueueId() + "\",\n" +
+                    "    \"queue_name\": \"" + skillSetRequest.getSkillName() + "\",\n" +
+                    "    \"customer_code\": \"test\",\n" + //tenantID
+                    "    \"musiconhold\": \"test\",\n" +
+                    "    \"timeout\": 120,\n" +
+                    "    \"ringinuse\": \"no\",\n" +
+                    "    \"retry\": 5,\n" +
+                    "    \"wrapuptime\": 5,\n" +
+                    "    \"autofill\": \"yes\",\n" +
+                    "    \"maxlen\": 120,\n" +
+                    "    \"strategy\": \"" + strategy + "\",\n" +
+                    "    \"joinempty\": \"yes\",\n" +
+                    "    \"leavewhenempty\": \"no\",\n" +
+                    "    \"reportholdtime\": \"no\",\n" +
+                    "    \"announcementstatus\": \"yes\",\n" +
+                    "    \"annoucement_path\": \"www.test.com/annoucement\"\n" +
+                    "}";
+
+
+            // Execute the request and handle the response
+            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+                HttpPost httpPost = new HttpPost(queueUpdateAPI);
+                httpPost.setHeader("Content-Type", "application/json");
+                StringEntity requestEntity = new StringEntity(jsonPayload);
+                httpPost.setEntity(requestEntity);
+                logger.info("Request : URL : " + queueUpdateAPI + " payload : " + jsonPayload);
+
+                try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                    HttpEntity responseEntity = response.getEntity();
+                    int responseCode = response.getStatusLine().getStatusCode();
+
+                    if (responseCode == 200) {
+                        status = "SUCCESS";
+                        isCreated = true;
+                        try {
+                            Query queryObj = firstEntityManager.createNativeQuery("UPDATE appointment_remainder.queue_Skillset\n" +
+                                    "SET \n" +
+                                    "    name = :name,\n" +
+                                    "    queue_name = :queue_name,\n" +
+                                    "    customer_code = :customer_code,\n" +
+                                    "    musiconhold = :musiconhold,\n" +
+                                    "    timeout = :timeout,\n" +
+                                    "    ringinuse = :ringinuse,\n" +
+                                    "    retry = :retry,\n" +
+                                    "    wrapuptime = :wrapuptime,\n" +
+                                    "    autofill = :autofill,\n" +
+                                    "    maxlen = :maxlen,\n" +
+                                    "    strategy = :strategy,\n" +
+                                    "    joinempty = :joinempty,\n" +
+                                    "    leavewhenempty = :leavewhenempty,\n" +
+                                    "    reportholdtime = :reportholdtime,\n" +
+                                    "    announcementstatus = :announcementstatus,\n" +
+                                    "    annoucement_path = :annoucement_path\n" +
+                                    "WHERE \n" +
+                                    "    actionid = :actionid\n");
+
+
+
+			/*
+			1) Least Recent (leastrecent)
+			2) Fewest Calls (fewestcalls)
+			3) Linear (linear)
+			4) Round Robin-M (rrmemory)
+			 */
+
+                            queryObj.setParameter("actionid", actionId);
+                            queryObj.setParameter("name", skillSetRequest.getVdnQueueId()); // queue id
+                            queryObj.setParameter("queue_name", skillSetRequest.getSkillName());
+                            queryObj.setParameter("customer_code", "tenantId");
+                            queryObj.setParameter("musiconhold", "test");
+                            queryObj.setParameter("timeout", 120);
+                            queryObj.setParameter("ringinuse", "no");
+                            queryObj.setParameter("retry", 5);
+                            queryObj.setParameter("wrapuptime", 5);
+                            queryObj.setParameter("autofill", "no");
+                            queryObj.setParameter("maxlen", 120);
+                            queryObj.setParameter("strategy", strategy);
+                            queryObj.setParameter("joinempty", "yes");
+                            queryObj.setParameter("leavewhenempty", "no");
+                            queryObj.setParameter("reportholdtime", "no");
+                            queryObj.setParameter("announcementstatus", "yes");
+                            queryObj.setParameter("annoucement_path", "www.test.com/announcement");
+
+                            int insertVal = queryObj.executeUpdate();
+                            if (insertVal > 0) {
+                                logger.info("Queue for this skillset is inserted , Queue name : " + skillSetRequest.getSkillName());
+                            }
+
+                        } catch (Exception e) {
+                            logger.error("Error on the insert queue value in the database");
+                        }
+                    } else {
+                        status = "FAILURE";
+                        isCreated = false;
+                    }
+                    logger.info("Response Status Code: " + responseCode);
+
+                    if (responseEntity != null) {
+                        String responseBody = EntityUtils.toString(responseEntity);
+                        logger.info("Response Body: " + responseBody);
+                    }
+                } catch (ClientProtocolException e) {
+                    logger.error("ClientProtocolException occurred", e);
+                } catch (Exception e) {
+                    logger.error("Exception occurred", e);
+                }
+            } catch (Exception e) {
+                logger.error("Exception occurred during HTTP client setup", e);
+            }
+            return isCreated;
+
+        }
+    }

@@ -5,6 +5,8 @@ public class AgentCampaignDetRequest {
 
     private String campaignName;
 
+    private String vdnQueueId;
+
     public String getCampaignId() {
         return campaignId;
     }
@@ -21,11 +23,20 @@ public class AgentCampaignDetRequest {
         this.campaignName = campaignName;
     }
 
+    public String getVdnQueueId() {
+        return vdnQueueId;
+    }
+
+    public void setVdnQueueId(String vdnQueueId) {
+        this.vdnQueueId = vdnQueueId;
+    }
+
     @Override
     public String toString() {
         return "AgentCampaignDetRequest{" +
                 "campaignId='" + campaignId + '\'' +
                 ", campaignName='" + campaignName + '\'' +
+                ", vdnQueueId='" + vdnQueueId + '\'' +
                 '}';
     }
 }

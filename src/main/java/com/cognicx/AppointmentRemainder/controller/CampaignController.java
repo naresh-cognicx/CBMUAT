@@ -2350,8 +2350,6 @@ public class CampaignController {
 
 		return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
 	}
-
-
 	@GetMapping("/getCustomerDetail")
 	public ResponseEntity<GenericResponse> getCustomerDetail(@RequestParam String customerNumber)
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
