@@ -164,10 +164,14 @@ public class CampaignServiceImpl implements CampaignService {
 				;
 				campaignDetRequest.setQueue(String.valueOf(obj[18]));
 				campaignDetRequest.setDispositionID(String.valueOf(obj[19]));
-
 				campaignDetRequest.setDailingoption(String.valueOf(obj[20]));
-
-				campaignDetRequest.setPreviewOption(String.valueOf(obj[20]));
+				campaignDetRequest.setQueueName(String.valueOf(obj[21]));
+				campaignDetRequest.setForceacw(String.valueOf(obj[22]));
+				campaignDetRequest.setAcwseconds(String.valueOf(obj[23]));
+				campaignDetRequest.setAutoanswer(String.valueOf(obj[24]));
+				campaignDetRequest.setAutoanswervalue(String.valueOf(obj[25]));
+				campaignDetRequest.setNoanswer(String.valueOf(obj[26]));
+				
 				if (campainWeekDetList != null && campainWeekDetList.containsKey(campaignDetRequest.getCampaignId()))
 					campaignDetRequest.setWeekDaysTime(campainWeekDetList.get(campaignDetRequest.getCampaignId()));
 				campaignDetList.add(campaignDetRequest);
@@ -218,7 +222,12 @@ public class CampaignServiceImpl implements CampaignService {
 				campaignDetRequest.setQueue(String.valueOf(obj[18]));
 				campaignDetRequest.setDispositionID(String.valueOf(obj[19]));
 				campaignDetRequest.setDailingoption(String.valueOf(obj[20]));
-
+				campaignDetRequest.setQueueName(String.valueOf(obj[21]));
+				campaignDetRequest.setForceacw(String.valueOf(obj[22]));
+				campaignDetRequest.setAcwseconds(String.valueOf(obj[23]));
+				campaignDetRequest.setAutoanswer(String.valueOf(obj[24]));
+				campaignDetRequest.setAutoanswervalue(String.valueOf(obj[25]));
+				campaignDetRequest.setNoanswer(String.valueOf(obj[26]));
 				if (campainWeekDetList != null && campainWeekDetList.containsKey(campaignDetRequest.getCampaignId()))
 					campaignDetRequest.setWeekDaysTime(campainWeekDetList.get(campaignDetRequest.getCampaignId()));
 				campaignDetList.add(campaignDetRequest);
@@ -2323,13 +2332,11 @@ public class CampaignServiceImpl implements CampaignService {
 			Integer answerCount = map.get("answerCount");
 			Integer noAnswerCount = map.get("noanswerCount");
 			Integer answerduration = map.get("answeredDuration");
-			Integer failedCount = map.get("failedCount");
 			if (answerduration == null) {
 				answerduration = 0;
 			}
-			Integer Totalcount = busyCount + answerCount + noAnswerCount + failedCount;
-			Integer Totalduration = (busyCount * 7) + (noAnswerCount * 15) + answerduration + (failedCount * 30);
-
+			Integer Totalcount = busyCount + answerCount + noAnswerCount;
+			Integer Totalduration = (busyCount * 7) + (noAnswerCount * 15) + answerduration;
 			mapETCDuration.put("TotalCount", Totalcount);
 			mapETCDuration.put("Totalduration", Totalduration);
 		} catch (Exception e) {
@@ -2355,6 +2362,12 @@ public class CampaignServiceImpl implements CampaignService {
 	}
 
 	@Override
+	public synchronized boolean updateDynContactDetail(String campaignId, String phone, String actionId, String inProgress) {
+		return campaignDao.updateDynContactDetail(campaignId, phone, actionId, inProgress);
+	}
+	
+	
+	@Override
 	public int getinProgressCallCount(String campaignId) {
 		return campaignDao.getinProgressCallCount(campaignId);
 	}
@@ -2368,6 +2381,15 @@ public class CampaignServiceImpl implements CampaignService {
 	public List<SurveyContactDetDto> getContactDetRetry(String campaignName, String retryCount) {
 		return campaignDao.getContactDetRetry(campaignName, retryCount);
 	}
+	
+	
+	@Override
+	public List<DynamicContactDetDto> getDynContactDetRetry(String campaignId, String retryCount) {
+		Map<String,String> mapDynamicMapField=getContMappDetail();
+		return campaignDao.getDynContactDetRetry(mapDynamicMapField, campaignId, retryCount);
+		
+	}
+	
 
 	public boolean updateNTCStatus(String campaignId) {
 		if (campaignDao.updateNTCStatusinRetryDet(campaignId)) {
@@ -3092,6 +3114,7 @@ public class CampaignServiceImpl implements CampaignService {
 		return dynamicContListMap;
 	}
 
+
 	@Override
 	public  Map<String,List<DynamicContactDetDto>> getSupervisorAgentContactDet(String Supervisor) {
 		Map<String,List<DynamicContactDetDto>> dynamicContListMap=null;
@@ -3119,9 +3142,32 @@ public class CampaignServiceImpl implements CampaignService {
 	}
 
 	@Override
-	public DynamicContactDetDto getCustomerDetail(String customerNumber) {
-		return campaignDao.getCustomerDetail(customerNumber);
+	public String getAvailAgentFromQueue(String Queue) {
+		try {
+			return campaignDao.getAvailAgentFromQueue(Queue);
+		}catch(Exception e) {
+			StringWriter str = new StringWriter();
+			e.printStackTrace(new PrintWriter(str));
+			logger.error("Exception :" + str.toString());
+		}
+		return null;
 	}
+	
+	
+	@Override
+	public Integer getAgentAvailableCount(String Queue) {
+		try {
+			return campaignDao.getAgentAvailableCount(Queue);
+		}catch(Exception e) {
+			StringWriter str = new StringWriter();
+			e.printStackTrace(new PrintWriter(str));
+			logger.error("Exception :" + str.toString());
+		}
+		return null;
+	}
+
+	
+	
 
 }
 

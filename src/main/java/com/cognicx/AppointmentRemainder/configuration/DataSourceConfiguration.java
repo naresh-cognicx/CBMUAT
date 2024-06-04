@@ -29,7 +29,8 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = {		"com.ison.app.JpaRepository" }, entityManagerFactoryRef = "firstEntityManager", transactionManagerRef = "transactionManager")
+@EnableJpaRepositories(basePackages = {
+		"com.ison.app.JpaRepository" }, entityManagerFactoryRef = "firstEntityManager", transactionManagerRef = "transactionManager")
 public class DataSourceConfiguration {
 
 	private org.slf4j.Logger logger = LoggerFactory.getLogger(DataSourceConfiguration.class);

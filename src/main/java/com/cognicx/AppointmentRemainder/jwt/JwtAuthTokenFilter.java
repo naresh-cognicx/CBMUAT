@@ -93,7 +93,6 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 							"/api/logout", "/api/forgetpassword/request", "/api/forgetpassword/reset",
 							"/api/forgetpassword/validateOTP", "/v2/api-docs", "/configuration", "/swagger",
 							"/webjars","/api/changepassword","/campaign/updateCallDetail");
-
 					if (allowedUrls.contains(request.getServletPath())) {
 						filterChain.doFilter(request, response);
 					} else if (whiteListedIPList.isEmpty()) {

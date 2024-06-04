@@ -67,21 +67,7 @@ public class UserDto {
 	private String oldPassword;
 	private String newPassword;
 	private String confirmPassword;
-
-	private String pbxExt;
-	private String skillSet;
-	private String disposition;
-	private String usergrouptype;
-	private String agentStatus;
-
-	public String getAgentStatus() {
-		return agentStatus;
-	}
-
-	public void setAgentStatus(String agentStatus) {
-		this.agentStatus = agentStatus;
-	}
-
+	
 
 	public UserDto() {
 	}
@@ -125,42 +111,7 @@ public class UserDto {
 		this.oldPassword=userDto.oldPassword;
 		this.newPassword=userDto.newPassword;
 		this.confirmPassword=userDto.confirmPassword;
-		this.pbxExt=userDto.pbxExt;
-		this.disposition=userDto.disposition;
-		this.skillSet=userDto.skillSet;
-		this.usergrouptype=userDto.usergrouptype;
-	}
-
-	public String getUsergrouptype() {
-		return usergrouptype;
-	}
-
-	public void setUsergrouptype(String usergrouptype) {
-		this.usergrouptype = usergrouptype;
-	}
-
-	public String getPbxExt() {
-		return pbxExt;
-	}
-
-	public void setPbxExt(String pbxExt) {
-		this.pbxExt = pbxExt;
-	}
-
-	public String getSkillSet() {
-		return skillSet;
-	}
-
-	public void setSkillSet(String skillSet) {
-		this.skillSet = skillSet;
-	}
-
-	public String getDisposition() {
-		return disposition;
-	}
-
-	public void setDisposition(String disposition) {
-		this.disposition = disposition;
+				
 	}
 
 	public String getGroupId() {
@@ -523,61 +474,4 @@ public class UserDto {
 		this.confirmPassword = confirmPassword;
 	}
 
-
-
-	@Override
-	public String toString() {
-		return "UserDto{" +
-				"autogenUsersId=" + autogenUsersId +
-				", autogenUsersDetailsId='" + autogenUsersDetailsId + '\'' +
-				", inventoryCategoryId=" + inventoryCategoryId +
-				", inventoryCategoryName='" + inventoryCategoryName + '\'' +
-				", email='" + email + '\'' +
-				", employeeId='" + employeeId + '\'' +
-				", firstName='" + firstName + '\'' +
-				", lastName='" + lastName + '\'' +
-				", loginAttempt=" + loginAttempt +
-				", mobileNumber='" + mobileNumber + '\'' +
-				", password='" + password + '\'' +
-				", recAddDt=" + recAddDt +
-				", recUpdateDt=" + recUpdateDt +
-				", status='" + status + '\'' +
-				", supervisorUsersName='" + supervisorUsersName + '\'' +
-				", roles=" + roles +
-				", userInventoryMapDtoList=" + userInventoryMapDtoList +
-				", userLeaveDetailsDtoList=" + userLeaveDetailsDtoList +
-				", userInventoryMaps=" + userInventoryMaps +
-				", reports=" + reports +
-				", authorities=" + authorities +
-				", supervisorUsersId='" + supervisorUsersId + '\'' +
-				", autogenRolesId=" + autogenRolesId +
-				", rolesName='" + rolesName + '\'' +
-				", createdBy='" + createdBy + '\'' +
-				", updatedBy='" + updatedBy + '\'' +
-				", resultObjList=" + resultObjList +
-				", resultObj=" + resultObj +
-				", surveyTypes=" + surveyTypes +
-				", userName='" + userName + '\'' +
-				", domain=" + domain +
-				", businessUnit=" + businessUnit +
-				", roleDetailList=" + roleDetailList +
-				", rolesList=" + rolesList +
-				", approvedBy='" + approvedBy + '\'' +
-				", approvedOn=" + approvedOn +
-				", editFlag=" + editFlag +
-				", approverComment='" + approverComment + '\'' +
-				", approvedUserId='" + approvedUserId + '\'' +
-				", groupId='" + groupId + '\'' +
-				", groupName='" + groupName + '\'' +
-				", userID='" + userID + '\'' +
-				", oldPassword='" + oldPassword + '\'' +
-				", newPassword='" + newPassword + '\'' +
-				", confirmPassword='" + confirmPassword + '\'' +
-				", pbxExt='" + pbxExt + '\'' +
-				", skillSet='" + skillSet + '\'' +
-				", disposition='" + disposition + '\'' +
-				", usergrouptype='" + usergrouptype + '\'' +
-				'}';
-
-	}
 }

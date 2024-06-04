@@ -5,6 +5,9 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
+import org.asteriskjava.manager.event.QueueMemberEvent;
+import org.asteriskjava.manager.event.QueueMemberStatusEvent;
+
 import com.cognicx.AppointmentRemainder.Dto.ContactDetDto;
 import com.cognicx.AppointmentRemainder.Dto.CustomerDataDto;
 import com.cognicx.AppointmentRemainder.Dto.DncContactDto;
@@ -145,12 +148,17 @@ public interface CampaignDao {
 	 boolean updateSMSStatus(String actionId);
 
 	boolean updateContactDetail(String campaignId, String contactNo, String actionId, String callStatus);
-
+	
+	boolean updateDynContactDetail(String campaignId, String contactNo, String actionId, String callStatus);
+	
+	
 	int getinProgressCallCount(String campaignId);
 
 	boolean checkContactIsHangUp(String actionId, String phone);
 
 	List<SurveyContactDetDto> getContactDetRetry(String campaignId, String retryCount);
+	
+	List<DynamicContactDetDto> getDynContactDetRetry(Map<String,String> mapDynamicMapField,String campaignId, String retryCount);
 
 	List<Object[]> getSmswebReportDet(String actionID);
 
@@ -180,9 +188,11 @@ public interface CampaignDao {
 	//Map<String, List<DynamicContactDetDto>> getPreviewAgentBasedContactDetail(Map<String,String> mapDynamicFields,String agent_userid);
 	//List<DynamicContactDetDto> getPreviewAgentBasedContactDetail(Map<String,String> mapDynamicFields,String agent_userid);
 	boolean updateAssignedAgentDynamicContact(String actionId, String agent_userid, String campaign_id,String customer_mobile_number);
-
 	Map<String, List<DynamicContactDetDto>> getSupervisorAgentContactDet(Map<String, String> mapDynamicFields,String supervisor);
 
-	DynamicContactDetDto getCustomerDetail(String customerNumber);
+	boolean updateQueueMemberEvent(QueueMemberStatusEvent event);
+	public String getAvailAgentFromQueue(String queue);
+	public Integer getAgentAvailableCount(String queue);
+	boolean insertQueueAgentDetails(QueueMemberStatusEvent event) throws Exception;
 
 }

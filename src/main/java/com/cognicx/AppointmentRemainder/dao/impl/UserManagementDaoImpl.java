@@ -1,9 +1,5 @@
 package com.cognicx.AppointmentRemainder.dao.impl;
 
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -16,25 +12,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-
-import com.cognicx.AppointmentRemainder.Request.CampaignWeekDetRequest;
-import com.cognicx.AppointmentRemainder.model.SkillSetDetail;
-import com.cognicx.AppointmentRemainder.response.FeatureResponse;
-import com.cognicx.AppointmentRemainder.util.CommonUtil;
-import com.cognicx.AppointmentRemainder.util.FileDecryptor;
-import com.cognicx.AppointmentRemainder.util.LicenseUtil;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-
 import com.cognicx.AppointmentRemainder.response.FeatureResponse;
 import com.cognicx.AppointmentRemainder.util.FileDecryptor;
 import com.cognicx.AppointmentRemainder.util.LicenseUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,11 +48,6 @@ public class UserManagementDaoImpl implements UserManagementDao {
     private final FileDecryptor fileDecryptor;
 
 
-    @Value("${createAgent}")
-    private String createAgent;
-    @Value("${updateAgent}")
-    private String updateAgent;
-
 
     public UserManagementDaoImpl(LicenseUtil licenseUtil, FileDecryptor fileDecryptor) {
         this.licenseUtil = licenseUtil;
@@ -80,9 +55,9 @@ public class UserManagementDaoImpl implements UserManagementDao {
     }
 
 
-    @Override
-    public String createUser(UserManagementDetRequest userDetRequest) {
 
+    @Override
+    public String createUser(UserManagementDetRequest userDetRequest) throws Exception {
         String userKey = null;
         boolean isInserted;
         int insertVal;
@@ -109,20 +84,10 @@ public class UserManagementDaoImpl implements UserManagementDao {
             insertVal = queryObj.executeUpdate();
             if (insertVal > 0) {
                 if (userDetRequest.getRole() != null && userDetRequest.getRole().equalsIgnoreCase("Agent")) {
-                    boolean success = createPbxExtinAsterisk(userDetRequest.getPbxExtn());
-                    if (success && createSkillSetforAgent(userDetRequest)) {
-//                        createSkillSetforAgent(userDetRequest)
-                        Query queryUserMapObj = firstEntityManager.createNativeQuery(UserManagementQueryConstant.INSERT_AGENT_DET);
-                        queryUserMapObj.setParameter("Agent", userDetRequest.getUserId());
-                        queryUserMapObj.executeUpdate();
-//                            String skillset = userDetRequest.getSkillSet();
-                    }
-                } else {
-                    logger.info("Pbx Ext is not created for Agent");
-                }
-            } else if (userDetRequest.getRole() != null && userDetRequest.getRole().equalsIgnoreCase("Supervisor")) {
-                boolean success = createPbxExtinAsterisk(userDetRequest.getPbxExtn());
-                if (success) {
+                    Query queryUserMapObj = firstEntityManager.createNativeQuery(UserManagementQueryConstant.INSERT_AGENT_DET);
+                    queryUserMapObj.setParameter("Agent", userDetRequest.getUserId());
+                    queryUserMapObj.executeUpdate();
+                } else if (userDetRequest.getRole() != null && userDetRequest.getRole().equalsIgnoreCase("Supervisor")) {
                     String agentDetails = userDetRequest.getAgent();
                     String[] agentDetArr = agentDetails.split("\\,");
                     for (String agentID : agentDetArr) {
@@ -131,90 +96,14 @@ public class UserManagementDaoImpl implements UserManagementDao {
                         queryUserMapObj.setParameter("Supervisor", userDetRequest.getUserId());
                         queryUserMapObj.executeUpdate();
                     }
-                } else {
-                    logger.info("Pbx Ext is not created for Supervisor");
                 }
+                return userKey;
             }
-
-            return userKey;
         } catch (Exception e) {
             logger.error("Error occured in UserManagementDaoImpl::createuser" + e);
             return null;
         }
-
-
-    }
-
-    public boolean createSkillSetforAgent(UserManagementDetRequest userDetRequest) {
-        int insertValue = 0;
-        boolean isCreated = false;
-        try {
-            Query queryObj = firstEntityManager.createNativeQuery("INSERT INTO [appointment_remainder].[agent_skillset_mapping] ([SkillSet],[Proficency],[QueueId],[Agent],[PbxExt])VALUES (:SkillSet,:Proficency,:QueueId,:Agent,:PbxExt)");
-            for (SkillSetDetail skillSetDetail : userDetRequest.getSkillSetDetails()) {
-                queryObj.setParameter("SkillSet", skillSetDetail.getSkillSetName());
-                queryObj.setParameter("Proficency", skillSetDetail.getProficiency());
-                queryObj.setParameter("QueueId", skillSetDetail.getQueueId());
-                queryObj.setParameter("Agent", userDetRequest.getUserId());
-                queryObj.setParameter("PbxExt", userDetRequest.getPbxExtn());
-                insertValue = queryObj.executeUpdate();
-                if (insertValue > 0) {
-                    isCreated = true;
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Error occured in CampaignDaoImpl::createCampaignWeek" + e);
-            isCreated = false;
-        }
-        return isCreated;
-    }
-
-    private boolean createPbxExtinAsterisk(String pbxExtn) {
-        boolean status = false;
-        String jsonPayload = "{\n" +
-                "    \"extension\": \"" + pbxExtn + "\",\n" +
-                "    \"password\": \"" + pbxExtn + "\",\n" +
-                "    \"max_contacts\": \"" + 1 + "\",\n" +
-                "    \"accountcode\": \"" + pbxExtn + "\",\n" +
-                "    \"customer_code\": \"" + "tenantID01" + "\",\n" +
-                "    \"user_type\": \"" + "webrtc" + "\",\n" +
-                "    \"default_ring_time\": \"" + "60" + "\",\n" +
-                "    \"recording\": \"" + "y" + "\",\n" +
-                "    \"intercom\": \"" + "y" + "\",\n" +
-                "    \"outcall\": \"" + "y" + "\",\n" +
-                "    \"inbound\": \"" + "y" + "\",\n" +
-                "    \"dnd\": \"" + "n" + "\"\n" +
-                "}";
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost httpPost = new HttpPost(createAgent);
-            httpPost.setHeader("Content-Type", "application/json");
-            StringEntity requestEntity = new StringEntity(jsonPayload);
-            httpPost.setEntity(requestEntity);
-            logger.info("Request : " + " URL : " + httpPost + " payload : " + requestEntity + " request payload : " + jsonPayload);
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-                HttpEntity responseEntity = response.getEntity();
-                int responseCode = response.getStatusLine().getStatusCode();
-                if (responseCode == 200) {
-                    status = true;
-                } else {
-                    status = false;
-                }
-                logger.info("Response Status Code: " + response.getStatusLine().getStatusCode());
-                if (responseEntity != null) {
-                    String responseBody = EntityUtils.toString(responseEntity);
-                    logger.info(responseBody);
-                }
-            } catch (Exception e) {
-                StringWriter str = new StringWriter();
-                e.printStackTrace(new PrintWriter(str));
-                logger.error("Exception :" + str.toString());
-            }
-        } catch (Exception e) {
-            StringWriter str = new StringWriter();
-            e.printStackTrace(new PrintWriter(str));
-            logger.error("Exception :" + str.toString());
-        }
-        return status;
+        return null;
     }
 
     public Integer getUserKey() {
@@ -245,6 +134,7 @@ public class UserManagementDaoImpl implements UserManagementDao {
         return resultList;
     }
 
+    
     @Override
     public List<Object[]> getAgentDetail() {
         List<Object[]> resultList = null;
@@ -257,7 +147,7 @@ public class UserManagementDaoImpl implements UserManagementDao {
         }
         return resultList;
     }
-
+    
     @Override
     public List<Object[]> getUserDetail(String userGroup) {
         List<Object[]> resultList = null;
@@ -370,7 +260,7 @@ public class UserManagementDaoImpl implements UserManagementDao {
     public FeatureResponse getFeatures() {
         FeatureResponse response = new FeatureResponse();
         String licensekey;
-        try {
+        try{
             licensekey = FileDecryptor.decrypt();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -494,7 +384,7 @@ public class UserManagementDaoImpl implements UserManagementDao {
                     }
                 }
                 response.setMacAddress(checkMacaddress(macaddress));
-                logger.info("Mac Address is present : " + checkMacaddress(macaddress));
+                logger.info("Mac Address is present : "+ checkMacaddress(macaddress));
 
                 return response;
             }
@@ -592,12 +482,6 @@ public class UserManagementDaoImpl implements UserManagementDao {
                     }
                     userDto.setAutogenUsersDetailsId(objects[9].toString());
                     userDto.setGroupName(objects[8].toString());
-
-                    userDto.setPbxExt(CommonUtil.nullRemove(objects[9].toString()));
-                    userDto.setSkillSet(CommonUtil.nullRemove(objects[10].toString()));
-                    userDto.setDisposition(CommonUtil.nullRemove(objects[13].toString()));
-
-
                     Set<Roles> roleset = new HashSet<>();
                     Roles roles = new Roles();
                     roles.setRolesName(objects[3].toString());
@@ -607,12 +491,9 @@ public class UserManagementDaoImpl implements UserManagementDao {
                     rolesList.add(roles.getRolesName());
                     userDto.setRolesList(rolesList);
 
-                    userOptional = Optional.ofNullable(userDto);
-                    logger.info(userDto.toString());
-                    userDto.setSkillSet(objects[10].toString());
-                    userOptional = Optional.ofNullable(userDto);
                 }
             }
+            userOptional = Optional.ofNullable(userDto);
         } catch (Exception e) {
             logger.error("Exception findByUsername() : {}", e.getMessage());
         } finally {
@@ -621,21 +502,7 @@ public class UserManagementDaoImpl implements UserManagementDao {
         return userOptional;
     }
 
-
-    public String getUserGroupType(String userGroupName) {
-        String type = "";
-        try {
-            Query queryObj = firstEntityManager.createNativeQuery("SELECT usergroupType FROM appointment_remainder_db.appointment_remainder.usergroup_det WHERE usergroupName = :usergroupName");
-            queryObj.setParameter("usergroupName", userGroupName);
-            type = (String) queryObj.getSingleResult();
-        } catch (Exception e) {
-            logger.error("Error occurred in getUserGroupType: ", e);
-        }
-        return type;
-    }
-
-
-
+    @Override
     public List<Object[]> getAgentDetail(String userID) {
         List<Object[]> resultList = null;
         try {

@@ -29,8 +29,4 @@ public interface UserManagementService {
     FeatureResponse getFeatures();
     ResponseEntity<GenericResponse> getAgentDetail() ;
     List<UserManagementDetRequest> getAgentDetList() throws Exception;
-
-
-    String getUserGroupType(String usergroupName);
-
 }

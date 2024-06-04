@@ -22,11 +22,7 @@ public class UserManagementQueryConstant {
 	public static final String GET_AGENT_DETAILS_BYID ="SELECT FirstName,LastName,UserId from appointment_remainder.usermanagement_det where UserId=:userId";
 	
 	
-
-	public static final String GET_USER_DET_BYID = "SELECT userKey, UserId, UserPassword, UserRole, EmailId, FirstName, LastName, MobNum, userGroup, PBXExtn, SkillSet, Agent, status, Disposition FROM appointment_remainder.usermanagement_det WHERE UserId =:UserId COLLATE Latin1_General_CS_AS"	;
-
-//	public static final String GET_USER_DET_BYID = "SELECT userKey, UserId, UserPassword, UserRole, EmailId, FirstName, LastName, MobNum, userGroup, PBXExtn, SkillSet, Agent, status FROM appointment_remainder.usermanagement_det WHERE UserId =:UserId COLLATE Latin1_General_CS_AS"	;
-
+	public static final String GET_USER_DET_BYID = "SELECT userKey, UserId, UserPassword, UserRole, EmailId, FirstName, LastName, MobNum, userGroup, PBXExtn, SkillSet, Agent, status FROM appointment_remainder.usermanagement_det WHERE UserId =:UserId COLLATE Latin1_General_CS_AS"	;
 //	public static final String GET_USER_DET_BYID = "SELECT userKey,UserId,UserPassword,UserRole,EmailId,FirstName,LastName,MobNum,userGroup,PBXExtn,SkillSet,Agent,status from appointment_remainder.usermanagement_det where UserId=:UserId";
 
 	public static final String GET_USER_DET_USERGROUP = "SELECT userKey,FirstName,LastName,EmailId,MobNum,UserId,UserPassword,UserRole,PBXExtn,SkillSet,Agent,userGroup,status  FROM appointment_remainder.usermanagement_det where userGroup=:groupName";

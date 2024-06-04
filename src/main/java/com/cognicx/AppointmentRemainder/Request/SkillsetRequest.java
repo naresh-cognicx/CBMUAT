@@ -14,70 +14,6 @@ public class SkillsetRequest {
 	private String ShortAbandonedThreshold;
 	private String CountAbandonedSLA;
 	private String Disposition;
-	private boolean forceACW;
-	private String forceACWSec;
-	private boolean autoanswer;
-	private String autoanswersec;
-	private String noAnswer;
-	private String vdnQueueId;
-	private String routingStrategy;
-
-	public String getVdnQueueId() {
-		return vdnQueueId;
-	}
-
-	public void setVdnQueueId(String vdnQueueId) {
-		this.vdnQueueId = vdnQueueId;
-	}
-
-	public boolean isForceACW() {
-		return forceACW;
-	}
-
-	public void setForceACW(boolean forceACW) {
-		this.forceACW = forceACW;
-	}
-
-	public String getForceACWSec() {
-		return forceACWSec;
-	}
-
-	public void setForceACWSec(String forceACWSec) {
-		this.forceACWSec = forceACWSec;
-	}
-
-	public boolean isAutoanswer() {
-		return autoanswer;
-	}
-
-	public void setAutoanswer(boolean autoanswer) {
-		this.autoanswer = autoanswer;
-	}
-
-	public String getAutoanswersec() {
-		return autoanswersec;
-	}
-
-	public void setAutoanswersec(String autoanswersec) {
-		this.autoanswersec = autoanswersec;
-	}
-
-	public String getNoAnswer() {
-		return noAnswer;
-	}
-
-	public void setNoAnswer(String noAnswer) {
-		this.noAnswer = noAnswer;
-	}
-
-	public String getRoutingStrategy() {
-		return routingStrategy;
-	}
-
-	public void setRoutingStrategy(String routingStrategy) {
-		this.routingStrategy = routingStrategy;
-	}
-
 	public String getSkillsetId() {
 		return skillsetId;
 	}
@@ -90,7 +26,6 @@ public class SkillsetRequest {
 	public void setSkillName(String skillName) {
 		this.skillName = skillName;
 	}
-
 	
 	public String getDisposition() {
 		return Disposition;
@@ -98,7 +33,6 @@ public class SkillsetRequest {
 	public void setDisposition(String disposition) {
 		Disposition = disposition;
 	}
-
 	public String getLanguage() {
 		return Language;
 	}
@@ -159,30 +93,5 @@ public class SkillsetRequest {
 	public void setCountAbandonedSLA(String countAbandonedSLA) {
 		CountAbandonedSLA = countAbandonedSLA;
 	}
-
-	@Override
-	public String toString() {
-		return "SkillsetRequest{" +
-				"skillsetId='" + skillsetId + '\'' +
-				", skillName='" + skillName + '\'' +
-				", Language='" + Language + '\'' +
-				", TimeZone='" + TimeZone + '\'' +
-				", ChannelType='" + ChannelType + '\'' +
-				", ServiceLevelThreshold='" + ServiceLevelThreshold + '\'' +
-				", ServiceLevelGoal='" + ServiceLevelGoal + '\'' +
-				", FirstCallResolution='" + FirstCallResolution + '\'' +
-				", AbandonedRateThreshold='" + AbandonedRateThreshold + '\'' +
-				", ShortCallThreshold='" + ShortCallThreshold + '\'' +
-				", ShortAbandonedThreshold='" + ShortAbandonedThreshold + '\'' +
-				", CountAbandonedSLA='" + CountAbandonedSLA + '\'' +
-				", Disposition='" + Disposition + '\'' +
-				", forceACW=" + forceACW +
-				", forceACWSec='" + forceACWSec + '\'' +
-				", autoanswer=" + autoanswer +
-				", autoanswersec='" + autoanswersec + '\'' +
-				", noAnswer='" + noAnswer + '\'' +
-				", vdnQueueId='" + vdnQueueId + '\'' +
-				", routingStrategy='" + routingStrategy + '\'' +
-				'}';
-	}
+	
 }

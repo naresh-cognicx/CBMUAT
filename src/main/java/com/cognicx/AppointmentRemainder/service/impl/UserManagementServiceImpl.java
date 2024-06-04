@@ -33,8 +33,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     @Autowired
     UserManagementDao userManagementDao;
-
-    private final Logger logger = LoggerFactory.getLogger(UserManagementServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(UserManagementServiceImpl.class);
 
     @Override
     public ResponseEntity<GenericResponse> createUser(UserManagementDetRequest userDetRequest) {
@@ -241,11 +240,7 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
     }
-
-    public String getUserGroupType(String usergroupName){
-        return userManagementDao.getUserGroupType(usergroupName);
-    }
-
+    
     @Override
     public List<UserManagementDetRequest> getAgentDetList() throws Exception {
         List<UserManagementDetRequest> userDetList;

@@ -27,11 +27,13 @@ public class CampaignDetRequest {
 	private String dispositionID;
 	private String frontstatus;
 	private String userGroup;
-
 	private String Dailingoption;
-
-	private String previewOption;
-
+	private String queueName;
+	private String forceacw;
+	private String acwseconds;
+	private String autoanswer;
+	private String autoanswervalue;
+	private String noanswer;
 
 	private List<CampaignWeekDetRequest> weekDaysTime;
 
@@ -47,17 +49,48 @@ public class CampaignDetRequest {
 		this.userGroup = userGroup;
 	}
 
-	public String getPreviewOption() {
-		return previewOption;
-	}
-
-	public void setPreviewOption(String previewOption) {
-		this.previewOption = previewOption;
-	}
-
-
 	public void setDailingMode(String dailingMode) {
 		DailingMode = dailingMode;
+	}
+
+	public String getForceacw() {
+		return forceacw;
+	}
+
+	public void setForceacw(String forceacw) {
+		this.forceacw = forceacw;
+	}
+
+	public String getAcwseconds() {
+		return acwseconds;
+	}
+
+	public void setAcwseconds(String acwseconds) {
+		this.acwseconds = acwseconds;
+	}
+
+	public String getAutoanswer() {
+		return autoanswer;
+	}
+
+	public void setAutoanswer(String autoanswer) {
+		this.autoanswer = autoanswer;
+	}
+
+	public String getAutoanswervalue() {
+		return autoanswervalue;
+	}
+
+	public void setAutoanswervalue(String autoanswervalue) {
+		this.autoanswervalue = autoanswervalue;
+	}
+
+	public String getNoanswer() {
+		return noanswer;
+	}
+
+	public void setNoanswer(String noanswer) {
+		this.noanswer = noanswer;
 	}
 
 	public String getQueue() {
@@ -246,6 +279,17 @@ public class CampaignDetRequest {
 
 	public void setFrontstatus(String frontstatus) {
 		this.frontstatus = frontstatus;
+	}
+	
+	
+	
+
+	public String getQueueName() {
+		return queueName;
+	}
+
+	public void setQueueName(String queueName) {
+		this.queueName = queueName;
 	}
 
 	@Override

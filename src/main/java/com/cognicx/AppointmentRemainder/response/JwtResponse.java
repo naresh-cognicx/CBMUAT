@@ -20,13 +20,10 @@ public class JwtResponse {
 	private List<Map<String, String>> domain;
 	private List<Map<String, String>> businessUnit;
 	private boolean ldapEnabled;
-	private FeatureResponse featureResponse;
-	private String pbxExt;
-	private String skillSet;
-	private String disposition;
-	private String usergrouptype;
 
-	public JwtResponse() {}
+	private FeatureResponse featureResponse;
+
+    public JwtResponse() {}
     
     public JwtResponse(JwtResponse jwtResponse) {
     	this.userName = jwtResponse.getUserName();
@@ -43,36 +40,7 @@ public class JwtResponse {
 		this.userGroupName=jwtResponse.getUserGroupName();
 		this.ldapEnabled = jwtResponse.isLdapEnabled();
 		this.featureResponse = jwtResponse.getFeatureResponse();
-		this.skillSet= jwtResponse.getSkillSet();
-		this.disposition= jwtResponse.getDisposition();
-		this.pbxExt=jwtResponse.getPbxExt();
-		this.usergrouptype = jwtResponse.getUsergrouptype();
     }
-
-	public String getPbxExt() {
-		return pbxExt;
-	}
-
-	public void setPbxExt(String pbxExt) {
-		this.pbxExt = pbxExt;
-	}
-
-
-	public String getDisposition() {
-		return disposition;
-	}
-
-	public void setDisposition(String disposition) {
-		this.disposition = disposition;
-	}
-
-	public String getUsergrouptype() {
-		return usergrouptype;
-	}
-
-	public void setUsergrouptype(String usergrouptype) {
-		this.usergrouptype = usergrouptype;
-	}
 
 	public FeatureResponse getFeatureResponse() {
 		return featureResponse;
@@ -194,12 +162,5 @@ public class JwtResponse {
 		this.userGroupName = userGroupName;
 	}
 
-	public String getSkillSet() {
-		return skillSet;
-	}
-
-	public void setSkillSet(String skillSet) {
-		this.skillSet = skillSet;
-	}
 
 }

@@ -220,8 +220,6 @@ public class UserAuthentication {
             jwtResponse.setExpiryDate(expiryDate);
             jwtResponse.setExpirySeconds(String.valueOf(jwtExpiration));
             jwtResponse.setUserGroupName(userPrinciple.getUsergroupName());
-
-            jwtResponse.setPbxExt(userPrinciple.getAutogenUsersDetailsId());
             //	jwtResponse.setModulescreens(moduleListResponse);
             jwtResponse.setFirstName(userPrinciple.getFirstName());
             jwtResponse.setLastName(userPrinciple.getLastName());
@@ -229,13 +227,6 @@ public class UserAuthentication {
             //	jwtResponse.setDomain(userDto.getDomain());
             //	jwtResponse.setBusinessUnit(userDto.getBusinessUnit());
             jwtResponse.setLdapEnabled(ldapEnabled);
-            jwtResponse.setSkillSet(userPrinciple.getSkillSet());
-
-            jwtResponse.setDisposition(userPrinciple.getDisposition());
-            jwtResponse.setPbxExt(userPrinciple.getPbxExt());
-            String type = userManagementService.getUserGroupType(userPrinciple.getUsergroupName());
-            jwtResponse.setUsergrouptype(type);
-
 //            jwtResponse.setFeatureResponse(userManagementService.getFeatures());
             genericResponse.setValue(new JwtResponse(jwtResponse));
 

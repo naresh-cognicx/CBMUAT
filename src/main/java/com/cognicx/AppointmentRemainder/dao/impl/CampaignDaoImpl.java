@@ -15,6 +15,8 @@ import java.util.*;
 import javax.persistence.*;
 
 import org.apache.poi.ss.formula.functions.T;
+import org.asteriskjava.manager.event.QueueMemberEvent;
+import org.asteriskjava.manager.event.QueueMemberStatusEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,11 +100,12 @@ public class CampaignDaoImpl implements CampaignDao {
 			queryObj.setParameter("Queue", campaignDetRequest.getQueue());
 			queryObj.setParameter("dispositionID", campaignDetRequest.getDispositionID());
 			queryObj.setParameter("groupname", campaignDetRequest.getUserGroup());
-
 			queryObj.setParameter("Dailingoption", campaignDetRequest.getDailingoption());
-
-			queryObj.setParameter("previewOption", campaignDetRequest.getPreviewOption());
-
+			queryObj.setParameter("forceacw", campaignDetRequest.getForceacw());
+			queryObj.setParameter("acwseconds", campaignDetRequest.getAcwseconds());
+			queryObj.setParameter("autoanswer", campaignDetRequest.getAutoanswer());
+			queryObj.setParameter("autoanswervalue", campaignDetRequest.getAutoanswervalue());
+			queryObj.setParameter("noanswer", campaignDetRequest.getNoanswer());
 			if (!"".equalsIgnoreCase(campaignDetRequest.getFtpUsername())
 					&& !"".equalsIgnoreCase(campaignDetRequest.getFtpPassword()))
 				queryObj.setParameter("ftpCredentials",
@@ -276,9 +279,11 @@ public class CampaignDaoImpl implements CampaignDao {
 			queryObj.setParameter("dispositionID", campaignDetRequest.getDispositionID());
 			queryObj.setParameter("groupname", campaignDetRequest.getUserGroup());
 			queryObj.setParameter("Dailingoption", campaignDetRequest.getDailingoption());
-			queryObj.setParameter("previewOption", campaignDetRequest.getPreviewOption());
-
-
+			queryObj.setParameter("forceacw", campaignDetRequest.getForceacw());
+			queryObj.setParameter("acwseconds", campaignDetRequest.getAcwseconds());
+			queryObj.setParameter("autoanswer", campaignDetRequest.getAutoanswer());
+			queryObj.setParameter("autoanswervalue", campaignDetRequest.getAutoanswervalue());
+			queryObj.setParameter("noanswer", campaignDetRequest.getNoanswer());
 			if (!"".equalsIgnoreCase(campaignDetRequest.getFtpUsername())
 					&& !"".equalsIgnoreCase(campaignDetRequest.getFtpPassword()))
 				queryObj.setParameter("ftpCredentials",
@@ -1264,7 +1269,7 @@ public class CampaignDaoImpl implements CampaignDao {
 			queryObj.executeUpdate();
 			insertionStatus = true;
 			logger.error("Insert Campaign Status successfully for the Campaign ID :" + campDetRequest.getCampaignId()
-					+ " and It's status :" + campDetRequest.getCampaignActive());
+			+ " and It's status :" + campDetRequest.getCampaignActive());
 		} catch (Exception e) {
 			StringWriter str = new StringWriter();
 			e.printStackTrace(new PrintWriter(str));
@@ -1291,10 +1296,7 @@ public class CampaignDaoImpl implements CampaignDao {
 			queryObj.executeUpdate();
 			updateStatus = true;
 			logger.error("Updated Campaign Status successfully for the Campaign ID :" + campDetRequest.getCampaignId()
-
-					+ " and It' Status " + campDetRequest.getCampaignActive());
-
-
+			+ " and It' Status " + campDetRequest.getCampaignActive());
 		} catch (Exception e) {
 			logger.error("Error occured in CampaignDaoImpl:: Update Campaign Status" + e);
 			logger.error("campaign_id" + campDetRequest.getCampaignId());
@@ -1481,9 +1483,7 @@ public class CampaignDaoImpl implements CampaignDao {
 			queryObj.setParameter("campaignname", campaignName);
 			queryObj.executeUpdate();
 			updateStatus = true;
-
-			logger.info("Updated Active Contact Details for the Product ID :" + productid);
-
+			logger.error("Updated Active Contact Details for the Product ID :" + productid);
 		} catch (Exception e) {
 			StringWriter str = new StringWriter();
 			e.printStackTrace(new PrintWriter(str));
@@ -1929,6 +1929,7 @@ public class CampaignDaoImpl implements CampaignDao {
 			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_DYANMIC_CONTACT_DET_CT);
 			queryObj.setParameter("campaign_id", campaign_id);
 			resultList = queryObj.getResultList();
+			// logger.info("List :"+ resultList);
 			if (resultList != null && !resultList.isEmpty()) {
 				String preVal = "";
 				for (Object[] obj : resultList) {
@@ -1950,9 +1951,7 @@ public class CampaignDaoImpl implements CampaignDao {
 					// surveyConDto.setMapDynamicFields(dynField);
 					surveyConDto.setMapDynamicFields(dynField);
 					campaignDetlist.add(surveyConDto);
-
 					logger.info("list :: " + dynField);
-
 					// logger.info("TO DELETE --- Campaign Survey Contact Map:" + campaignDetMap);
 				}
 			}
@@ -2185,9 +2184,6 @@ public class CampaignDaoImpl implements CampaignDao {
 		Integer answerCount = 0;
 		Integer noanswerCount = 0;
 		Integer answeredDuration = 0;
-
-		Integer failedCount = 0;
-
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		try {
 			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_BUSY_COUNT);
@@ -2219,22 +2215,10 @@ public class CampaignDaoImpl implements CampaignDao {
 		} catch (Exception e) {
 			logger.error("Error occured in CampaignDaoImpl:: getETC" + e);
 		}
-		try {
-			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_FAILED_COUNT);
-			queryObj.setParameter("campaign_id", campaignId);
-			failedCount = (Integer) queryObj.getSingleResult();
-		} catch (Exception e) {
-			logger.error("Error occured in CampaignDaoImpl in failed count:: getETC" + e);
-		}
-
 		map.put("busycount", busyCount);
 		map.put("answerCount", answerCount);
 		map.put("noanswerCount", noanswerCount);
 		map.put("answeredDuration", answeredDuration);
-
-		map.put("failedCount",failedCount);
-
-
 		return map;
 	}
 
@@ -2494,7 +2478,30 @@ public class CampaignDaoImpl implements CampaignDao {
 		return isUpdated;
 	}
 
-	public synchronized boolean updateContactDetailToNOANSWER(String actionId, String retryCount) {
+	
+	@Override
+	public boolean updateDynContactDetail(String campaignId, String contactNo, String actionId, String callStatus) {
+		boolean isUpdated = false;
+		try {
+			Query queryObj = firstEntityManager.createNativeQuery(
+					"UPDATE appointment_remainder.contact_det_new_1 set call_status=:callStatus,rec_upt_date=getdate() where actionId =:actionId and customer_mobile_number=:contactNo and campaign_id=:campaignId");
+			queryObj.setParameter("callStatus", callStatus);
+			queryObj.setParameter("actionId", actionId);
+			queryObj.setParameter("contactNo", contactNo);
+			queryObj.setParameter("campaignId", campaignId);
+			if (queryObj.executeUpdate() > 0) {
+				isUpdated = true;
+			} else {
+				isUpdated = false;
+			}
+		} catch (Exception e) {
+			logger.error("Error on updateContactDetail " + e.getMessage());
+		}
+		return isUpdated;
+	}
+	
+	
+	public boolean updateContactDetailToNOANSWER(String actionId, String retryCount) {
 		boolean isUpdated = false;
 		try {
 			Query queryObj = firstEntityManager.createNativeQuery(
@@ -2599,7 +2606,7 @@ public class CampaignDaoImpl implements CampaignDao {
 		return status;
 	}
 
-	public synchronized List<Object[]> makeInprogressintoNoAnswer(String campaignId) {
+	public List<Object[]> makeInprogressintoNoAnswer(String campaignId) {
 		boolean status = false;
 		List<Object[]> resultList = new ArrayList<>();
 		try {
@@ -2691,6 +2698,7 @@ public class CampaignDaoImpl implements CampaignDao {
 			logger.error("Error occurring while updating data in call retry det for in progress: {}", e.getMessage());
 			return false;
 		}
+
 		return isUpdated;
 	}
 
@@ -2732,15 +2740,6 @@ public class CampaignDaoImpl implements CampaignDao {
 			if (resultList != null && !resultList.isEmpty()) {
 				for (Object[] obj : resultList) {
 					SurveyContactDetDto surveyConDto = new SurveyContactDetDto();
-					// contactDetDto.(String.valueOf(obj[1]));
-					// contactDetDto.s(String.valueOf(obj[1]));
-					/*
-					 * contactDetDto.setDoctorName(String.valueOf(obj[2]));
-					 * contactDetDto.setPatientName(String.valueOf(obj[3]));
-					 * contactDetDto.setContactNo(String.valueOf(obj[4]));
-					 * contactDetDto.setAppointmentDate(String.valueOf(obj[5]));
-					 */
-
 					surveyConDto.setMainSkillset(String.valueOf(obj[0]));
 					surveyConDto.setPhone(String.valueOf(obj[1]));
 					surveyConDto.setActionId(String.valueOf(obj[2]));
@@ -2757,18 +2756,6 @@ public class CampaignDaoImpl implements CampaignDao {
 					surveyConDto.setTotalDue(String.valueOf(obj[9]));
 					surveyConDto.setMinPayment(String.valueOf(obj[10]));
 					surveyConDto.setDueDate(String.valueOf(obj[11]));
-					// campaignDetMap.get(preVal).add(surveyConDto);
-					// contactDetDto.setLastFourDigits(String.valueOf(obj[2]));
-					// contactDetDto.setPhone(String.valueOf(obj[3]));
-					// contactDetDto.setTotalDue(String.valueOf(obj[4]));
-					// contactDetDto.setMinPayment(String.valueOf(obj[5]));
-					// contactDetDto.setDueDate(String.valueOf(obj[6]));
-					// contactDetDto.setSurvey_Lang(String.valueOf(obj[7]));
-					// contactDetDto.setActionId(String.valueOf(obj[8]));
-					// contactDetDto.setRetryCount(String.valueOf(obj[9]));
-					// contactDetDto.setRec_update_time(String.valueOf(obj[10]));
-					// contactDetDto.setCall_status(String.valueOf(obj[11]));
-					// // contactDetDto.setProductID(String.valueOf(obj[12]));
 					contactDetDtoRetry.add(surveyConDto);
 				}
 			}
@@ -2828,7 +2815,6 @@ public class CampaignDaoImpl implements CampaignDao {
 					+ customer_mobile_number + " :: Campaign ID :" + campaign_id);
 			Query queryObj = firstEntityManager
 					.createNativeQuery(CampaignQueryConstant.UPDATE_ASSIGNED_DYANMIC_CONTACT_DET_CT);
-
 			queryObj.setParameter("actionId", actionId);
 			queryObj.setParameter("customer_mobile_number", customer_mobile_number);
 			queryObj.setParameter("agent_userid", agent_userid);
@@ -2881,7 +2867,6 @@ public class CampaignDaoImpl implements CampaignDao {
 	 * e); return campaignDetlist; } return campaignDetlist; }
 	 */
 
-
 	@Override
 	public Map<String, List<DynamicContactDetDto>> getcampBasedAssignedContactDetail(
 			Map<String, String> mapDynamicFields, String campaign_id) {
@@ -2892,6 +2877,7 @@ public class CampaignDaoImpl implements CampaignDao {
 			// Query queryObj =
 			// firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_SURVEY_CONTACT_DET);
 			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_CAMPAIGN_BASED_CONTACT_DET);
+
 			queryObj.setParameter("campaign_id", campaign_id);
 			// queryObj.executeUpdate();
 			resultList = queryObj.getResultList();
@@ -2940,8 +2926,8 @@ public class CampaignDaoImpl implements CampaignDao {
 	}
 
 	@Override
-	public Map<String, List<DynamicContactDetDto>> getPreviewAgentBasedContactDetail(Map<String, String> mapDynamicFields, String agent_userid) {
-
+	public Map<String, List<DynamicContactDetDto>> getPreviewAgentBasedContactDetail(
+			Map<String, String> mapDynamicFields, String agent_userid) {
 		List<Object[]> resultList;
 		List<DynamicContactDetDto> campaignDetlist = new ArrayList<>();
 		Map<String, List<DynamicContactDetDto>> mapCampBasedAgCont = new LinkedHashMap<>();
@@ -2949,6 +2935,7 @@ public class CampaignDaoImpl implements CampaignDao {
 			// Query queryObj =
 			// firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_SURVEY_CONTACT_DET);
 			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_AGENT_BASED_CONTACT_DET);
+
 			queryObj.setParameter("agent_userid", agent_userid);
 			// queryObj.executeUpdate();
 			resultList = queryObj.getResultList();
@@ -2999,96 +2986,227 @@ public class CampaignDaoImpl implements CampaignDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, List<DynamicContactDetDto>> getSupervisorAgentContactDet(Map<String, String> mapDynamicFields,
-	        String supervisor) {
-	    Map<String, List<DynamicContactDetDto>> supervisorContactDetails = new LinkedHashMap<>();
-	    try {
-	        Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_ASSIGNED_AGENT_BASED_ON_SUPERVISOR);
-	        queryObj.setParameter("Supervisor", supervisor);
-	        List<Object> resultList = queryObj.getResultList();
+			String supervisor) {
+		Map<String, List<DynamicContactDetDto>> supervisorContactDetails = new LinkedHashMap<>();
+		try {
+			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_ASSIGNED_AGENT_BASED_ON_SUPERVISOR);
+			queryObj.setParameter("Supervisor", supervisor);
+			List<Object> resultList = queryObj.getResultList();
 
-	        for (Object obj : resultList) {
-	            String agent_userid = (String) obj;
-	            Map<String, List<DynamicContactDetDto>> agentContactDetails = getAgentBasedContactDetailwithStatus(mapDynamicFields, agent_userid);
-	            supervisorContactDetails.put(agent_userid, agentContactDetails.get(agent_userid));
-	        }
-	    } catch (Exception e) {
-	        StringWriter str = new StringWriter();
-	        e.printStackTrace(new PrintWriter(str));
-	        logger.error("Error occurred in CampaignDaoImpl::getSupervisorAgentContactDet" + str.toString());
-	    }
-	    return supervisorContactDetails;
+			for (Object obj : resultList) {
+				String agent_userid = (String) obj;
+				Map<String, List<DynamicContactDetDto>> agentContactDetails = getAgentBasedContactDetailwithStatus(mapDynamicFields, agent_userid);
+				supervisorContactDetails.put(agent_userid, agentContactDetails.get(agent_userid));
+			}
+		} catch (Exception e) {
+			StringWriter str = new StringWriter();
+			e.printStackTrace(new PrintWriter(str));
+			logger.error("Error occurred in CampaignDaoImpl::getSupervisorAgentContactDet" + str.toString());
+		}
+		return supervisorContactDetails;
+	}
+
+	public Map<String, List<DynamicContactDetDto>> getAgentBasedContactDetailwithStatus(
+			Map<String, String> mapDynamicFields, String agent_userid) {
+		List<Object[]> resultList;
+		Map<String, List<DynamicContactDetDto>> mapCampBasedAgCont = new LinkedHashMap<>();
+		try {
+			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_AGENT_BASED_CONTACT_STATUS_DET);
+			queryObj.setParameter("agent_userid", agent_userid);
+			resultList = queryObj.getResultList();
+			logger.info("Result list: " + resultList);
+
+			List<DynamicContactDetDto> contactDetails = new ArrayList<>();
+			for (Object[] obj : resultList) {
+				DynamicContactDetDto surveyConDto = new DynamicContactDetDto();
+				surveyConDto.setCampaignId(String.valueOf(obj[0]));
+				surveyConDto.setCampaignName(String.valueOf(obj[1]));
+				surveyConDto.setCustomerMobileNumber(String.valueOf(obj[2]));
+				surveyConDto.setAgent_userid(String.valueOf(obj[3]));
+				String agentId = String.valueOf(obj[3]);
+				surveyConDto.setActionId(String.valueOf(obj[4]));
+				surveyConDto.setCallStatus(String.valueOf(obj[5]));
+				Map<String, String> dynField = new LinkedHashMap<>();
+				for (int i = 1; i <= mapDynamicFields.size(); i++) {
+					String key = mapDynamicFields.get("reserve_" + i);
+					String value = (String) obj[i + 3];
+					dynField.put(key, value);
+				}
+				surveyConDto.setMapDynamicFields(dynField);
+				mapCampBasedAgCont.computeIfAbsent(agentId, k -> new ArrayList<>()).add(surveyConDto);
+				//   mapCampBasedAgCont.put(agent_userid, contactDetails);
+			}} catch (Exception e) {
+				logger.error("Error occurred in CampaignDaoImpl::getAgentBasedContactDetailwithStatus" + e);
+			}
+		return mapCampBasedAgCont;
+	}
+
+	@Override
+	public boolean updateQueueMemberEvent(QueueMemberStatusEvent event) {
+		boolean isUpdated=false;
+		try {
+			String extn=event.getName();
+			Integer intStatus=event.getStatus();
+			String Queue=event.getQueue();
+			Integer loginTime=event.getLogintime();
+			Integer isAgentAvail=isAgentAvailable(extn);
+			if(isAgentAvail>0) {
+				Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.UPDATE_QUEUE_AGENT_DET);
+				queryObj.setParameter("agentID", extn);
+				queryObj.setParameter("agent_status", intStatus);
+				queryObj.setParameter("queue_name", Queue);
+				queryObj.setParameter("loginTime", loginTime);
+				queryObj.executeUpdate();
+				isUpdated=true;
+			}else {
+				Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.INSERT_QUEUE_AGENT_DET);
+				queryObj.setParameter("agentID", extn);
+				queryObj.setParameter("agent_status", intStatus);
+				queryObj.setParameter("queue_name", Queue);
+				queryObj.setParameter("loginTime", loginTime);
+				queryObj.executeUpdate();
+				isUpdated=true;
+			}
+			logger.info("Extn :"+extn+" :: status :"+intStatus+" :: Queue "+Queue);
+		}catch(Exception e) {
+			logger.error("Error occurred in CampaignDaoImpl::" + e);
+		}
+		return isUpdated;
 	}
 
 
-	public DynamicContactDetDto getCustomerDetail(String customerNumber) {
-		DynamicContactDetDto dynamicContactDetDto = new DynamicContactDetDto();
-		List<DynamicContactDetDto> dynamicContactDetDtoList = new ArrayList<>();
-		try {
-			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_CONTACT_DET_BY_CUSTOMERNUMBER);
-			queryObj.setParameter("customerNumber", customerNumber);
-			List<Object[]> resultList = queryObj.getResultList();  // Declare and initialize resultList
-			logger.info("Result list: " + resultList);
 
+	private Integer isAgentAvailable(String agentId) {
+		Integer maxVal;
+		try {
+			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_QUEUE_AGENT_DET);
+			queryObj.setParameter("agentID", agentId);
+			maxVal = (Integer) queryObj.getSingleResult();
+		} catch (Exception e) {
+			logger.error("Error occured in CampaignDaoImpl::getCampaignId" + e);
+			return 0;
+		}
+		return maxVal;
+	}
+
+
+	@Override
+	public String getAvailAgentFromQueue(String queue) {
+		String agentId=null;
+		try {
+			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_AVAIL_AGENT_FROM_QUEUE);
+			queryObj.setParameter("queue_name", queue);
+			agentId=(String) queryObj.getSingleResult();
+		} catch (Exception e) {
+			logger.error("Error occured in CampaignDaoImpl::getCampaignId" + e);
+		}
+		return agentId;
+	}
+
+	@Override
+	public Integer getAgentAvailableCount(String queue) {
+		Integer maxVal;
+		try {
+			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_COUNT_AVAIL_AGENT_FROM_QUEUE);
+			queryObj.setParameter("queue", queue);
+			maxVal = (Integer) queryObj.getSingleResult();
+		} catch (Exception e) {
+			logger.error("Error occured in CampaignDaoImpl::getAgentAvailableCount" + e);
+			return 0;
+		}
+		return maxVal;
+	}
+
+	@Override
+	public boolean insertQueueAgentDetails(QueueMemberStatusEvent event) throws Exception
+	{
+		int insertVal=0;
+		boolean insertionStatus = false;
+		try {
+			String extn=event.getName();
+			Integer intStatus=event.getStatus();
+			String Queue=event.getQueue();
+			Integer loginTime=event.getLogintime();
+			Integer isAgentAvail=isAgentAvailable(extn);
+			if(isAgentAvail>0) {
+				Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.UPDATE_QUEUE_AGENT_DET);
+				queryObj.setParameter("agentID", extn);
+				queryObj.setParameter("agent_status", intStatus);
+				queryObj.setParameter("queue_name", Queue);
+				queryObj.setParameter("loginTime", loginTime);
+				insertVal = queryObj.executeUpdate();
+			}else {
+				Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.INSERT_QUEUE_AGENT_DET);
+				queryObj.setParameter("agentID", extn);
+				queryObj.setParameter("agent_status", intStatus);
+				queryObj.setParameter("queue_name", Queue);
+				queryObj.setParameter("loginTime", loginTime);
+				queryObj.setParameter("member", event.getName());
+				queryObj.setParameter("interface", event.getInterface());
+				queryObj.setParameter("stateinterface", event.getStateinterface());
+				queryObj.setParameter("membership", event.getMembership());
+				queryObj.setParameter("penalty", event.getPenalty());	
+				queryObj.setParameter("callstaken", event.getCallsTaken());
+				queryObj.setParameter("lastcall", event.getLastCall());
+				queryObj.setParameter("lastpause", event.getLastPause());
+				queryObj.setParameter("incall", event.getIncall());
+				queryObj.setParameter("paused", event.getPaused());
+				queryObj.setParameter("pausedreason", event.getPausedreason());
+				queryObj.setParameter("ringinuse", event.getRinginuse());
+				queryObj.setParameter("wrapuptime", event.getWrapuptime());
+				insertVal = queryObj.executeUpdate();
+			}
+			if (insertVal > 0) {
+				insertionStatus=true;
+			}
+			logger.info("Queue Details Insertion Success");
+		} catch (Exception e) {
+			logger.error("Error occured in CampaignDaoImpl:: Insertion Campaign Status" +e.getMessage());
+		}
+		return insertionStatus;
+	}
+
+	@Override
+	public List<DynamicContactDetDto> getDynContactDetRetry(Map<String,String> mapDynamicFields,String campaignId, String retryCount) {
+
+		List<Object[]> resultList;
+		List<DynamicContactDetDto> campaignDetlist = new ArrayList<>();
+		try {
+			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_DYANMIC_CONTACT_RETRY);
+			queryObj.setParameter("campaignId", campaignId);
+			queryObj.setParameter("retryCount", retryCount);
+			
+			resultList = queryObj.getResultList();
 			if (resultList != null && !resultList.isEmpty()) {
+				String preVal = "";
 				for (Object[] obj : resultList) {
+
 					DynamicContactDetDto surveyConDto = new DynamicContactDetDto();
 					surveyConDto.setCampaignId(String.valueOf(obj[0]));
 					surveyConDto.setCampaignName(String.valueOf(obj[1]));
 					surveyConDto.setCustomerMobileNumber(String.valueOf(obj[2]));
-					surveyConDto.setAgent_userid(String.valueOf(obj[3]));
-					surveyConDto.setActionId(String.valueOf(obj[4]));
-					surveyConDto.setCallStatus(String.valueOf(obj[5]));
-					surveyConDto.setLanguage(String.valueOf(obj[6]));
-					surveyConDto.setCallRetryCount(String.valueOf(obj[7]));
-//					surveyConDto.setFailureReason(String.valueOf(obj[8]));
-					surveyConDto.setHistoryId(BigInteger.valueOf(Integer.parseInt(String.valueOf(obj[8]))));
-					surveyConDto.setUpdatedDate(String.valueOf(obj[9]));
-					surveyConDto.setContactId(String.valueOf(obj[10]));
-					surveyConDto.setSubskill_set(String.valueOf(obj[11]));
-					dynamicContactDetDtoList.add(surveyConDto);
+					surveyConDto.setActionId(String.valueOf(obj[3]));
+					surveyConDto.setAgent_userid(String.valueOf(obj[4]));
+					// surveyConDto.setCampaignId(preVal);
+					Map<String, String> dynField = new LinkedHashMap<>();
+
+					for (int i = 1; i <= mapDynamicFields.size(); i++) {
+						String key = mapDynamicFields.get("reserve_" + i);
+						String value = (String) obj[i + 4];
+						dynField.put(key, value);
+					}
+					// surveyConDto.setMapDynamicFields(dynField);
+					surveyConDto.setMapDynamicFields(dynField);
+					campaignDetlist.add(surveyConDto);
+					logger.info("list :: " + dynField);
+					// logger.info("TO DELETE --- Campaign Survey Contact Map:" + campaignDetMap);
 				}
 			}
-			if (!dynamicContactDetDtoList.isEmpty()) {
-				dynamicContactDetDto = dynamicContactDetDtoList.get(0);
-			}
 		} catch (Exception e) {
-			logger.error("Error occurring while getCustomerDetail :: CampaignDaoImpl " + e.getMessage());
+			logger.error("Error occured in CampaignDaoImpl::getSurveyContactDet" + e);
+			return campaignDetlist;
 		}
-		return dynamicContactDetDto;
-	}
-
-	public Map<String, List<DynamicContactDetDto>> getAgentBasedContactDetailwithStatus(
-	        Map<String, String> mapDynamicFields, String agent_userid) {
-	    List<Object[]> resultList;
-	    Map<String, List<DynamicContactDetDto>> mapCampBasedAgCont = new LinkedHashMap<>();
-	    try {
-	        Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_AGENT_BASED_CONTACT_STATUS_DET);
-	        queryObj.setParameter("agent_userid", agent_userid);
-	        resultList = queryObj.getResultList();
-	        logger.info("Result list: " + resultList);
-	        
-	        List<DynamicContactDetDto> contactDetails = new ArrayList<>();
-	        for (Object[] obj : resultList) {
-	        	  DynamicContactDetDto surveyConDto = new DynamicContactDetDto();
-		            surveyConDto.setCampaignId(String.valueOf(obj[0]));
-		            surveyConDto.setCampaignName(String.valueOf(obj[1]));
-		            surveyConDto.setCustomerMobileNumber(String.valueOf(obj[2]));
-		            surveyConDto.setAgent_userid(String.valueOf(obj[3]));
-		            String agentId = String.valueOf(obj[3]);
-		            surveyConDto.setActionId(String.valueOf(obj[4]));
-		            surveyConDto.setCallStatus(String.valueOf(obj[5]));
-		            Map<String, String> dynField = new LinkedHashMap<>();
-		            for (int i = 1; i <= mapDynamicFields.size(); i++) {
-		                String key = mapDynamicFields.get("reserve_" + i);
-		                String value = (String) obj[i + 3];
-		                dynField.put(key, value);
-		            }
-		            surveyConDto.setMapDynamicFields(dynField);
-		            mapCampBasedAgCont.computeIfAbsent(agentId, k -> new ArrayList<>()).add(surveyConDto);
-	     //   mapCampBasedAgCont.put(agent_userid, contactDetails);
-	    }} catch (Exception e) {
-	        logger.error("Error occurred in CampaignDaoImpl::getAgentBasedContactDetailwithStatus" + e);
-	    }
-	    return mapCampBasedAgCont;
+		return campaignDetlist;
+	
 	}
 }

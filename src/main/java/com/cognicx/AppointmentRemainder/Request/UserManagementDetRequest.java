@@ -1,7 +1,5 @@
 package com.cognicx.AppointmentRemainder.Request;
 
-import com.cognicx.AppointmentRemainder.model.SkillSetDetail;
-
 import java.util.List;
 
 public class UserManagementDetRequest {
@@ -17,20 +15,11 @@ public class UserManagementDetRequest {
 	private String skillSet;
 	private String agent;
 
-	private List<SkillSetDetail> skillSetDetails;
-
 	private List<AgentDetail> agentDetails;
 
 	private String status;
 
-	public List<SkillSetDetail> getSkillSetDetails() {
-		return skillSetDetails;
-	}
-
-	public void setSkillSetDetails(List<SkillSetDetail> skillSetDetails) {
-		this.skillSetDetails = skillSetDetails;
-	}
-
+	
 	public List<AgentDetail> getAgentDetails() {
 		return agentDetails;
 	}

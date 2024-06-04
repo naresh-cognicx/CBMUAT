@@ -111,12 +111,16 @@ public interface CampaignService {
     String getDNCIDusingCampaignID(String campaignId);
 
 	boolean updateContactDetail(String campaignId, String phone, String actionId, String inProgress);
+	
+	boolean updateDynContactDetail(String campaignId, String phone, String actionId, String inProgress);
 
 	int getinProgressCallCount(String campaignID);
 
 	boolean checkContactIsHangUp(String actionId, String phone);
 
 	List<SurveyContactDetDto> getContactDetRetry(String campaignId, String retryCount);
+	
+	List<DynamicContactDetDto> getDynContactDetRetry(String campaignId, String retryCount);
 
 	ResponseEntity<GenericResponse> stopCampaignStatus(String campaignId, String stop);
 
@@ -137,11 +141,9 @@ public interface CampaignService {
 	// List<DynamicContactDetDto> getPreviewAgentBasedContactDetail(String agent_userid);
 	  Map<String,List<DynamicContactDetDto>> getAgentBasedContactDetail(String campaign_id);
 	  Map<String,List<DynamicContactDetDto>> getPreviewAgentBasedContactDetail(String agent_userid);
-
 	  Map<String,List<DynamicContactDetDto>> getSupervisorAgentContactDet(String Supervisor);
 	  
 	  String getExtn();
-
-    DynamicContactDetDto getCustomerDetail(String customerNumber);
-}
-
+	  String getAvailAgentFromQueue(String Queue);
+	  public Integer getAgentAvailableCount(String Queue);
+	}

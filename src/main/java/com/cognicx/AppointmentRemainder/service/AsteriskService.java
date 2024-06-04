@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 
 import org.asteriskjava.manager.event.ContactStatusEvent;
 import org.asteriskjava.manager.event.DeviceStateChangeEvent;
+import org.asteriskjava.manager.event.QueueMemberEvent;
+import org.asteriskjava.manager.event.QueueMemberStatusEvent;
 import org.asteriskjava.manager.event.UserEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +84,10 @@ public class AsteriskService {
 			logger.error("Error in AsteriskService::update Act Cont " + e);
 		}
 	}
-	
+
+
+
+
 	public void updateDeviceEvent(DeviceStateChangeEvent event) {
 		try {
 			String extn=event.getDevice();
@@ -116,12 +121,12 @@ public class AsteriskService {
 			logger.info("AsteriskService Update Contact status Method Invoked");
 			logger.info("Agent state  :"+state);
 			logger.info("Agent Extn :"+extn);
-		//	campaignDao.updateDeviceEvent(state,extn);
+			//	campaignDao.updateDeviceEvent(state,extn);
 		}catch(Exception e) {
 			logger.error("Error in AsteriskService::update device Event " + e);
 		}
 	}
-	
+
 	public void updateProgressiveDeviceEvent(progressiveStatusEvent event) {
 		try {
 			String extn=event.getPhone();
@@ -146,10 +151,25 @@ public class AsteriskService {
 				str.append(matcher.group());
 			}
 			logger.info("Extn :"+str.toString());
-		
+
 		}catch(Exception e) {
 			logger.error("Error in AsteriskService::update device Event " + e);
 		}
 		return str.toString();
+	}
+
+
+
+	public void handleQueueMemberStatusEvent(QueueMemberStatusEvent event) {
+		try {
+			Integer status = event.getStatus();
+			String extn=event.getName();
+			String member=event.getMembership();
+			String queue=event.getQueue();
+			logger.info("QueueMemberStatusEvent Received - Queue: {}, Member: {}, Status: {}", queue, member, status,extn);
+			campaignDao.insertQueueAgentDetails(event);
+		} catch (Exception e) {
+			logger.error("Error handling QueueMemberStatusEvent: {}", e.getMessage(), e);
+		}
 	}
 }

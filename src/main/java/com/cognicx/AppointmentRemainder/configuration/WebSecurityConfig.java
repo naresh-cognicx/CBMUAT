@@ -77,9 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 					.antMatchers("/api/token/authenticate", "/user/usersList", "/api/login", "/api/logout",
 							"/api/forgetpassword/request", "/api/forgetpassword/reset",
 							"/api/forgetpassword/validateOTP", "/v2/api-docs", "/configuration/**", "/swagger*/**",
-
 							"/webjars/**", "/user/getRoles", "/user/addUser", "/user/updateUser","/user/findLoginDetails","/userRule/api/login","/api/changepassword","/campaign/updateCallDetail")
-
 					.permitAll().anyRequest().authenticated().and().exceptionHandling()
 					.authenticationEntryPoint(unauthorizedHandler).and().sessionManagement()
 					.sessionCreationPolicy(SessionCreationPolicy.STATELESS);

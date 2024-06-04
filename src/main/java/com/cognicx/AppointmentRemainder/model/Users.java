@@ -71,6 +71,7 @@ public class Users implements Serializable {
 	@Column(name = "Approved_UserId")
 	private String approvedUserId;
 
+
 	public Users() {
 	}
 

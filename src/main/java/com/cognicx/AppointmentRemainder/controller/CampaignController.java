@@ -22,11 +22,6 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-
-import com.cognicx.AppointmentRemainder.Request.*;
-import com.cognicx.AppointmentRemainder.service.AgentService;
-
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -57,7 +52,6 @@ import com.cognicx.AppointmentRemainder.Dto.DncContactDto;
 import com.cognicx.AppointmentRemainder.Dto.DynamicContactDetDto;
 import com.cognicx.AppointmentRemainder.Dto.SurveyContactDetDto;
 import com.cognicx.AppointmentRemainder.Dto.UploadHistoryDto;
-
 import com.cognicx.AppointmentRemainder.Request.CampaignDetRequest;
 import com.cognicx.AppointmentRemainder.Request.CampaignRealTimeDashboard;
 import com.cognicx.AppointmentRemainder.Request.CampaignStatus;
@@ -173,11 +167,11 @@ public class CampaignController {
 							stream = sftpChannel.get(campaignDetRequest.getFileName());
 						} catch (SftpException e) {
 							logger.error("SftpException occurred in Retriving" + campaignDetRequest.getFileName()
-									+ "file from SFTP");
+							+ "file from SFTP");
 							isFileFound = false;
 						} catch (Exception e) {
 							logger.error("Exception occurred in Retriving" + campaignDetRequest.getFileName()
-									+ "file from SFTP");
+							+ "file from SFTP");
 							isFileFound = false;
 						}
 					} else {
@@ -190,21 +184,20 @@ public class CampaignController {
 
 						List<ContactDetDto> contactDetList = csvToData(stream, historyId, isFTP,
 								fileDirectory, fileTimestamp, failureDirectory, campaignDetList, new
-										ArrayList<>(), "", "");
-						logger.info("****Converted CSV DATA to Object****");
-						if (stream != null) stream.close();
-						logger.info("****Inserting contact details to DB Table****");
-						for
-						(ContactDetDto contactDetDto : contactDetList) {
-							campaignService.createContact(contactDetDto);
-						}
+								ArrayList<>(), "", ""); logger.info("****Converted CSV DATA to Object****");
+								if (stream != null) stream.close();
+								logger.info("****Inserting contact details to DB Table****"); for
+								(ContactDetDto contactDetDto : contactDetList) {
+									campaignService.createContact(contactDetDto); }
 
 
-						String[] file = fileName.split("\\.");
-						if (sftpChannel != null) {
-							sftpChannel.rename(fileName, file[0] + "_" + fileTimestamp + "." + file[1]);
-							sftpChannel.exit();
-						}
+
+
+								String[] file = fileName.split("\\.");
+								if (sftpChannel != null) {
+									sftpChannel.rename(fileName, file[0] + "_" + fileTimestamp + "." + file[1]);
+									sftpChannel.exit();
+								}
 					}
 					session.disconnect();
 				}
@@ -276,7 +269,7 @@ public class CampaignController {
 							//							}
 						} else {
 							logger.info("In ftp Fileupload:: expected file '" + campaignDetRequest.getFileName()
-									+ "' is not there");
+							+ "' is not there");
 							client.disconnect();
 						}
 
@@ -311,8 +304,8 @@ public class CampaignController {
 	}
 
 	private static List<ContactDetDto> csvToData(InputStream is, BigInteger historyId, String isFTP,
-												 String fileDirectory, String fileTimestamp, String failureDirectory,
-												 List<CampaignDetRequest> campaignDetList, List<ContactDetDto> failureList, String campaignId, String campaignName) {
+			String fileDirectory, String fileTimestamp, String failureDirectory,
+			List<CampaignDetRequest> campaignDetList, List<ContactDetDto> failureList, String campaignId, String campaignName) {
 		List<ContactDetDto> contactList = null;
 		CSVPrinter csvPrinter = null;
 		CSVParser csvParser = null;
@@ -373,9 +366,10 @@ public class CampaignController {
 	}
 
 
-	public List<DynamicContactDetDto> dynamiccsvToData(InputStream is, BigInteger historyId, String isFTP,
-													   String fileDirectory, String fileTimestamp, String failureDirectory,
-													   List<CampaignDetRequest> campaignDetList, List<DynamicContactDetDto> failureList, String campaignId, String campaignName) {
+
+	public  List<DynamicContactDetDto> dynamiccsvToData(InputStream is, BigInteger historyId, String isFTP,
+			String fileDirectory, String fileTimestamp, String failureDirectory,
+			List<CampaignDetRequest> campaignDetList, List<DynamicContactDetDto> failureList, String campaignId, String campaignName) {
 		List<DynamicContactDetDto> dynamiccontactList = null;
 		CSVPrinter csvPrinter = null;
 		CSVParser csvParser = null;
@@ -393,40 +387,40 @@ public class CampaignController {
 			dynamiccontactList = new ArrayList<>();
 			// failureList = new ArrayList<>();
 			Iterable<CSVRecord> csvRecords = csvParser.getRecords();
-			logger.info("Header Names :" + csvParser.getHeaderMap());
-			List<String> headerNames = csvParser.getHeaderNames();
+			logger.info("Header Names :"+csvParser.getHeaderMap());
+			List<String> headerNames=csvParser.getHeaderNames();
 
-			String[] arrstaticFields = staticFields.split("\\|");
-			List<String> listStaticFields = null;
+			String[] arrstaticFields=staticFields.split("\\|");
+			List<String> listStaticFields=null;
 
-			if (arrstaticFields != null) {
-				listStaticFields = Arrays.asList(arrstaticFields);
+			if(arrstaticFields!=null) {
+				listStaticFields=Arrays.asList(arrstaticFields);
 			}
 
 
 			for (CSVRecord csvRecord : csvRecords) {
 				reason = new StringBuilder();
-				DynamicContactDetDto dynacontactDet = new DynamicContactDetDto();
+				DynamicContactDetDto dynacontactDet=new DynamicContactDetDto();
 				dynacontactDet.setCampaignId(campaignId);
 				dynacontactDet.setCampaignName(campaignName);
 				//dynacontactDet.setSubskill_set(csvRecord.get("Sub Skillset"));
 				dynacontactDet.setCustomerMobileNumber(csvRecord.get("CUST_MOBILE_NUMBER"));
 
 				//logger.info("Sub Skill Set : "+csvRecord.get("Sub Skillset"));
-				logger.info("static field : " + staticFields);
-				logger.info("dynamic contact det :: " + dynacontactDet.toString());
+				logger.info("static field : "+staticFields);
+				logger.info("dynamic contact det :: " +dynacontactDet.toString());
 				//	Iterator<String> it=csvRecord.iterator();
-				Map<String, String> mapDynamicValues = new LinkedHashMap();
+				Map<String,String> mapDynamicValues=new LinkedHashMap();
 
-				for (String header : headerNames) {
-					if (listStaticFields == null || !listStaticFields.contains(header)) {
-						mapDynamicValues.put(header, csvRecord.get(header));
+				for(String header:headerNames) {
+					if(listStaticFields==null || !listStaticFields.contains(header)) {
+						mapDynamicValues.put(header,csvRecord.get(header));
 					}
 				}
 				dynacontactDet.setMapDynamicFields(mapDynamicValues);
 				// contactDet.setContactId(csvRecord.get("contact_id"));
 				dynacontactDet.setHistoryId(historyId);
-				logger.info("Dynamic Contacts :" + dynacontactDet.getMapDynamicFields() + " :: Campaign ID " + dynacontactDet.getCampaignId());
+				logger.info("Dynamic Contacts :"+dynacontactDet.getMapDynamicFields()+" :: Campaign ID "+dynacontactDet.getCampaignId());
 				dynamiccontactList.add(dynacontactDet);
 				/*
 				 * if (validateFileData(csvRecord, reason, campaignDetList, dynacontactDet)) {
@@ -439,10 +433,11 @@ public class CampaignController {
 			if (!failureList.isEmpty()) {
 				// csvPrinter = failureCsvData(fileTimestamp, failureList, failureDirectory);
 			}
-		} catch (IOException e) {
+		}  
+		catch (IOException e) {
 			logger.error("fail to parse CSV file: " + e.getMessage());
-		} catch (Exception e) {
-			StringWriter str = new StringWriter();
+		}catch (Exception e) {
+			StringWriter str=new StringWriter();
 			e.printStackTrace();
 			logger.error("fail to parse CSV file: " + str.toString());
 		} finally {
@@ -459,11 +454,12 @@ public class CampaignController {
 	}
 
 
+
 	private static CSVPrinter failureCsvData(String fileTimestamp, List<ContactDetDto> failureList,
-											 String failureDirectory) throws IOException {
+			String failureDirectory) throws IOException {
 		CSVPrinter csvPrinter;
-		List<String> headerlist = new ArrayList<>(Arrays.asList("campaign id", "campaign name",
-				"CUST_MOBILE_NUMBER", "reason"));
+		List<String> headerlist = new ArrayList<>(Arrays.asList("campaign id", "campaign name", 
+				"CUST_MOBILE_NUMBER",  "reason"));
 		//        List<String> headerlist = new ArrayList<>(Arrays.asList("campaign id", "campaign name", "subskill_set",
 		//                "language", "customer_mobile_number", "reason"));
 		final CSVFormat format = CSVFormat.DEFAULT.withHeader(headerlist.toArray(new String[0]));
@@ -472,9 +468,9 @@ public class CampaignController {
 
 		for (ContactDetDto contactDet : failureList) {
 			csvPrinter
-					.printRecord(new ArrayList<>(Arrays.asList(contactDet.getCampaignId(), contactDet.getCampaignName(),
-							contactDet.getLastFourDigits(), contactDet.getCustomerMobileNumber(), contactDet.getTotalDue(),
-							contactDet.getMinPayment(), contactDet.getDueDate(), contactDet.getFailureReason())));
+			.printRecord(new ArrayList<>(Arrays.asList(contactDet.getCampaignId(), contactDet.getCampaignName(),
+					contactDet.getLastFourDigits(), contactDet.getCustomerMobileNumber(), contactDet.getTotalDue(),
+					contactDet.getMinPayment(), contactDet.getDueDate(), contactDet.getFailureReason())));
 		}
 		csvPrinter.flush();
 		return csvPrinter;
@@ -515,7 +511,7 @@ public class CampaignController {
 	 */
 
 	private static boolean validateFileData(CSVRecord csvRecord, StringBuilder reason,
-											List<CampaignDetRequest> campaignDetList, ContactDetDto contactDet) {
+			List<CampaignDetRequest> campaignDetList, ContactDetDto contactDet) {
 		boolean isValid = true;
 		/*
 		 * if (csvRecord.get("Last 4 Digits") == null ||
@@ -535,15 +531,14 @@ public class CampaignController {
 		 * reason.append("Minimum Payment is missing;"); isValid = false; } if
 		 * (csvRecord.get("Due Date") == null && csvRecord.get("Due Date").isEmpty()) {
 		 * reason.append("Due Date is missing;"); isValid = false; }
-		 */
-		else {
-			try {
-				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(csvRecord.get("Due Date"));
-			} catch (Exception e) {
-				reason.append(" Date format is incorrect;");
-				isValid = false;
-			}
-		}
+		 */else {
+			 try {
+				 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(csvRecord.get("Due Date"));
+			 } catch (Exception e) {
+				 reason.append(" Date format is incorrect;");
+				 isValid = false;
+			 }
+		 }
 
 
 		if (!isValid)
@@ -873,6 +868,10 @@ public class CampaignController {
 	//    }
 
 
+	//CBM 1.1
+	
+	
+	
 	@Scheduled(cron = "${scheduling.job.cron}")
 	@PostMapping("/httpurl")
 	public void scheduledAPIInvoker() {
@@ -882,6 +881,7 @@ public class CampaignController {
 		//            } else {
 		try {
 			int concurrent;
+			int availAgentCount;
 			int val;
 			long timeDifference = 0;
 			long timeDifference1 = 0;
@@ -920,6 +920,12 @@ public class CampaignController {
 						} else {
 							concurrent = 5;
 						}
+						//CBM 2.0
+						if (campaignDetRequest.getQueueName() != null && !campaignDetRequest.getQueueName().isEmpty()) {
+							availAgentCount = campaignService.getAgentAvailableCount(campaignDetRequest.getQueueName());
+						} else {
+							availAgentCount = 0;
+						}
 
 						String campaignDateStr = campaignDetRequest.getStartDate() + " "
 								+ campaignDetRequest.getStartTime();
@@ -954,108 +960,352 @@ public class CampaignController {
 								logger.info("No InProgress call status to change");
 							}
 							//
-							List<SurveyContactDetDto> contactDetListRetry = campaignService.getContactDetRetry(campaignDetRequest.getCampaignId(), campaignDetRequest.getRetryCount());
+							List<DynamicContactDetDto> contactDetListRetry = campaignService.getDynContactDetRetry(campaignDetRequest.getCampaignId(), campaignDetRequest.getRetryCount());
 							logger.info("For this Campaign Id : {}  and for retry contact Count: {}", campaignDetRequest.getCampaignId(), contactDetListRetry.size());
 							int i = 0;
 							int isValidCount = 0;
 							int retryCallCount = 0;
 
 
-							try {
-								if (contactDetListRetry != null && !contactDetListRetry.isEmpty()) {
-									for (SurveyContactDetDto surveyContactDetDto : contactDetListRetry) {
-										logger.info("Remove list for Retry list : " + remListforRetry + " ,Current ActionID : " + surveyContactDetDto.getActionId());
-										if (!remListforRetry.contains(surveyContactDetDto.getActionId())) {
-											boolean isValid = validContact(campaignStartdate, campaignEndDate, weekStartDate, weekEndDate, weekDay, dateformat, dateTimeformat, currentDate, weekDayFormat, time, WeekDaytimeFormat, isMaxAdvTime, surveyContactDetDto, campaignDetRequest, retryDifference);
-											//                                        logger.info("ValidContact is checked in retry list");
-											retryCallCount = campaignService.getinProgressCallCount(campaignDetRequest.getCampaignId());
-											if (isValid) {
-												if (retryCallCount < concurrent) {
-													try {
-														logger.info("Current ActionID : " + surveyContactDetDto.getActionId() + ", In Retry Count : " + retryCallCount);
-														String response = processCallApi(surveyContactDetDto, campaignDetRequest.getCampaignName(), campaignDetRequest, campaignDetRequest.getQueue(), dateTimeformat);
-														if (response.contains("Success")) {
-															remListforRetry.add(surveyContactDetDto.getActionId());
-															if (campaignService.updateContactDetail(campaignDetRequest.getCampaignId(), surveyContactDetDto.getPhone(), surveyContactDetDto.getActionId(), "InProgress")) {
-																retryCallCount++;
-															}
-														}
-														logger.info("InProgress Count for Retry list : " + retryCallCount);
 
-													} catch (Exception e) {
-														logger.error("Error on process call api " + e.getMessage());
+							String dialingMode=campaignDetRequest.getDailingMode();
+							String dialingOption=campaignDetRequest.getDailingoption();
+
+							if(dialingMode!=null && dialingOption!=null && dialingMode.equalsIgnoreCase("progressive") && dialingOption.equalsIgnoreCase("agentbased")) {
+								try {
+									if (contactDetListRetry != null && !contactDetListRetry.isEmpty()) {
+										for (DynamicContactDetDto surveyContactDetDto : contactDetListRetry) {
+											logger.info("Remove list for Retry list : " + remListforRetry + " ,Current ActionID : " + surveyContactDetDto.getActionId());
+											if (!remListforRetry.contains(surveyContactDetDto.getActionId())) {
+												boolean isValid = validContact(campaignStartdate, campaignEndDate, weekStartDate, weekEndDate, weekDay, dateformat, dateTimeformat, currentDate, weekDayFormat, time, WeekDaytimeFormat, isMaxAdvTime, surveyContactDetDto, campaignDetRequest, retryDifference);
+												if (isValid) {
+													int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+													if (availableAgent < 0) {
+														try {
+															logger.info("Current ActionID : " + surveyContactDetDto.getActionId() + ", In Retry Count : " + retryCallCount);
+															String response = processCallApi(surveyContactDetDto, campaignDetRequest.getCampaignName(), campaignDetRequest, campaignDetRequest.getQueue(), dateTimeformat);
+															if (response.contains("Success")) {
+																remListforRetry.add(surveyContactDetDto.getActionId());
+																if (campaignService.updateDynContactDetail(campaignDetRequest.getCampaignId(), surveyContactDetDto.getCustomerMobileNumber(), surveyContactDetDto.getActionId(), "InProgress")) {
+																	retryCallCount++;
+																}
+															}
+														} catch (Exception e) {
+															logger.error("Error on process call api " + e.getMessage());
+														}
+													} else {
+														logger.info("Reached the maximum concurrent in-progress calls for retry list");
+														break;
 													}
 												} else {
-													logger.info("Reached the maximum concurrent in-progress calls for retry list");
-													break;
+													logger.info("Action id is not valid conditions");
 												}
-											} else {
-												logger.info("Action id is not valid conditions");
 											}
+											logger.info("Current Action ID is already in Inprogress : " + surveyContactDetDto.getActionId());
 										}
-										logger.info("Current Action ID is already in Inprogress : " + surveyContactDetDto.getActionId());
+									} else {
+										logger.info("Retry Contact list is empty for this campaign ID" + campaignDetRequest.getCampaignId());
+										retryCallCount = 0;
 									}
-								} else {
-									logger.info("Retry Contact list is empty for this campaign ID" + campaignDetRequest.getCampaignId());
-									retryCallCount = 0;
+								} catch (Exception e) {
+									logger.error("Error in retry api process list " + e.getMessage());
 								}
-							} catch (Exception e) {
-								logger.error("Error in retry api process list " + e.getMessage());
-							}
 
 
-							try {
-								if (surveyContactDet != null && surveyContactDet.containsKey(campaignDetRequest.getCampaignName())) {
-									List<SurveyContactDetDto> surveyContDetList = surveyContactDet.get(campaignDetRequest.getCampaignName());
-									logger.info("**** To Delete Survey Contact List for the campaign : " + campaignDetRequest.getCampaignName() + " and the contacts :" + surveyContDetList.toString());
-									if (surveyContDetList != null && !surveyContDetList.isEmpty()) {
-										logger.info("Total Contact: " + surveyContDetList.size());
-										for (SurveyContactDetDto surveyContactDetDto : surveyContDetList) {
-											if (!newRemList.contains(surveyContactDetDto.getActionId())) {
-												logger.info("Inside the loop of list of new surveyContactDetDto  and Current Action Id  ; " + surveyContactDetDto.getActionId());
-												if (surveyContactDetDto == null) {
-													logger.info("Contact Detail is null");
+
+								try {
+									if (surveyContactDet != null && surveyContactDet.containsKey(campaignDetRequest.getCampaignName())) {
+									
+										List<DynamicContactDetDto> surveyDynContDetList=campaignService.getDynamicContactDet(campaignDetRequest.getCampaignId());
+										//List<SurveyContactDetDto> surveyContDetList = surveyContactDet.get(campaignDetRequest.getCampaignName());
+										logger.info("**** To Delete Survey Contact List for the campaign : " + campaignDetRequest.getCampaignName() + " and the contacts :" + surveyDynContDetList.toString());
+										if (surveyDynContDetList != null && !surveyDynContDetList.isEmpty()) {
+											logger.info("Total Contact: " + surveyDynContDetList.size());
+											for (DynamicContactDetDto surveyContactDetDto : surveyDynContDetList) {
+												if (!newRemList.contains(surveyContactDetDto.getActionId())) {
+													logger.info("Inside the loop of list of new surveyContactDetDto  and Current Action Id  ; " + surveyContactDetDto.getActionId());
+													if (surveyContactDetDto == null) {
+														logger.info("Contact Detail is null");
+													} else {
+														boolean isValid = validContact(campaignStartdate, campaignEndDate, weekStartDate, weekEndDate, weekDay, dateformat, dateTimeformat, currentDate, weekDayFormat, time, WeekDaytimeFormat, isMaxAdvTime, surveyContactDetDto, campaignDetRequest, retryDifference);
+														isValidCount = campaignService.getinProgressCallCount(campaignDetRequest.getCampaignId());
+														if (isValid) {
+															int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+															if (availableAgent<0) {
+																logger.info("All Conditions Satisfied for this ContactId : " + surveyContactDetDto.getActionId() + ", Current Call In : " + isValidCount);
+																try {
+																	String response = processCallApi(surveyContactDetDto, campaignDetRequest.getCampaignName(), campaignDetRequest, campaignDetRequest.getQueue(), dateTimeformat);
+																	if (response.contains("Success")) {
+																		newRemList.add(surveyContactDetDto.getActionId());
+																		logger.info("Valid Count : " + isValidCount);
+																	}
+																} catch (Exception e) {
+																	logger.error("Error on process call api " + e.getMessage());
+																}
+															} else {
+																logger.info("No Agent Available");
+																break;
+															}
+														}
+													}
 												} else {
-													boolean isValid = validContact(campaignStartdate, campaignEndDate, weekStartDate, weekEndDate, weekDay, dateformat, dateTimeformat, currentDate, weekDayFormat, time, WeekDaytimeFormat, isMaxAdvTime, surveyContactDetDto, campaignDetRequest, retryDifference);
-													isValidCount = campaignService.getinProgressCallCount(campaignDetRequest.getCampaignId());
-													if (isValid) {
-														if (isValidCount != concurrent && isValidCount < concurrent) {
-															logger.info("All Conditions Satisfied for this ContactId : " + surveyContactDetDto.getActionId() + ", Current Call In : " + isValidCount);
+													logger.info("Current Action Id is already in progress " + surveyContactDetDto.getActionId());
+												}
+											}
+										} else {
+											logger.info("Contact List is Null or Empty");
+										}
+									} else {
+										logger.info("Survey contact Det is Null , No contact for this campaign Name : " + campaignDetRequest.getCampaignName());
+									}
+								} catch (Exception e) {
+									logger.error("Error in New api process list : " + e.getMessage());
+								}
+							}else if(dialingMode!=null && dialingOption!=null && dialingMode.equalsIgnoreCase("predictive")) {
+								try {
+									int numberOfCalls=0;
+									int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+									if(availableAgent>0) {
+										if(dialingOption.equalsIgnoreCase("1:2")) {
+											numberOfCalls=2;
+										}else if(dialingOption.equalsIgnoreCase("1:3")) {
+											numberOfCalls=3;
+										}
+									}
+
+									if (contactDetListRetry != null && !contactDetListRetry.isEmpty()) {
+										for (DynamicContactDetDto surveyContactDetDto : contactDetListRetry) {
+											logger.info("Remove list for Retry list : " + remListforRetry + " ,Current ActionID : " + surveyContactDetDto.getActionId());
+
+
+											if (!remListforRetry.contains(surveyContactDetDto.getActionId())) {
+
+												boolean isValid = validContact(campaignStartdate, campaignEndDate, weekStartDate, weekEndDate, weekDay, dateformat, dateTimeformat, currentDate, weekDayFormat, time, WeekDaytimeFormat, isMaxAdvTime, surveyContactDetDto, campaignDetRequest, retryDifference);
+												if (isValid) {
+													if (numberOfCalls >0) {
+														try {
+															logger.info("Current ActionID : " + surveyContactDetDto.getActionId() + ", In Retry Count : " + retryCallCount);
+															String response = processCallApi(surveyContactDetDto, campaignDetRequest.getCampaignName(), campaignDetRequest, campaignDetRequest.getQueue(), dateTimeformat);
+															if (response.contains("Success")) {
+																remListforRetry.add(surveyContactDetDto.getActionId());
+																numberOfCalls--;
+																if (campaignService.updateDynContactDetail(campaignDetRequest.getCampaignId(), surveyContactDetDto.getCustomerMobileNumber(), surveyContactDetDto.getActionId(), "InProgress")) {
+																	retryCallCount++;
+																}
+															}
+														} catch (Exception e) {
+															logger.error("Error on process call api " + e.getMessage());
+														}
+													}else {
+														availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+
+														if(availableAgent>0) {
+															if(dialingOption.equalsIgnoreCase("1:2")) {
+																numberOfCalls=2;
+															}else if(dialingOption.equalsIgnoreCase("1:3")) {
+																numberOfCalls=3;
+															}
 															try {
+																logger.info("Current ActionID : " + surveyContactDetDto.getActionId() + ", In Retry Count : " + retryCallCount);
 																String response = processCallApi(surveyContactDetDto, campaignDetRequest.getCampaignName(), campaignDetRequest, campaignDetRequest.getQueue(), dateTimeformat);
 																if (response.contains("Success")) {
-																	newRemList.add(surveyContactDetDto.getActionId());
-																	if (campaignService.updateContactDetail(campaignDetRequest.getCampaignId(), surveyContactDetDto.getPhone(), surveyContactDetDto.getActionId(), "InProgress")) {
-																		isValidCount++;
-																		//                                                                if (campaignService.checkContactIsHangUp(surveyContactDetDto.getActionId(), surveyContactDetDto.getPhone())) {
-																	}
-
-																	logger.info("InProgress Count for New list : " + isValidCount);
-
-
+																	remListforRetry.add(surveyContactDetDto.getActionId());
+																	numberOfCalls--;
 																}
-																//                                                        }
 															} catch (Exception e) {
 																logger.error("Error on process call api " + e.getMessage());
 															}
-														} else {
-															logger.info("Reached the maximum concurrent in-progress calls. for new list");
+														}else {
 															break;
 														}
+
 													}
+
+												} else {
+													logger.info("Action id is not valid conditions");
 												}
-											} else {
-												logger.info("Current Action Id is already in progress " + surveyContactDetDto.getActionId());
+
 											}
+											logger.info("Current Action ID is already in Inprogress : " + surveyContactDetDto.getActionId());
 										}
 									} else {
-										logger.info("Contact List is Null or Empty");
+										logger.info("Retry Contact list is empty for this campaign ID" + campaignDetRequest.getCampaignId());
+										retryCallCount = 0;
 									}
-								} else {
-									logger.info("Survey contact Det is Null , No contact for this campaign Name : " + campaignDetRequest.getCampaignName());
+								} catch (Exception e) {
+									logger.error("Error in retry api process list " + e.getMessage());
 								}
-							} catch (Exception e) {
-								logger.error("Error in New api process list : " + e.getMessage());
+
+								try {
+									int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+									int numberOfCalls=0;
+									if(availableAgent>0) {
+										if(dialingOption.equalsIgnoreCase("1:2")) {
+											numberOfCalls=2;
+										}else if(dialingOption.equalsIgnoreCase("1:3")) {
+											numberOfCalls=3;
+										}
+									}
+									if (surveyContactDet != null && surveyContactDet.containsKey(campaignDetRequest.getCampaignName())) {
+										List<DynamicContactDetDto> surveyContDetList = campaignService.getDynamicContactDet(campaignDetRequest.getCampaignId());
+										logger.info("**** To Delete Survey Contact List for the campaign : " + campaignDetRequest.getCampaignName() + " and the contacts :" + surveyContDetList.toString());
+										if (surveyContDetList != null && !surveyContDetList.isEmpty()) {
+											logger.info("Total Contact: " + surveyContDetList.size());
+											for (DynamicContactDetDto surveyContactDetDto : surveyContDetList) {
+												if (!newRemList.contains(surveyContactDetDto.getActionId())) {
+													logger.info("Inside the loop of list of new surveyContactDetDto  and Current Action Id  ; " + surveyContactDetDto.getActionId());
+													if (surveyContactDetDto == null) {
+														logger.info("Contact Detail is null");
+													} else {
+														boolean isValid = validContact(campaignStartdate, campaignEndDate, weekStartDate, weekEndDate, weekDay, dateformat, dateTimeformat, currentDate, weekDayFormat, time, WeekDaytimeFormat, isMaxAdvTime, surveyContactDetDto, campaignDetRequest, retryDifference);
+														isValidCount = campaignService.getinProgressCallCount(campaignDetRequest.getCampaignId());
+														if (isValid) {
+															//availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+															if (numberOfCalls >0) {
+																logger.info("All Conditions Satisfied for this ContactId : " + surveyContactDetDto.getActionId() + ", Current Call In : " + isValidCount);
+																try {
+																	String response = processCallApi(surveyContactDetDto, campaignDetRequest.getCampaignName(), campaignDetRequest, campaignDetRequest.getQueue(), dateTimeformat);
+																	if (response.contains("Success")) {
+																		newRemList.add(surveyContactDetDto.getActionId());
+																		numberOfCalls--;
+																		logger.info("Valid Count : " + isValidCount);
+																	}
+																} catch (Exception e) {
+																	logger.error("Error on process call api " + e.getMessage());
+																}
+															} else {
+																availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+																if(availableAgent>0) {
+																	if(dialingOption.equalsIgnoreCase("1:2")) {
+																		numberOfCalls=2;
+																	}else if(dialingOption.equalsIgnoreCase("1:3")) {
+																		numberOfCalls=3;
+																	}
+																	logger.info("All Conditions Satisfied for this ContactId : " + surveyContactDetDto.getActionId() + ", Current Call In : " + isValidCount);
+																	try {
+																		String response = processCallApi(surveyContactDetDto, campaignDetRequest.getCampaignName(), campaignDetRequest, campaignDetRequest.getQueue(), dateTimeformat);
+																		if (response.contains("Success")) {
+																			newRemList.add(surveyContactDetDto.getActionId());
+																			numberOfCalls--;
+																			logger.info("Valid Count : " + isValidCount);
+																		}
+																	} catch (Exception e) {
+																		logger.error("Error on process call api " + e.getMessage());
+																	}
+																}else {
+																	break;
+																}
+															}
+
+														}
+													}
+												} else {
+													logger.info("Current Action Id is already in progress " + surveyContactDetDto.getActionId());
+												}
+											}
+										} else {
+											logger.info("Contact List is Null or Empty");
+										}
+									} else {
+										logger.info("Survey contact Det is Null , No contact for this campaign Name : " + campaignDetRequest.getCampaignName());
+									}
+								} catch (Exception e) {
+									logger.error("Error in New api process list : " + e.getMessage());
+								}
+
+							}
+							else {
+								try {
+									if (contactDetListRetry != null && !contactDetListRetry.isEmpty()) {
+										for (DynamicContactDetDto surveyContactDetDto : contactDetListRetry) {
+											logger.info("Remove list for Retry list : " + remListforRetry + " ,Current ActionID : " + surveyContactDetDto.getActionId());
+											if (!remListforRetry.contains(surveyContactDetDto.getActionId())) {
+												boolean isValid = validContact(campaignStartdate, campaignEndDate, weekStartDate, weekEndDate, weekDay, dateformat, dateTimeformat, currentDate, weekDayFormat, time, WeekDaytimeFormat, isMaxAdvTime, surveyContactDetDto, campaignDetRequest, retryDifference);
+												//                                        logger.info("ValidContact is checked in retry list");
+												retryCallCount = campaignService.getinProgressCallCount(campaignDetRequest.getCampaignId());
+												if (isValid) {
+													if (retryCallCount < concurrent) {
+														try {
+															logger.info("Current ActionID : " + surveyContactDetDto.getActionId() + ", In Retry Count : " + retryCallCount);
+															String response = processCallApi(surveyContactDetDto, campaignDetRequest.getCampaignName(), campaignDetRequest, campaignDetRequest.getQueue(), dateTimeformat);
+															if (response.contains("Success")) {
+																remListforRetry.add(surveyContactDetDto.getActionId());
+																if (campaignService.updateDynContactDetail(campaignDetRequest.getCampaignId(), surveyContactDetDto.getCustomerMobileNumber(), surveyContactDetDto.getActionId(), "InProgress")) {
+																	retryCallCount++;
+																}
+															}
+														} catch (Exception e) {
+															logger.error("Error on process call api " + e.getMessage());
+														}
+													} else {
+														logger.info("Reached the maximum concurrent in-progress calls for retry list");
+														break;
+													}
+												} else {
+													logger.info("Action id is not valid conditions");
+												}
+											}
+											logger.info("Current Action ID is already in Inprogress : " + surveyContactDetDto.getActionId());
+										}
+									} else {
+										logger.info("Retry Contact list is empty for this campaign ID" + campaignDetRequest.getCampaignId());
+										retryCallCount = 0;
+									}
+								} catch (Exception e) {
+									logger.error("Error in retry api process list " + e.getMessage());
+								}
+
+
+								try {
+									if (surveyContactDet != null && surveyContactDet.containsKey(campaignDetRequest.getCampaignName())) {
+										List<DynamicContactDetDto> surveyContDetList = campaignService.getDynamicContactDet(campaignDetRequest.getCampaignId());
+										logger.info("**** To Delete Survey Contact List for the campaign : " + campaignDetRequest.getCampaignName() + " and the contacts :" + surveyContDetList.toString());
+										if (surveyContDetList != null && !surveyContDetList.isEmpty()) {
+											logger.info("Total Contact: " + surveyContDetList.size());
+											for (DynamicContactDetDto surveyContactDetDto : surveyContDetList) {
+												if (!newRemList.contains(surveyContactDetDto.getActionId())) {
+													logger.info("Inside the loop of list of new surveyContactDetDto  and Current Action Id  ; " + surveyContactDetDto.getActionId());
+													if (surveyContactDetDto == null) {
+														logger.info("Contact Detail is null");
+													} else {
+														boolean isValid = validContact(campaignStartdate, campaignEndDate, weekStartDate, weekEndDate, weekDay, dateformat, dateTimeformat, currentDate, weekDayFormat, time, WeekDaytimeFormat, isMaxAdvTime, surveyContactDetDto, campaignDetRequest, retryDifference);
+														isValidCount = campaignService.getinProgressCallCount(campaignDetRequest.getCampaignId());
+														if (isValid) {
+															if (isValidCount != concurrent && isValidCount < concurrent) {
+																logger.info("All Conditions Satisfied for this ContactId : " + surveyContactDetDto.getActionId() + ", Current Call In : " + isValidCount);
+																try {
+																	String response = processCallApi(surveyContactDetDto, campaignDetRequest.getCampaignName(), campaignDetRequest, campaignDetRequest.getQueue(), dateTimeformat);
+																	if (response.contains("Success")) {
+																		newRemList.add(surveyContactDetDto.getActionId());
+																		if (campaignService.updateDynContactDetail(campaignDetRequest.getCampaignId(), surveyContactDetDto.getCustomerMobileNumber(), surveyContactDetDto.getActionId(), "InProgress")) {
+																			isValidCount++;
+																			//                                                                if (campaignService.checkContactIsHangUp(surveyContactDetDto.getActionId(), surveyContactDetDto.getPhone())) {
+																		}
+																		logger.info("Valid Count : " + isValidCount);
+																	}
+																	//                                                        }
+																} catch (Exception e) {
+																	logger.error("Error on process call api " + e.getMessage());
+																}
+															} else {
+																logger.info("Reached the maximum concurrent in-progress calls. for new list");
+																break;
+															}
+														}
+													}
+												} else {
+													logger.info("Current Action Id is already in progress " + surveyContactDetDto.getActionId());
+												}
+											}
+										} else {
+											logger.info("Contact List is Null or Empty");
+										}
+									} else {
+										logger.info("Survey contact Det is Null , No contact for this campaign Name : " + campaignDetRequest.getCampaignName());
+									}
+								} catch (Exception e) {
+									logger.error("Error in New api process list : " + e.getMessage());
+								}
 							}
 						} else {
 							logger.info("Current Date ::" + currentDat + " Not falls between Campaign Start date :" + campaignStartdate + " and End Date" + campaignEndDate);
@@ -1076,14 +1326,14 @@ public class CampaignController {
 
 	private boolean validContact(Date campaignStartdate, Date campaignEndDate, Date weekStartDate, Date
 			weekEndDate, String weekDay, DateFormat dateformat, DateFormat dateTimeformat, Date currentDate, DateFormat
-										 weekDayFormat, DateFormat time, DateFormat WeekDaytimeFormat, boolean isMaxAdvTime, SurveyContactDetDto surveycontDetDto, CampaignDetRequest
-										 campaignDetRequest, long retryDifference) {
+			weekDayFormat, DateFormat time, DateFormat WeekDaytimeFormat, boolean isMaxAdvTime, DynamicContactDetDto surveycontDetDto, CampaignDetRequest
+			campaignDetRequest, long retryDifference) {
 		boolean isValid = false;
-		logger.info("Action Id : " + surveycontDetDto.getActionId() + " : call_status :: " + surveycontDetDto.getCall_status() + ", retry COunt :: " + surveycontDetDto.getRetryCount() + "Campaign Retry count : " + campaignDetRequest.getRetryCount() + ", Contact last retry time : " + surveycontDetDto.getRec_update_time() + ", Current time : " + currentDate);
+		logger.info("Action Id : " + surveycontDetDto.getActionId() + " : call_status :: " + surveycontDetDto.getCallStatus() + ", retry COunt :: " + surveycontDetDto.getCallRetryCount() + "Campaign Retry count : " + campaignDetRequest.getRetryCount() + ", Contact last retry time : " + surveycontDetDto.getUpdatedDate() + ", Current time : " + currentDate);
 		try {
-			String call_status = surveycontDetDto.getCall_status();
+			String call_status = surveycontDetDto.getCallStatus();
 			//            logger.info("Call status is :: " + call_status);
-			if (surveycontDetDto.getRetryCount() != null && Integer.parseInt(surveycontDetDto.getRetryCount()) > Integer.parseInt(campaignDetRequest.getRetryCount())) {
+			if (surveycontDetDto.getCallRetryCount() != null && Integer.parseInt(surveycontDetDto.getCallRetryCount()) > Integer.parseInt(campaignDetRequest.getRetryCount())) {
 				return false;
 			}
 			isMaxAdvTime = true;
@@ -1092,19 +1342,19 @@ public class CampaignController {
 			if (dncID != null) {
 				dncContacts = campaignService.getDNSDetList(dncID);
 			}
-			String contactNumber = surveycontDetDto.getPhone();
+			String contactNumber = surveycontDetDto.getCustomerMobileNumber();
 			logger.info("contact number :" + contactNumber);
 			logger.info("Dnc Contacts list for campaignID : " + campaignDetRequest.getCampaignId() + " : " + dncContacts.toString());
 			if (contactNumber != null && dncContacts != null && !dncContacts.contains(contactNumber)) {
 				//                logger.info("call_status :: " + call_status + "Survey contact retry count is  ::" + surveycontDetDto.getRetryCount() + "Campaign contact retry count :: " + campaignDetRequest.getRetryCount());
-				if (surveycontDetDto.getRetryCount() != null &&
-						(Integer.parseInt(surveycontDetDto.getRetryCount()) <= Integer.parseInt(campaignDetRequest.getRetryCount()))) {
-					Date updateddate = dateTimeformat.parse(surveycontDetDto.getRec_update_time());
+				if (surveycontDetDto.getCallRetryCount() != null &&
+						(Integer.parseInt(surveycontDetDto.getCallRetryCount()) <= Integer.parseInt(campaignDetRequest.getRetryCount()))) {
+					Date updateddate = dateTimeformat.parse(surveycontDetDto.getUpdatedDate());
 					retryDifference = TimeUnit.MILLISECONDS.toMinutes(currentDate.getTime() - updateddate.getTime());
 					//
 					//Added on 27
 					if ("New".equalsIgnoreCase(call_status) || retryDifference >= Integer.parseInt(campaignDetRequest.getRetryDelay())) {
-						String productID = surveycontDetDto.getSurvey_Lang() + "_" + surveycontDetDto.getSubSkillset();
+						String productID = surveycontDetDto.getLanguage() + "_" + surveycontDetDto.getSubskill_set();
 						String Queue = campaignDetRequest.getQueue();
 						logger.info("Queue : " + Queue);
 
@@ -1116,7 +1366,7 @@ public class CampaignController {
 							if (weekStartDate != null && (WeekDaytimeFormat.parse(WeekDaytimeFormat.format(currentDate))
 									.after(weekStartDate))
 									&& weekEndDate != null && (WeekDaytimeFormat.parse(WeekDaytimeFormat.format(currentDate))
-									.before(weekEndDate))) {
+											.before(weekEndDate))) {
 								isValid = true;
 								logger.info(
 										"**** All Conditions are satisfied going to make call For the Action ID : " + surveycontDetDto.getActionId() + "****");
@@ -1136,7 +1386,7 @@ public class CampaignController {
 					}
 				} else {
 					//                    logger.info("Contact status is Neither NULL nor NEW, Hence not invoking Campaign API");
-					logger.info("If Condition False in : Survey contact retry count is  ::" + surveycontDetDto.getRetryCount() + "Campaign contact retry count :: " + campaignDetRequest.getRetryCount());
+					logger.info("If Condition False in : Survey contact retry count is  ::" + surveycontDetDto.getCallRetryCount() + "Campaign contact retry count :: " + campaignDetRequest.getRetryCount());
 					return false;
 				}
 			} else {
@@ -1152,7 +1402,7 @@ public class CampaignController {
 	}
 
 
-	private String processCallApi(SurveyContactDetDto surveycontDetDto, String campaignName, CampaignDetRequest
+	private String processCallApi(DynamicContactDetDto surveycontDetDto, String campaignName, CampaignDetRequest
 			campaignDetRequest, String Queue, DateFormat dateTimeformat) {
 		logger.info(
 				"****Inside API Processing****");
@@ -1163,8 +1413,8 @@ public class CampaignController {
 			campaignStatus.setCampaignId(campaignDetRequest.getCampaignId());
 			boolean campStatus = campaignService.getCampaignStatus(campaignStatus);
 			String frontCampStatus = null;
-			String dialingMode = campaignDetRequest.getDailingMode();
-			String dialingOption = campaignDetRequest.getDailingoption();
+			String dialingMode=campaignDetRequest.getDailingMode();
+			String dialingOption=campaignDetRequest.getDailingoption();
 			try {
 				frontCampStatus = campaignService.getFrontCampStatus(campaignStatus);
 			} catch (Exception e) {
@@ -1173,18 +1423,22 @@ public class CampaignController {
 			logger.info("New :: Campaign status :" + campStatus);
 			if (campStatus) {
 				if (frontCampStatus != null && frontCampStatus.equalsIgnoreCase("running")) {
-					String request = null;
-					if (dialingOption != null && dialingOption.equalsIgnoreCase("agentbased")) {
-						String agentExtn = campaignService.getExtn();
-						request = getAgentBasedString(surveycontDetDto, campaignName, Queue, dateTimeformat, agentExtn);
-					} else {
-						request = getString(surveycontDetDto, campaignName, Queue, dateTimeformat);
+
+					String request=null;
+					if(dialingMode!=null && dialingOption!=null && dialingMode.equalsIgnoreCase("progressive") && dialingOption.equalsIgnoreCase("agentbased")) {
+						String agentExtn=getProgressiveExtn(campaignDetRequest.getQueue());
+						request = getAgentBasedString(surveycontDetDto,campaignDetRequest,campaignName, Queue, dateTimeformat,agentExtn);
+					}else if(dialingMode!=null && dialingMode.equalsIgnoreCase("predicitve")){
+						String agentExtn=getProgressiveExtn(campaignDetRequest.getQueue());
+						request = getPredictiveString(surveycontDetDto,campaignDetRequest,campaignName, Queue, dateTimeformat,agentExtn);
+					}
+					else {
+						request = getString(surveycontDetDto, campaignName, campaignDetRequest,Queue, dateTimeformat);	
 					}
 
 					String actionId = surveycontDetDto.getActionId();
 					logger.info("Campaign Name :" + campaignName + "It's Request :" + request);
 
-					logger.info("Campaign Name :" + campaignName + "It's Request :" + request);
 					HttpResponse<String> response = Unirest.post(callApiAutoCall)
 							.header("Content-Type", "application/json")
 							.body(request)
@@ -1192,6 +1446,8 @@ public class CampaignController {
 					logger.info("**** Inside Thread API Thread API response****");
 					logger.info("OutBound API Response :" + response.getBody());
 					responseValue = response.getBody();
+
+
 				} else {
 					logger.info("Front Camp Status is in " + frontCampStatus + " state, hence not invoking API");
 				}
@@ -1207,6 +1463,20 @@ public class CampaignController {
 		}
 		return responseValue;
 	}
+
+
+	private String getProgressiveExtn(String queue) {
+		String extn=null;
+		try {
+			extn=campaignService.getAvailAgentFromQueue(queue);
+		}catch(Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return extn;
+	}
+
+
 
 
 	//    private void processCallApi(SurveyContactDetDto surveycontDetDto, String campaignName, String Queue) {
@@ -1238,64 +1508,77 @@ public class CampaignController {
 	//        }
 	//    }
 
-	private static String getString(SurveyContactDetDto surveycontDetDto, String campaignName, String Queue, DateFormat dateTimeformat) throws ParseException {
+	private static String getString(DynamicContactDetDto surveycontDetDto, String campaignName, CampaignDetRequest campaigndetRequest,String Queue, DateFormat dateTimeformat) throws ParseException {
 
-		String productID = surveycontDetDto.getSurvey_Lang() + "_" + surveycontDetDto.getSubSkillset();
+		String productID = surveycontDetDto.getLanguage() + "_" + surveycontDetDto.getSubskill_set();
 
 		/*
-		 * "{\r\n    \"outcallerid\": \"044288407\",\r\n    \"siptrunk\": \"Avaya\",\r\n  "
-		 * + "  \"phone\": \""+ surveycontDetDto.getPhone()+"\",\r\n   " +
-		 * "  \"productid\": \""+productID+"\",\r\n   " +
-		 * "  \"campaingnname\": \""+campaignName+"\",\r\n   " + " \"language\": \""+
-		 * surveycontDetDto.getSurvey_Lang()
-		 * +"\",\r\n    \"dialplan\": \"nas-neuro\",\r\n " + " \"actionid\": \""+
-		 * surveycontDetDto.getActionId()+"\"\r\n}";
+		 * Date dueDate = dateTimeformat.parse(surveycontDetDto.getDueDate()); Long
+		 * dueUnixTime = dueDate.getTime() / 1000;
 		 */
-		//
-		//    return "{\r\n    \"outcallerid\": \"044288407\",\r\n    \"siptrunk\": \"Avaya\",\r\n  "
-		//            + "  \"phone\": \"" + surveycontDetDto.getPhone() + "\",\r\n   "
-		//            + "  \"productid\": \"" + productID + "\",\r\n"
-		//            + " \"language\": \"" + surveycontDetDto.getSurvey_Lang() + "\",\r\n  "
-		//            + " \"campaingnname\": \"" + campaignName + "\",\r\n"
-		//            + "\r\n    \"dialplan\": \"" + Queue + "\",\r\n "
-		//            + " \"actionid\": \"" + surveycontDetDto.getActionId() + "\"\r\n}";
+/*		return "{\r\n    \"outcallerid\": \"044288407\",\r\n    \"siptrunk\": \"Avaya\",\r\n  "
+		+ "  \"phone\": \"" + surveycontDetDto.getCustomerMobileNumber() + "\",\r\n   "
+		+ "\"language\": \"" + surveycontDetDto.getLanguage() + "\",\r\n "
+		+ "  \"productid\": \"" + productID + "\",\r\n   "
+		+ " \"amount\": \"" + surveycontDetDto.getMinPayment() + "\",\r\n    "
+		+ " \"last4digit\": \"" + surveycontDetDto.getLastFourDigits() + "\",\r\n "
+		+ "   \"duedate\": \"" + surveycontDetDto.getDueDate() + "\",\r\n   "
+		+ " \"campaingnname\": \"" + campaignName + "\",\r\n"
+		+ "  \"unixtime\": \"" + dueUnixTime + "\",\r\n    \"timezone\": \"GST\",\r\n    \"dialplan\": \"" + Queue + "\",\r\n   "
+		+ " \"actionid\": \"" + surveycontDetDto.getActionId() + "\"\r\n}";
+		*/
+		String data="{\r\n \"actionid\":\""+surveycontDetDto.getActionId()+"\",\r\n"
+				+ "\"outcallerid\":\"+911213509249\",\r\n"
+				+ "\"siptrunk\":\"callanywhere-cognicx\",\r\n"
+				+ "\"trunktype\":\"sip\",\r\n"
+				+ "\"phone\":\""+surveycontDetDto.getCustomerMobileNumber()+"\",\r\n"
+				+ "\"dialplan\""+campaigndetRequest.getDailingMode()+"\",\r\n"
+				+ "\"agent\":\""+""+"\",\r\n"
+				+ "\"callmode\""+campaigndetRequest.getDailingMode()+"\",\r\n"
+				+ " \"campaingnname\": \"" + campaigndetRequest.getCampaignName() + "\",\r\n"
+				+ "}";
 
-
-		Date dueDate = dateTimeformat.parse(surveycontDetDto.getDueDate());
-		Long dueUnixTime = dueDate.getTime() / 1000;
-
-		return "{\r\n    \"outcallerid\": \"044288407\",\r\n    \"siptrunk\": \"Avaya\",\r\n  "
-				+ "  \"phone\": \"" + surveycontDetDto.getPhone() + "\",\r\n   "
-				+ "\"language\": \"" + surveycontDetDto.getSurvey_Lang() + "\",\r\n "
-				+ "  \"productid\": \"" + productID + "\",\r\n   "
-				+ " \"amount\": \"" + surveycontDetDto.getMinPayment() + "\",\r\n    "
-				+ " \"last4digit\": \"" + surveycontDetDto.getLastFourDigits() + "\",\r\n "
-				+ "   \"duedate\": \"" + surveycontDetDto.getDueDate() + "\",\r\n   "
-				+ " \"campaingnname\": \"" + campaignName + "\",\r\n"
-				+ "  \"unixtime\": \"" + dueUnixTime + "\",\r\n    \"timezone\": \"GST\",\r\n    \"dialplan\": \"" + Queue + "\",\r\n   "
-				+ " \"actionid\": \"" + surveycontDetDto.getActionId() + "\"\r\n}";
-
+		return data;
+		
 	}
 
+	private static String getAgentBasedString(DynamicContactDetDto surveycontDetDto, CampaignDetRequest campaigndetRequest, String campaignName, String Queue, DateFormat dateTimeformat,String extn) throws ParseException {
+		String productID = surveycontDetDto.getLanguage() + "_" + surveycontDetDto.getSubskill_set();
 
-	private static String getAgentBasedString(SurveyContactDetDto surveycontDetDto, String campaignName, String Queue, DateFormat dateTimeformat, String extn) throws ParseException {
-		String productID = surveycontDetDto.getSurvey_Lang() + "_" + surveycontDetDto.getSubSkillset();
-		Date dueDate = dateTimeformat.parse(surveycontDetDto.getDueDate());
-		Long dueUnixTime = dueDate.getTime() / 1000;
-
-		String data = "{\r\n \"actionid\":\"" + surveycontDetDto.getActionId() + "\",\r\n"
-				+ "\"outcallerid\":\"044288407\",\r\n"
-				+ "\"siptrunk\":\"Avaya\",\r\n"
-				+ "\"trunktype\":\"pjsip\",\r\n"
-				+ "\"phone\":\"" + surveycontDetDto.getPhone() + "\",\r\n"
-				+ "\"dialplan\":\"direct-customer\",\r\n"
-				+ "\"agent\":\"" + extn + "\",\r\n"
-				+ "\"callmode\":\"progressive\",\r\n"
-				+ "\"campaingnname\":\"progressive_data\",\r\n"
+		String data="{\r\n \"actionid\":\""+surveycontDetDto.getActionId()+"\",\r\n"
+				+ "\"outcallerid\":\"+911213509249\",\r\n"
+				+ "\"siptrunk\":\"callanywhere-cognicx\",\r\n"
+				+ "\"trunktype\":\"sip\",\r\n"
+				+ "\"phone\":\""+surveycontDetDto.getCustomerMobileNumber()+"\",\r\n"
+				+ "\"dialplan\""+campaigndetRequest.getDailingMode()+"\",\r\n"
+				+ "\"agent\":\""+extn+"\",\r\n"
+				+ "\"callmode\""+campaigndetRequest.getDailingMode()+"\",\r\n"
+				+ " \"campaingnname\": \"" + campaigndetRequest.getCampaignName() + "\",\r\n"
 				+ "}";
 
 		return data;
 	}
+
+	private static String getPredictiveString(DynamicContactDetDto surveycontDetDto, CampaignDetRequest campaigndetRequest, String campaignName, String Queue, DateFormat dateTimeformat,String extn) throws ParseException {
+		String productID = surveycontDetDto.getLanguage() + "_" + surveycontDetDto.getSubskill_set();
+		
+		Map<String,String> mapDynamicFields=surveycontDetDto.getMapDynamicFields();
+		
+		String data="{\r\n \"actionid\":\""+surveycontDetDto.getActionId()+"\",\r\n"
+				+ "\"outcallerid\":\"+911213509249\",\r\n"
+				+ "\"siptrunk\":\"callanywhere-cognicx\",\r\n"
+				+ "\"trunktype\":\"sip\",\r\n"
+				+ "\"phone\":\""+surveycontDetDto.getCustomerMobileNumber()+"\",\r\n"
+				+ "\"dialplan\""+campaigndetRequest.getDailingMode()+"\",\r\n"
+				+ "\"agent\":\""+campaigndetRequest.getQueueName()+"\",\r\n"
+				+ "\"callmode\""+campaigndetRequest.getDailingMode()+"\",\r\n"
+				+ " \"campaingnname\": \"" + campaigndetRequest.getCampaignName() + "\",\r\n"
+				+"\"var1\":{\"element1\":\""+mapDynamicFields+"\"}\r\n"
+				+ "}";
+
+		return data;
+	}
+
 
 	@PostMapping("/createCampaign")
 	public ResponseEntity<GenericResponse> createCampaign(@RequestBody CampaignDetRequest campaignDetRequest)
@@ -1377,8 +1660,8 @@ public class CampaignController {
 	//    }
 	@PostMapping("/updateCallDetail")
 	public ResponseEntity<GenericResponse> updateCallDetail(@RequestBody UpdateAutoCallRequest
-																	updateAutoCallRequest)
-			throws ParseException, JsonParseException, JsonMappingException, IOException {
+			updateAutoCallRequest)
+					throws ParseException, JsonParseException, JsonMappingException, IOException {
 
 		logger.info("**********UPDATE CALL DETAILS INPUT**********");
 		UpdateCallDetRequest updateCallDetRequest = new UpdateCallDetRequest();
@@ -1398,18 +1681,18 @@ public class CampaignController {
 		updateCallDetRequest.setSurveyrating(updateCallDetRequest.getSurveyrating());
 		updateCallDetRequest.setCalltalktime(updateAutoCallRequest.getCalltalktime());
 		String actionID = updateAutoCallRequest.getActionid();
-		if (remListforRetry.contains(actionID)) {
+		if(remListforRetry.contains(actionID)){
 			remListforRetry.remove(actionID);
-			logger.info("This ActionId : {} is updated in database and remove from rem List for Retry", actionID);
-		} else {
-			logger.info("This Action Id not in retry contact list : {}", actionID);
+			logger.info("This ActionId : {} is updated in database and remove from rem List for Retry",actionID);
+		}else {
+			logger.info("This Action Id not in retry contact list : {}",actionID);
 		}
 
-		if (newRemList.contains(actionID)) {
+		if(newRemList.contains(actionID)){
 			newRemList.remove(actionID);
-			logger.info("This ActionId : {} is updated in database and remove from remove List for New", actionID);
-		} else {
-			logger.info("This Action Id not in New contact list : {}", actionID);
+			logger.info("This ActionId : {} is updated in database and remove from remove List for New",actionID);
+		}else {
+			logger.info("This Action Id not in New contact list : {}",actionID);
 		}
 
 		return campaignService.updateCallDetail(updateCallDetRequest);
@@ -1452,7 +1735,7 @@ public class CampaignController {
 	@PostMapping("/downloadsmsReport")
 	public ResponseEntity<InputStreamResource>
 	downloadsmsReport(@RequestBody ReportRequest reportRequest) throws
-			ParseException, JsonParseException, JsonMappingException, IOException {
+	ParseException, JsonParseException, JsonMappingException, IOException {
 		return campaignService.downloadsmsReport(reportRequest);
 	}
 
@@ -1485,15 +1768,14 @@ public class CampaignController {
 	@PostMapping("/deleteContactByHistory")
 	public ResponseEntity<GenericResponse> deleteContactByHistory(
 			@RequestBody UpdateCallDetRequest updateCallDetRequest)
-			throws ParseException, JsonParseException, JsonMappingException, IOException {
+					throws ParseException, JsonParseException, JsonMappingException, IOException {
 		return campaignService.deleteContactByHistory(updateCallDetRequest);
 	}
-
 	@PostMapping("/uploadContactDetail")
 	public ResponseEntity<GenericResponse> uploadContactDetail(@RequestParam("file") MultipartFile file,
-															   @RequestParam(name = "campaignId", required = false) String campaignId,
-															   @RequestParam(name = "campaignName", required = false) String campaignName)
-			throws ParseException, JsonParseException, JsonMappingException, IOException {
+			@RequestParam(name = "campaignId", required = false) String campaignId,
+			@RequestParam(name = "campaignName", required = false) String campaignName)
+					throws ParseException, JsonParseException, JsonMappingException, IOException {
 		String message = null;
 		CSVPrinter csvPrinter = null;
 		boolean isUploaded = true;
@@ -1538,7 +1820,7 @@ public class CampaignController {
 					for (ContactDetDto contactDetDto : contactDetList) {
 						if (dncList != null && dncList.contains(contactDetDto.getCustomerMobileNumber())) {
 							contactDetDto.setCallStatus("DNC");
-//							isUploaded = campaignService.createContact(contactDetDto);
+							//							isUploaded = campaignService.createContact(contactDetDto);
 							logger.info("**** This contact is in DNC List :" + contactDetDto.getCustomerMobileNumber() + "Hence setting status as DNC****");
 						} else {
 							contactDetDto.setCallStatus("NEW");
@@ -1554,23 +1836,23 @@ public class CampaignController {
 
 					}
 					message = "Uploaded the file successfully: " + file.getOriginalFilename();
-//				if (commonDetail != null) {
-//					logger.info("****Inserting contact details to DB Table****");
-//					for (ContactDetDto contactDetDto : contactDetList) {
-////						if (contactDetDto!=null) {
-////							logger.info("Contact : "+contactDetDto.getCustomerMobileNumber());
-//							isUploaded = campaignService.createContact(contactDetDto);
-////						}else {
-////							logger.info("It's seems the upload list has some null values ...");
-////							continue;
-////						}
-//						if (!isUploaded) {
-//							contactDetDto.setFailureReason(
-//									"Contact details already exist for same Appointment Date and Time");
-//							failureList.add(contactDetDto);
-//						}
-//					}
-//					message = "Uploaded the file successfully: " + file.getOriginalFilename();
+					//				if (commonDetail != null) {
+					//					logger.info("****Inserting contact details to DB Table****");
+					//					for (ContactDetDto contactDetDto : contactDetList) {
+					////						if (contactDetDto!=null) {
+					////							logger.info("Contact : "+contactDetDto.getCustomerMobileNumber());
+					//							isUploaded = campaignService.createContact(contactDetDto);
+					////						}else {
+					////							logger.info("It's seems the upload list has some null values ...");
+					////							continue;
+					////						}
+					//						if (!isUploaded) {
+					//							contactDetDto.setFailureReason(
+					//									"Contact details already exist for same Appointment Date and Time");
+					//							failureList.add(contactDetDto);
+					//						}
+					//					}
+					//					message = "Uploaded the file successfully: " + file.getOriginalFilename();
 					campaignService.updateCampaignStatusUploadContact(campaignId);
 					logger.info(message);
 					logger.info(failureList.toString());
@@ -1608,9 +1890,9 @@ public class CampaignController {
 
 	@PostMapping("/dynamicuploadContactDetail")
 	public ResponseEntity<GenericResponse> dynamicuploadContactDetail(@RequestParam("file") MultipartFile file,
-																	  @RequestParam(name = "campaignId", required = false) String campaignId,
-																	  @RequestParam(name = "campaignName", required = false) String campaignName)
-			throws ParseException, JsonParseException, JsonMappingException, IOException {
+			@RequestParam(name = "campaignId", required = false) String campaignId,
+			@RequestParam(name = "campaignName", required = false) String campaignName)
+					throws ParseException, JsonParseException, JsonMappingException, IOException {
 		String message = null;
 		CSVPrinter csvPrinter = null;
 		boolean isUploaded = true;
@@ -1897,9 +2179,9 @@ public class CampaignController {
 
 	@PostMapping("/uploadDncDetail")
 	public ResponseEntity<GenericResponse> uploadDNCDetail(@RequestParam("file") MultipartFile file,
-														   @RequestParam(name = "dncid", required = false) String dncId,
-														   @RequestParam(name = "dncName", required = false) String dncName)
-			throws ParseException, JsonParseException, JsonMappingException, IOException {
+			@RequestParam(name = "dncid", required = false) String dncId,
+			@RequestParam(name = "dncName", required = false) String dncName)
+					throws ParseException, JsonParseException, JsonMappingException, IOException {
 		GenericResponse response = new GenericResponse();
 
 		CSVPrinter csvPrinters = null;
@@ -1972,7 +2254,7 @@ public class CampaignController {
 
 	private List<DncContactDto> csvToDataconverter(DNCDetRequest dncDetRequest, InputStream inputStream, BigInteger
 			historyId, List<DncContactDto> failureList, List<DNCDetRequest> dncDetRequestList, String dncId, String
-														   dncName) {
+			dncName) {
 		List<DncContactDto> contactList = new ArrayList<>();
 		CSVPrinter csvPrinter = null;
 		CSVParser csvParser = null;
@@ -2018,7 +2300,7 @@ public class CampaignController {
 	}
 
 	private static boolean validateFileDataDNC(CSVRecord csvRecord, StringBuilder reason,
-											   List<DNCDetRequest> campaignDetList, DncContactDto contactDet) {
+			List<DNCDetRequest> campaignDetList, DncContactDto contactDet) {
 		boolean isValid = true;
 
 		if (csvRecord.get("contactNumber") == null || csvRecord.get("contactNumber").isEmpty()) {
@@ -2267,22 +2549,19 @@ public class CampaignController {
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		return campaignService.stopCampaignStatus(campaignId, "Stop");
 	}
-
 	@PostMapping("/pauseCampaign")
 	public ResponseEntity<GenericResponse> pauseCampaign(@RequestParam String campaignId)
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		return campaignService.stopPauseCampaignStatus(campaignId, "Pause");
 	}
-
 	@PostMapping("/updateAgentDynamicContact")
-	public ResponseEntity<GenericResponse> updateAgentDynamicContact(@RequestBody List<DynamicContactDetDto> dynamiccontactDet)
+	public ResponseEntity<GenericResponse> updateAgentDynamicContact( @RequestBody List<DynamicContactDetDto> dynamiccontactDet)
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		logger.info("Updating Agent ans contact Detail");
 		return campaignService.updateAgentDynamicContact(dynamiccontactDet);
 	}
-
 	@PostMapping("/updateAssignedAgentDynamicContact")
-	public ResponseEntity<GenericResponse> updateAssignedAgentDynamicContact(@RequestBody List<DynamicContactDetDto> dynamiccontactDet)
+	public ResponseEntity<GenericResponse> updateAssignedAgentDynamicContact( @RequestBody List<DynamicContactDetDto> dynamiccontactDet)
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		logger.info("Updating Agent ans contact Detail");
 		return campaignService.updateAssignedAgentDynamicContact(dynamiccontactDet);
@@ -2294,7 +2573,7 @@ public class CampaignController {
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		logger.info("Get agent based dynamic contact detail");
 		GenericResponse genericResponse = new GenericResponse();
-		Map<String, List<DynamicContactDetDto>> mapcampaignDetList = null;
+		Map<String,List<DynamicContactDetDto>> mapcampaignDetList=null;
 		List<DynamicContactDetDto> campaignDetList = null;
 		try {
 			mapcampaignDetList = campaignService.getAgentBasedContactDetail(campaignId);
@@ -2334,7 +2613,7 @@ public class CampaignController {
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		logger.info("Get agent based dynamic contact detail");
 		GenericResponse genericResponse = new GenericResponse();
-		Map<String, List<DynamicContactDetDto>> mapcampaignDetList = null;
+		Map<String,List<DynamicContactDetDto>> mapcampaignDetList=null;
 		List<DynamicContactDetDto> campaignDetList = null;
 		try {
 			mapcampaignDetList = campaignService.getPreviewAgentBasedContactDetail(agent_userid);
@@ -2351,35 +2630,12 @@ public class CampaignController {
 		return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
 	}
 
-
-	@GetMapping("/getCustomerDetail")
-	public ResponseEntity<GenericResponse> getCustomerDetail(@RequestParam String customerNumber)
-			throws ParseException, JsonParseException, JsonMappingException, IOException {
-		logger.info("Get agent based dynamic contact detail");
-		GenericResponse genericResponse = new GenericResponse();
-//		Map<String,List<DynamicContactDetDto>> mapcampaignDetList=null;
-//		List<DynamicContactDetDto> campaignDetList = null;
-		try {
-			DynamicContactDetDto mapcampaignDetList = campaignService.getCustomerDetail(customerNumber);
-			genericResponse.setStatus(200);
-			genericResponse.setValue(mapcampaignDetList);
-			genericResponse.setMessage("Success");
-		} catch (Exception e) {
-			logger.error("Error in getCustomerDetail controller " + e);
-			genericResponse.setStatus(400);
-			genericResponse.setValue("Failure");
-			genericResponse.setMessage("No data Found");
-		}
-
-		return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
-	}
-
 	@GetMapping("/getSupervisorAgentContactDet")
 	public ResponseEntity<GenericResponse> getPreviewSupervisorBasedContactDetail(@RequestParam String Supervisor)
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		logger.info("Get agent based dynamic contact detail");
 		GenericResponse genericResponse = new GenericResponse();
-		Map<String, List<DynamicContactDetDto>> mapcampaignDetList = null;
+		Map<String,List<DynamicContactDetDto>> mapcampaignDetList=null;
 		List<DynamicContactDetDto> campaignDetList = null;
 		try {
 			mapcampaignDetList = campaignService.getSupervisorAgentContactDet(Supervisor);
@@ -2395,6 +2651,5 @@ public class CampaignController {
 
 		return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
 	}
-
 
 }

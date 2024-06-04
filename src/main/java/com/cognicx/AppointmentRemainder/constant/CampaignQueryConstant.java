@@ -2,18 +2,17 @@ package com.cognicx.AppointmentRemainder.constant;
 
 public class CampaignQueryConstant {
 
-	public static final String INSERT_CAMPAIGN_DET = "INSERT INTO appointment_remainder.campaign_det(campaign_id,name,description,status,max_adv_time,retry_delay,retry_count,concurrent_call,start_date,start_time,end_date,end_time,ftp_location,ftp_credentials,file_name,dncId,groupname,DailingMode,Queue,dispositionID,Dailingoption)"
-			+ "VALUES (:campaignId,:name,:desc,:status,:maxAdvTime,:retryDelay,:retryCount,:concurrentCall,:startDate,:startTime,:endDate,:endTime,:ftpLocation,:ftpCredentials,:fileName,:dncId,:groupname,:DailingMode,:Queue,:dispositionID,:Dailingoption)";
+	public static final String INSERT_CAMPAIGN_DET = "INSERT INTO appointment_remainder.campaign_det(campaign_id,name,description,status,max_adv_time,retry_delay,retry_count,concurrent_call,start_date,start_time,end_date,end_time,ftp_location,ftp_credentials,file_name,dncId,groupname,DailingMode,Queue,dispositionID,Dailingoption,queueName,forceacw,acwseconds,autoanswer,autoanswervalue,noanswer)"
+			+ "VALUES (:campaignId,:name,:desc,:status,:maxAdvTime,:retryDelay,:retryCount,:concurrentCall,:startDate,:startTime,:endDate,:endTime,:ftpLocation,:ftpCredentials,:fileName,:dncId,:groupname,:DailingMode,:Queue,:dispositionID,:Dailingoption,:queueName,:forceacw,:acwseconds,:autoanswer,:autoanswervalue,:noanswer)";
+
 	public static final String INSERT_CAMPAIGN_WEEK_DET = "insert into appointment_remainder.campaign_week_det (campaign_id,day,status,start_time,end_time) values(:campaignId,:day,:status,:startTime,:endTime)";
 	public static final String GET_CAMPAIGN_ID = "select count(*) from appointment_remainder.campaign_det";
 	//    public static final String GET_CAMPAIGN_DET = "SELECT campaign_id,name,description,status,max_adv_time,retry_delay,retry_count,concurrent_call,start_date,start_time,campaign_det.end_date,end_time,ftp_location,ftp_credentials,file_name,call_before,dncId,groupname,DailingMode,dispositionID FROM appointment_remainder.campaign_det";
 
 	//    public static final String GET_CAMPAIGN_DET = "SELECT campaign_id,name,description,status,max_adv_time,retry_delay,retry_count,concurrent_call,start_date,start_time,campaign_det.end_date,end_time,ftp_location,ftp_credentials,file_name,call_before,dncId,groupname,DailingMode,Queue,dispositionID FROM appointment_remainder.campaign_det";
 
-	public static final String GET_CAMPAIGN_DET = "SELECT campaign_id,name,description,status,max_adv_time,retry_delay,retry_count,concurrent_call,start_date,start_time,campaign_det.end_date,end_time,ftp_location,ftp_credentials,file_name,dncId,groupname,DailingMode,Queue,dispositionID,Dailingoption FROM appointment_remainder.campaign_det  order by rec_add_dt desc";
-	public static final String GET_CAMPAIGN_DET_BY_USERGROUP = "SELECT campaign_id,name,description,status,max_adv_time,retry_delay,retry_count,concurrent_call,start_date,start_time,campaign_det.end_date,end_time,ftp_location,ftp_credentials,file_name,dncId,groupname,DailingMode,Queue,dispositionID,Dailingoption FROM appointment_remainder.campaign_det where groupname=:groupName";
-
-
+	public static final String GET_CAMPAIGN_DET = "SELECT campaign_id,name,description,status,max_adv_time,retry_delay,retry_count,concurrent_call,start_date,start_time,campaign_det.end_date,end_time,ftp_location,ftp_credentials,file_name,dncId,groupname,DailingMode,Queue,dispositionID,Dailingoption,queueName,forceacw,acwseconds,autoanswer,autoanswervalue,noanswer FROM appointment_remainder.campaign_det  order by rec_add_dt desc";
+	public static final String GET_CAMPAIGN_DET_BY_USERGROUP = "SELECT campaign_id,name,description,status,max_adv_time,retry_delay,retry_count,concurrent_call,start_date,start_time,campaign_det.end_date,end_time,ftp_location,ftp_credentials,file_name,dncId,groupname,DailingMode,Queue,dispositionID,Dailingoption,queueName,forceacw,acwseconds,autoanswer,autoanswervalue,noanswer FROM appointment_remainder.campaign_det where groupname=:groupName";
 
 	//public static final String GET_CAMPAIGN_DET = "SELECT campaign_id,name,description,status,max_adv_time,retry_delay,retry_count,concurrent_call,start_date,start_time,campaign_det.end_date,end_time,ftp_location,ftp_credentials,file_name,call_before,dncId,groupname,DailingMode,Queue,dispositionID FROM appointment_remainder.campaign_det  order by campaign_id desc";
 	// public static final String GET_CAMPAIGN_DET_BY_USERGROUP = "SELECT campaign_id,name,description,status,max_adv_time,retry_delay,retry_count,concurrent_call,start_date,start_time,campaign_det.end_date,end_time,ftp_location,ftp_credentials,file_name,call_before,dncId,groupname,DailingMode,Queue,dispositionID FROM appointment_remainder.campaign_det where groupname=:groupName";
@@ -21,10 +20,7 @@ public class CampaignQueryConstant {
 	public static final String GET_CAMPAIGN_WEEK_DET = "SELECT campaign_week_id,campaign_id,day,status,start_time,end_time from appointment_remainder.campaign_week_det";
 	// public static final String UPDATE_CAMPAIGN_DET = "UPDATE appointment_remainder.campaign_det SET name = :name,status = :status,max_adv_time = :maxAdvTime,retry_delay = :retryDelay,retry_count = :retryCount,concurrent_call = :concurrentCall,start_date = :startDate,start_time = :startTime,end_date = :endDate,end_time = :endTime,ftp_location = :ftpLocation,ftp_credentials = :ftpCredentials,rec_updt_dt = getdate(),call_before=:callBefore,file_name=:fileName, dncId=:dncId,groupname=:groupname, DailingMode=:DailingMode,Queue=:Queue,dispositionID=:dispositionID WHERE campaign_id = :campaignId";
 
-
-	public static final String UPDATE_CAMPAIGN_DET = "UPDATE appointment_remainder.campaign_det SET name = :name,status = :status,max_adv_time = :maxAdvTime,retry_delay = :retryDelay,retry_count = :retryCount,concurrent_call = :concurrentCall,start_date = :startDate,start_time = :startTime,end_date = :endDate,end_time = :endTime,ftp_location = :ftpLocation,ftp_credentials = :ftpCredentials,rec_updt_dt = getdate(),file_name=:fileName, dncId=:dncId,groupname=:groupname, DailingMode=:DailingMode,Queue=:Queue,dispositionID=:dispositionID,Dailingoption=:Dailingoption WHERE campaign_id = :campaignId";
-
-
+	public static final String UPDATE_CAMPAIGN_DET = "UPDATE appointment_remainder.campaign_det SET name = :name,status = :status,max_adv_time = :maxAdvTime,retry_delay = :retryDelay,retry_count = :retryCount,concurrent_call = :concurrentCall,start_date = :startDate,start_time = :startTime,end_date = :endDate,end_time = :endTime,ftp_location = :ftpLocation,ftp_credentials = :ftpCredentials,rec_updt_dt = getdate(),file_name=:fileName, dncId=:dncId,groupname=:groupname, DailingMode=:DailingMode,Queue=:Queue,dispositionID=:dispositionID,Dailingoption=:Dailingoption,queueName=:queueName,forceacw=:forceacw,acwseconds=:acwseconds,autoanswer=:autoanswer,autoanswervalue=:autoanswervalue,noanswer=:noanswer WHERE campaign_id = :campaignId";
 	public static final String UPDATE_CAMPAIGN_WEEK_DET = "UPDATE appointment_remainder.campaign_week_det SET day=:day, status=:status, start_time=:startTime, end_time=:endTime where campaign_week_id=:campaignWeekId";
 
 	public static final String UPDATE_CALL_DET = "UPDATE appointment_remainder.contact_det SET caller_response=:callerResponse, call_status=:callStatus, call_duration=:callDuration, call_retry_count=:retryCount,rec_upt_date=getdate() where contact_id=:contactId";
@@ -264,9 +260,7 @@ public class CampaignQueryConstant {
 
 	//    public static final String GET_SURVEY_CONTACT_DET_CT = "select campaign_name,customer_mobile_number,actionId, language,subskill_set,call_status,rec_upt_date,call_retry_count from appointment_remainder.contact_det where call_status !='ANSWERED'";
 
-
-	public static final String GET_SURVEY_CONTACT_DET_CT = "select campaign_name,customer_mobile_number,actionId, language,subskill_set,call_status,rec_upt_date,call_retry_count,last_four_digits,total_due,minimum_payment,due_date from appointment_remainder.contact_det where call_status = 'NEW' and campaign_stopstatus!='NTC' order by rec_upt_date asc";
-
+	public static final String GET_SURVEY_CONTACT_DET_CT = "select campaign_name,customer_mobile_number,actionId, language,subskill_set,call_status,rec_upt_date,call_retry_count,last_four_digits,total_due,minimum_payment,due_date from appointment_remainder.contact_det where call_status = 'NEW' and campaign_stopstatus!='NTC'";
 
 	public static final String UPADTE_SURVEY_CALL_DET_CT = "UPDATE appointment_remainder.contact_det SET caller_response=:callerResponse, call_status=:callStatus, call_duration=:callDuration, call_retry_count=:retryCount,rec_upt_date=getdate(),survey_rating=:survey_rating,SMS_Triggered=:SMS_Triggered,call_start_time=:call_start_time,call_end_time=:call_end_time  where actionId=:actionId";
 	public static final String GET_SURVEY_CALL_RETRY_COUNT_CT = "select call_retry_count from appointment_remainder.contact_det where actionId = :actionId";
@@ -297,9 +291,6 @@ public class CampaignQueryConstant {
 	public static final String GET_NO_ANSWER_COUNT = "select count(*) from appointment_remainder.call_retry_det where call_status = 'NO ANSWER' and campaign_id=:campaign_id and campaign_stopstatus!='NTC'";
 	public static final String GET_ANSWERED_COUNT = "select count(*) from appointment_remainder.call_retry_det where call_status = 'ANSWERED' and campaign_id=:campaign_id and campaign_stopstatus!='NTC'";
 	public static final String GET_ANSWER_DURATION = "select sum(call_duration) from [appointment_remainder].[call_retry_det]where call_status = 'ANSWERED' and campaign_id=:campaign_id and campaign_stopstatus!='NTC'";
-
-	public static final String GET_FAILED_COUNT = "select count(*) from appointment_remainder.call_retry_det where call_status = 'FAILED' and campaign_id=:campaign_id and campaign_stopstatus!='NTC'";
-
 	public static final String GET_CAMPAIGNID_FOR_RETRY_DET = "select campaign_id,customer_mobile_number,contact_id from appointment_remainder.contact_det where actionId = :actionId";
 
 	public static final String CHECK_CONTACT_NUMBER = "select count(*) from appointment_remainder.contact_det where customer_mobile_number =:customer_mobile_number and campaign_id =:campaign_id";
@@ -329,6 +320,10 @@ public class CampaignQueryConstant {
 	public static final String GET_CAMPAIGN_START_TIME_RT = "SELECT TOP 1 rec_add_dt FROM [appointment_remainder].[call_retry_det] WHERE campaign_id = :campaign_id AND campaign_stopstatus != 'NTC' ORDER BY rec_add_dt ASC";
 	public static final String GET_CONT_MAP_DET = "SELECT [number_of_field],[reserve_1],[reserve_2],[reserve_3],[reserve_4],[reserve_5],[reserve_6],[reserve_7],[reserve_8],[reserve_9],[reserve_10],[reserve_11] FROM [appointment_remainder_db].[appointment_remainder].[contact_mapping_det] where account=:account";
 	public static final String GET_DYANMIC_CONTACT_DET_CT = "select campaign_id,campaign_name,customer_mobile_number,actionId,agent_userid,[reserve_1],[reserve_2],[reserve_3],[reserve_4],[reserve_5],[reserve_6],[reserve_7],[reserve_8],[reserve_9],[reserve_10],[reserve_11] FROM [appointment_remainder_db].[appointment_remainder].[contact_det_new_1] where campaign_id=:campaign_id ";
+	
+	public static final String GET_DYANMIC_CONTACT_RETRY = "select campaign_id,campaign_name,customer_mobile_number,actionId,agent_userid,[reserve_1],[reserve_2],[reserve_3],[reserve_4],[reserve_5],[reserve_6],[reserve_7],[reserve_8],[reserve_9],[reserve_10],[reserve_11] FROM [appointment_remainder_db].[appointment_remainder].[contact_det_new_1] where campaign_id = :campaignId AND call_retry_count <= :retryCount AND call_status!='New' AND call_status!='ANSWERED' AND call_status!='InProgress' AND call_status!='INVALID NO' and call_status!='DNC' and campaign_stopstatus!='NTC'";
+
+	
 	public static final String UPDATE_DYANMIC_CONTACT_DET_CT ="update appointment_remainder.contact_det_new_1 set agent_userid=:agent_userid where actionId =:actionId and customer_mobile_number=:customer_mobile_number and campaign_id=:campaign_id";
 
 	public static final String UPDATE_ASSIGNED_DYANMIC_CONTACT_DET_CT ="update appointment_remainder.contact_det_new_1 set agent_userid as NULL where actionId =:actionId and customer_mobile_number=:customer_mobile_number and campaign_id=:campaign_id";
@@ -338,12 +333,21 @@ public class CampaignQueryConstant {
 	//public static final String GET_CONTACT_ASSIGNED_TO_AGENT = "select count(*) from appointment_remainder.contact_det where customer_mobile_number =:customer_mobile_number and campaign_id =:campaign_id";
 	public static final String GET_CAMPAIGN_BASED_CONTACT_DET = "select campaign_id,campaign_name,customer_mobile_number,agent_userid,actionId,[reserve_1],[reserve_2],[reserve_3],[reserve_4],[reserve_5],[reserve_6],[reserve_7],[reserve_8],[reserve_9],[reserve_10],[reserve_11] FROM [appointment_remainder_db].[appointment_remainder].[contact_det_new_1] where campaign_id=:campaign_id";
 	
-
 	public static final String GET_ASSIGNED_AGENT_BASED_ON_SUPERVISOR = "select Agent FROM [appointment_remainder_db].[appointment_remainder].[agent_sup_mapping] where Supervisor=:Supervisor";
 	
 	public static final String GET_AGENT_BASED_CONTACT_STATUS_DET = "select campaign_id,campaign_name,customer_mobile_number,agent_userid,actionId,call_status,[reserve_1],[reserve_2],[reserve_3],[reserve_4],[reserve_5],[reserve_6],[reserve_7],[reserve_8],[reserve_9],[reserve_10],[reserve_11] FROM [appointment_remainder_db].[appointment_remainder].[contact_det_new_1] where agent_userid=:agent_userid";
 	public static final String GET_AGENT_SKILSET="select SkillSet from [appointment_remainder].[usermanagement_det] where UserId=:UserId";
-	public static final String GET_CONTACT_DET_BY_CUSTOMERNUMBER = "select campaign_id,campaign_name,customer_mobile_number,agent_userid,actionId,call_status,[language],call_retry_count,upload_history_id,rec_upt_date,contact_id,subskill_set,[reserve_1],[reserve_2],[reserve_3],[reserve_4],[reserve_5],[reserve_6],[reserve_7],[reserve_8],[reserve_9],[reserve_10],[reserve_11] FROM [appointment_remainder].[contact_det_new_1] where customer_mobile_number=:customerNumber";
+	
+	
+	public static final String GET_QUEUE_AGENT_DET="select count(*) from [appointment_remainder].[new_agent_status_det] where agentID=:agentID";
+	//public static final String INSERT_QUEUE_AGENT_DET = "insert into appointment_remainder.new_agent_status_det (agentID,agent_status,queue_name,loginTime,rec_upt_date,queue,MemberName,interface,stateinterface,membership,penalty,callstaken,lastcall,lastpause,incall,status,paused,pausedreason,ringinuse,wrapuptime) values (:agentID,:agent_status,:queue_name,:loginTime,GETDATE(),:queue,:MemberName,:interface,:stateinterface,:membership,:penalty,:callstaken,:lastcall,:lastpause,:incall,:status,:paused,:pausedreason,:ringinuse,:wrapuptime)";
+	public static final String INSERT_QUEUE_AGENT_DET = "insert into appointment_remainder.new_agent_status_det (agentID,agent_status,queue_name,loginTime,rec_upt_date,MemberName,interface,stateinterface,membership,penalty,callstaken,lastcall,lastpause,incall,paused,pausedreason,ringinuse,wrapuptime) values (:agentID,:agent_status,:queue_name,:loginTime,GETDATE(),:member,:interface,:stateinterface,:membership,:penalty,:callstaken,:lastcall,:lastpause,:incall,:paused,:pausedreason,:ringinuse,:wrapuptime)";
+	
+	public static final String UPDATE_QUEUE_AGENT_DET = "update appointment_remainder.new_agent_status_det set agent_status=:agent_status,queue_name=:queue_name,loginTime=:loginTime,rec_upt_date=GETDATE() where agentID=:agentID";
 
+	public static final String GET_AVAIL_AGENT_FROM_QUEUE ="select top(1) agentID from [appointment_remainder_db].[appointment_remainder].[new_agent_status_det]  where [agent_status]='1'  and queue_name=:queue order by rec_upt_date";
+	public static final String GET_COUNT_AVAIL_AGENT_FROM_QUEUE ="select  count(*) from [appointment_remainder_db].[appointment_remainder].[new_agent_status_det]  where [agent_status]='1'  and queue_name=:queue";
+	
+	
 }
 

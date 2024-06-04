@@ -10,6 +10,8 @@ import org.asteriskjava.live.MeetMeUser;
 import org.asteriskjava.manager.ManagerConnection;
 import org.asteriskjava.manager.ManagerEventListener;
 import org.asteriskjava.manager.event.ManagerEvent;
+import org.asteriskjava.manager.event.QueueMemberEvent;
+import org.asteriskjava.manager.event.QueueMemberStatusEvent;
 import org.asteriskjava.manager.event.UserEvent;
 import org.asteriskjava.manager.action.StatusAction;
 import org.slf4j.Logger;
@@ -63,7 +65,7 @@ public class AsteriskConn implements ManagerEventListener,AsteriskServerListener
 	}
 
 
-	@Override
+	/*@Override
 	public void onManagerEvent(ManagerEvent event) {
 		if(event instanceof UserEvent) {
 			logger.info("Event :"+event.toString());
@@ -78,8 +80,29 @@ public class AsteriskConn implements ManagerEventListener,AsteriskServerListener
 			}else if(event instanceof callhangupEvent) {
 				callhangupEvent callhang=(callhangupEvent) event;
 				asteriskService.updateActiveContDetails(userEvent);
+			}else if(event instanceof QueueMemberEvent) {
+				logger.info("QueueMemberEvent Invoked");
+				QueueMemberEvent queueMemEvent=(QueueMemberEvent) event;
+				asteriskService.updateQueueMemEvent(queueMemEvent);
+			}else if(event instanceof QueueMemberStatusEvent) {
+				logger.info("QueueMember Status Event Invoked");
+			//	asteriskService.handleQueueMemberStatusEvent((QueueMemberStatusEvent) event);
+				//QueueMemberStatusEvent queStatusEvent=(QueueMemberStatusEvent) event;
+				QueueMemberStatusEvent queueMemberStatusEvent = (QueueMemberStatusEvent) event;
+	            // Handle QueueMemberStatusEvent
+	            asteriskService.handleQueueMemberStatusEvent(queueMemberStatusEvent);
 			}
 		}
+	}*/
+
+	@Override
+	public void onManagerEvent(ManagerEvent event) {
+	    logger.info("Received event: {}", event);
+	    if (event instanceof QueueMemberStatusEvent) {
+	        logger.info("Received QueueMemberStatusEvent");
+	        QueueMemberStatusEvent queueMemberStatusEvent = (QueueMemberStatusEvent) event;
+	        asteriskService.handleQueueMemberStatusEvent(queueMemberStatusEvent);
+	    }
 	}
 
 
