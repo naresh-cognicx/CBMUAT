@@ -37,4 +37,6 @@ public interface AgentService {
     List<AgentInteractionRequest> getAgentInteractionList(String agentId);
 
     String updateDispositonInagentInteraction(String sipId, String disposition);
+    AgentActivityRequest saveAgentActToInteraction(AgentActivityRequest activityDetails);
+
 }
