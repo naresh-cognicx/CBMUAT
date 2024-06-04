@@ -181,6 +181,26 @@ public class AgentController {
        }
         return response;
     }
+    @PostMapping("/activity")
+    public GenericAgentResponse<AgentActivityRequest> SaveAgentActivitytoInteractiontable(@RequestBody AgentActivityRequest activityDetails) {
+        GenericAgentResponse<AgentActivityRequest> response = new GenericAgentResponse<>();
+        try {
+            AgentActivityRequest agentActivity = new AgentActivityRequest();
+            agentActivity = agentService.saveAgentActToInteraction(activityDetails);
+            response.setStatus(Response.Status.OK);
+            response.setData(agentActivity);
+            response.setStatusCode(200);
+            response.setMessage("Activity updated in agent interaction table");
+        } catch (ApplicationException e) {
+            logger.error("{}:activity:ApplicationException:", activityDetails, e);
+            response.setErrorMessages(Arrays.asList(e.getMessage()));
+            response.setStatus(Response.Status.BAD_REQUEST);
+        } catch (Exception e) {
+            logger.error("{}:activity:Exception:", activityDetails, e);
+            throw new RuntimeException(e);
+        }
+        return response;
+    }
 
   /*  @PostMapping("/createCustomer")
     public GenericAgentResponse<CustomerRequest> createCustomer(@RequestBody CustomerRequest customerRequest){

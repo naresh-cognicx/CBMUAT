@@ -15,4 +15,5 @@ public interface AgentDao {
    List<AgentInteractionRequest> getAgentInteractionList(String agentId);
    String updateDispositonInagentInteraction(String sipId,String disposition);
    List<AgentInteractionRequest> getAllAgentInteractionList();
+    AgentActivityRequest saveAgentActToInteraction(AgentActivityRequest agentActivityRequest);
 }
