@@ -92,7 +92,8 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 					List<String> allowedUrls = Arrays.asList("/api/token/authenticate", "/user/usersList", "/api/login",
 							"/api/logout", "/api/forgetpassword/request", "/api/forgetpassword/reset",
 							"/api/forgetpassword/validateOTP", "/v2/api-docs", "/configuration", "/swagger",
-							"/webjars","/api/changepassword","/campaign/updateCallDetail","/agent/createCallSchedule");
+							"/webjars","/api/changepassword","/campaign/updateCallDetail");
+
 					if (allowedUrls.contains(request.getServletPath())) {
 						filterChain.doFilter(request, response);
 					} else if (whiteListedIPList.isEmpty()) {

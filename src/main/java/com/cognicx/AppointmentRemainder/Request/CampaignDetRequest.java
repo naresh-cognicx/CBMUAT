@@ -27,7 +27,11 @@ public class CampaignDetRequest {
 	private String dispositionID;
 	private String frontstatus;
 	private String userGroup;
+
 	private String Dailingoption;
+
+	private String previewOption;
+
 
 	private List<CampaignWeekDetRequest> weekDaysTime;
 
@@ -42,6 +46,15 @@ public class CampaignDetRequest {
 	public void setUserGroup(String userGroup) {
 		this.userGroup = userGroup;
 	}
+
+	public String getPreviewOption() {
+		return previewOption;
+	}
+
+	public void setPreviewOption(String previewOption) {
+		this.previewOption = previewOption;
+	}
+
 
 	public void setDailingMode(String dailingMode) {
 		DailingMode = dailingMode;

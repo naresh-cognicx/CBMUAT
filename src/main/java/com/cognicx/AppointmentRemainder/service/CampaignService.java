@@ -137,9 +137,11 @@ public interface CampaignService {
 	// List<DynamicContactDetDto> getPreviewAgentBasedContactDetail(String agent_userid);
 	  Map<String,List<DynamicContactDetDto>> getAgentBasedContactDetail(String campaign_id);
 	  Map<String,List<DynamicContactDetDto>> getPreviewAgentBasedContactDetail(String agent_userid);
+
 	  Map<String,List<DynamicContactDetDto>> getSupervisorAgentContactDet(String Supervisor);
 	  
 	  String getExtn();
 
     DynamicContactDetDto getCustomerDetail(String customerNumber);
 }
+

@@ -20,7 +20,9 @@ public interface UserManagementDao {
 	 List<Object[]> getRTAgentDetail();
 	 /* Added on 16th March 2024 */
 	 Optional<UserDto> findByUsername(String username) throws Exception;
+
 	 String getUserGroupType(String groupname);
+
 	 
 	 List<Object[]> getAgentDetail(String userID);
 	 boolean validateUserId(UserManagementDetRequest userDetRequest) throws Exception;

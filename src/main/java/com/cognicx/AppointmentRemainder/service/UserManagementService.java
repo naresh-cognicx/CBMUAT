@@ -30,5 +30,7 @@ public interface UserManagementService {
     ResponseEntity<GenericResponse> getAgentDetail() ;
     List<UserManagementDetRequest> getAgentDetList() throws Exception;
 
+
     String getUserGroupType(String usergroupName);
+
 }

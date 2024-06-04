@@ -90,6 +90,7 @@ public class SkillsetRequest {
 	public void setSkillName(String skillName) {
 		this.skillName = skillName;
 	}
+
 	
 	public String getDisposition() {
 		return Disposition;
@@ -97,6 +98,7 @@ public class SkillsetRequest {
 	public void setDisposition(String disposition) {
 		Disposition = disposition;
 	}
+
 	public String getLanguage() {
 		return Language;
 	}

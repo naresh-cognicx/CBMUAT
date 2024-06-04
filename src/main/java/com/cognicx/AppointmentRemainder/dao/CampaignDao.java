@@ -180,7 +180,9 @@ public interface CampaignDao {
 	//Map<String, List<DynamicContactDetDto>> getPreviewAgentBasedContactDetail(Map<String,String> mapDynamicFields,String agent_userid);
 	//List<DynamicContactDetDto> getPreviewAgentBasedContactDetail(Map<String,String> mapDynamicFields,String agent_userid);
 	boolean updateAssignedAgentDynamicContact(String actionId, String agent_userid, String campaign_id,String customer_mobile_number);
+
 	Map<String, List<DynamicContactDetDto>> getSupervisorAgentContactDet(Map<String, String> mapDynamicFields,String supervisor);
 
 	DynamicContactDetDto getCustomerDetail(String customerNumber);
+
 }

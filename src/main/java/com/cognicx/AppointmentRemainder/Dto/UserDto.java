@@ -72,7 +72,16 @@ public class UserDto {
 	private String skillSet;
 	private String disposition;
 	private String usergrouptype;
-	
+	private String agentStatus;
+
+	public String getAgentStatus() {
+		return agentStatus;
+	}
+
+	public void setAgentStatus(String agentStatus) {
+		this.agentStatus = agentStatus;
+	}
+
 
 	public UserDto() {
 	}
@@ -514,6 +523,8 @@ public class UserDto {
 		this.confirmPassword = confirmPassword;
 	}
 
+
+
 	@Override
 	public String toString() {
 		return "UserDto{" +
@@ -567,5 +578,6 @@ public class UserDto {
 				", disposition='" + disposition + '\'' +
 				", usergrouptype='" + usergrouptype + '\'' +
 				'}';
+
 	}
 }

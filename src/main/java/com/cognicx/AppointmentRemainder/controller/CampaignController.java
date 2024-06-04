@@ -22,8 +22,11 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
+
 import com.cognicx.AppointmentRemainder.Request.*;
 import com.cognicx.AppointmentRemainder.service.AgentService;
+
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -54,6 +57,15 @@ import com.cognicx.AppointmentRemainder.Dto.DncContactDto;
 import com.cognicx.AppointmentRemainder.Dto.DynamicContactDetDto;
 import com.cognicx.AppointmentRemainder.Dto.SurveyContactDetDto;
 import com.cognicx.AppointmentRemainder.Dto.UploadHistoryDto;
+
+import com.cognicx.AppointmentRemainder.Request.CampaignDetRequest;
+import com.cognicx.AppointmentRemainder.Request.CampaignRealTimeDashboard;
+import com.cognicx.AppointmentRemainder.Request.CampaignStatus;
+import com.cognicx.AppointmentRemainder.Request.CampaignWeekDetRequest;
+import com.cognicx.AppointmentRemainder.Request.DNCDetRequest;
+import com.cognicx.AppointmentRemainder.Request.ReportRequest;
+import com.cognicx.AppointmentRemainder.Request.UpdateAutoCallRequest;
+import com.cognicx.AppointmentRemainder.Request.UpdateCallDetRequest;
 import com.cognicx.AppointmentRemainder.response.GenericResponse;
 import com.cognicx.AppointmentRemainder.response.GenericResponseReport;
 import com.cognicx.AppointmentRemainder.service.CampaignService;
@@ -111,6 +123,7 @@ public class CampaignController {
 	private LicenseUtil licenseUtil;
 
 	private LocalDate expireDate;
+
 	private static final List<String> remListforRetry = new CopyOnWriteArrayList<>();
 	private static final List<String> newRemList = new CopyOnWriteArrayList<>();
 
@@ -160,32 +173,33 @@ public class CampaignController {
 							stream = sftpChannel.get(campaignDetRequest.getFileName());
 						} catch (SftpException e) {
 							logger.error("SftpException occurred in Retriving" + campaignDetRequest.getFileName()
-							+ "file from SFTP");
+									+ "file from SFTP");
 							isFileFound = false;
 						} catch (Exception e) {
 							logger.error("Exception occurred in Retriving" + campaignDetRequest.getFileName()
-							+ "file from SFTP");
+									+ "file from SFTP");
 							isFileFound = false;
 						}
 					} else {
 						stream = null;
 					}
 					if (isFileFound) {
-						
-						
+
+
 						BigInteger historyId = getUploadHistoryid(campaignDetRequest, fileName);
-						
-						  List<ContactDetDto> contactDetList = csvToData(stream, historyId, isFTP,
-						  fileDirectory, fileTimestamp, failureDirectory, campaignDetList, new
-						  ArrayList<>(), "", ""); logger.info("****Converted CSV DATA to Object****");
-						  if (stream != null) stream.close();
-						  logger.info("****Inserting contact details to DB Table****"); for
-						  (ContactDetDto contactDetDto : contactDetList) {
-						  campaignService.createContact(contactDetDto); }
-						 
-						
-						
-						
+
+						List<ContactDetDto> contactDetList = csvToData(stream, historyId, isFTP,
+								fileDirectory, fileTimestamp, failureDirectory, campaignDetList, new
+										ArrayList<>(), "", "");
+						logger.info("****Converted CSV DATA to Object****");
+						if (stream != null) stream.close();
+						logger.info("****Inserting contact details to DB Table****");
+						for
+						(ContactDetDto contactDetDto : contactDetList) {
+							campaignService.createContact(contactDetDto);
+						}
+
+
 						String[] file = fileName.split("\\.");
 						if (sftpChannel != null) {
 							sftpChannel.rename(fileName, file[0] + "_" + fileTimestamp + "." + file[1]);
@@ -262,7 +276,7 @@ public class CampaignController {
 							//							}
 						} else {
 							logger.info("In ftp Fileupload:: expected file '" + campaignDetRequest.getFileName()
-							+ "' is not there");
+									+ "' is not there");
 							client.disconnect();
 						}
 
@@ -297,8 +311,8 @@ public class CampaignController {
 	}
 
 	private static List<ContactDetDto> csvToData(InputStream is, BigInteger historyId, String isFTP,
-			String fileDirectory, String fileTimestamp, String failureDirectory,
-			List<CampaignDetRequest> campaignDetList, List<ContactDetDto> failureList, String campaignId, String campaignName) {
+												 String fileDirectory, String fileTimestamp, String failureDirectory,
+												 List<CampaignDetRequest> campaignDetList, List<ContactDetDto> failureList, String campaignId, String campaignName) {
 		List<ContactDetDto> contactList = null;
 		CSVPrinter csvPrinter = null;
 		CSVParser csvParser = null;
@@ -359,10 +373,9 @@ public class CampaignController {
 	}
 
 
-
-	public  List<DynamicContactDetDto> dynamiccsvToData(InputStream is, BigInteger historyId, String isFTP,
-			String fileDirectory, String fileTimestamp, String failureDirectory,
-			List<CampaignDetRequest> campaignDetList, List<DynamicContactDetDto> failureList, String campaignId, String campaignName) {
+	public List<DynamicContactDetDto> dynamiccsvToData(InputStream is, BigInteger historyId, String isFTP,
+													   String fileDirectory, String fileTimestamp, String failureDirectory,
+													   List<CampaignDetRequest> campaignDetList, List<DynamicContactDetDto> failureList, String campaignId, String campaignName) {
 		List<DynamicContactDetDto> dynamiccontactList = null;
 		CSVPrinter csvPrinter = null;
 		CSVParser csvParser = null;
@@ -380,40 +393,40 @@ public class CampaignController {
 			dynamiccontactList = new ArrayList<>();
 			// failureList = new ArrayList<>();
 			Iterable<CSVRecord> csvRecords = csvParser.getRecords();
-			logger.info("Header Names :"+csvParser.getHeaderMap());
-			List<String> headerNames=csvParser.getHeaderNames();
-			
-			String[] arrstaticFields=staticFields.split("\\|");
-			List<String> listStaticFields=null;
-			
-			if(arrstaticFields!=null) {
-				listStaticFields=Arrays.asList(arrstaticFields);
+			logger.info("Header Names :" + csvParser.getHeaderMap());
+			List<String> headerNames = csvParser.getHeaderNames();
+
+			String[] arrstaticFields = staticFields.split("\\|");
+			List<String> listStaticFields = null;
+
+			if (arrstaticFields != null) {
+				listStaticFields = Arrays.asList(arrstaticFields);
 			}
-			
-			
+
+
 			for (CSVRecord csvRecord : csvRecords) {
 				reason = new StringBuilder();
-				DynamicContactDetDto dynacontactDet=new DynamicContactDetDto();
+				DynamicContactDetDto dynacontactDet = new DynamicContactDetDto();
 				dynacontactDet.setCampaignId(campaignId);
 				dynacontactDet.setCampaignName(campaignName);
 				//dynacontactDet.setSubskill_set(csvRecord.get("Sub Skillset"));
 				dynacontactDet.setCustomerMobileNumber(csvRecord.get("CUST_MOBILE_NUMBER"));
 
 				//logger.info("Sub Skill Set : "+csvRecord.get("Sub Skillset"));
-				logger.info("static field : "+staticFields);
-				logger.info("dynamic contact det :: " +dynacontactDet.toString());
-			//	Iterator<String> it=csvRecord.iterator();
-				Map<String,String> mapDynamicValues=new LinkedHashMap();
-				
-				for(String header:headerNames) {
-					if(listStaticFields==null || !listStaticFields.contains(header)) {
-						mapDynamicValues.put(header,csvRecord.get(header));
+				logger.info("static field : " + staticFields);
+				logger.info("dynamic contact det :: " + dynacontactDet.toString());
+				//	Iterator<String> it=csvRecord.iterator();
+				Map<String, String> mapDynamicValues = new LinkedHashMap();
+
+				for (String header : headerNames) {
+					if (listStaticFields == null || !listStaticFields.contains(header)) {
+						mapDynamicValues.put(header, csvRecord.get(header));
 					}
 				}
 				dynacontactDet.setMapDynamicFields(mapDynamicValues);
 				// contactDet.setContactId(csvRecord.get("contact_id"));
 				dynacontactDet.setHistoryId(historyId);
-				logger.info("Dynamic Contacts :"+dynacontactDet.getMapDynamicFields()+" :: Campaign ID "+dynacontactDet.getCampaignId());
+				logger.info("Dynamic Contacts :" + dynacontactDet.getMapDynamicFields() + " :: Campaign ID " + dynacontactDet.getCampaignId());
 				dynamiccontactList.add(dynacontactDet);
 				/*
 				 * if (validateFileData(csvRecord, reason, campaignDetList, dynacontactDet)) {
@@ -426,11 +439,10 @@ public class CampaignController {
 			if (!failureList.isEmpty()) {
 				// csvPrinter = failureCsvData(fileTimestamp, failureList, failureDirectory);
 			}
-		}  
-		catch (IOException e) {
+		} catch (IOException e) {
 			logger.error("fail to parse CSV file: " + e.getMessage());
-		}catch (Exception e) {
-			StringWriter str=new StringWriter();
+		} catch (Exception e) {
+			StringWriter str = new StringWriter();
 			e.printStackTrace();
 			logger.error("fail to parse CSV file: " + str.toString());
 		} finally {
@@ -447,12 +459,11 @@ public class CampaignController {
 	}
 
 
-
 	private static CSVPrinter failureCsvData(String fileTimestamp, List<ContactDetDto> failureList,
-			String failureDirectory) throws IOException {
+											 String failureDirectory) throws IOException {
 		CSVPrinter csvPrinter;
-		List<String> headerlist = new ArrayList<>(Arrays.asList("campaign id", "campaign name", 
-				"CUST_MOBILE_NUMBER",  "reason"));
+		List<String> headerlist = new ArrayList<>(Arrays.asList("campaign id", "campaign name",
+				"CUST_MOBILE_NUMBER", "reason"));
 		//        List<String> headerlist = new ArrayList<>(Arrays.asList("campaign id", "campaign name", "subskill_set",
 		//                "language", "customer_mobile_number", "reason"));
 		final CSVFormat format = CSVFormat.DEFAULT.withHeader(headerlist.toArray(new String[0]));
@@ -461,9 +472,9 @@ public class CampaignController {
 
 		for (ContactDetDto contactDet : failureList) {
 			csvPrinter
-			.printRecord(new ArrayList<>(Arrays.asList(contactDet.getCampaignId(), contactDet.getCampaignName(),
-					contactDet.getLastFourDigits(), contactDet.getCustomerMobileNumber(), contactDet.getTotalDue(),
-					contactDet.getMinPayment(), contactDet.getDueDate(), contactDet.getFailureReason())));
+					.printRecord(new ArrayList<>(Arrays.asList(contactDet.getCampaignId(), contactDet.getCampaignName(),
+							contactDet.getLastFourDigits(), contactDet.getCustomerMobileNumber(), contactDet.getTotalDue(),
+							contactDet.getMinPayment(), contactDet.getDueDate(), contactDet.getFailureReason())));
 		}
 		csvPrinter.flush();
 		return csvPrinter;
@@ -504,7 +515,7 @@ public class CampaignController {
 	 */
 
 	private static boolean validateFileData(CSVRecord csvRecord, StringBuilder reason,
-			List<CampaignDetRequest> campaignDetList, ContactDetDto contactDet) {
+											List<CampaignDetRequest> campaignDetList, ContactDetDto contactDet) {
 		boolean isValid = true;
 		/*
 		 * if (csvRecord.get("Last 4 Digits") == null ||
@@ -524,7 +535,8 @@ public class CampaignController {
 		 * reason.append("Minimum Payment is missing;"); isValid = false; } if
 		 * (csvRecord.get("Due Date") == null && csvRecord.get("Due Date").isEmpty()) {
 		 * reason.append("Due Date is missing;"); isValid = false; }
-		 */else {
+		 */
+		else {
 			try {
 				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(csvRecord.get("Due Date"));
 			} catch (Exception e) {
@@ -533,7 +545,7 @@ public class CampaignController {
 			}
 		}
 
-		
+
 		if (!isValid)
 			logger.info("validateFileData : " + reason);
 		return isValid;
@@ -968,7 +980,8 @@ public class CampaignController {
 																retryCallCount++;
 															}
 														}
-														logger.info("InProgress Count for Retry list : "+retryCallCount);
+														logger.info("InProgress Count for Retry list : " + retryCallCount);
+
 													} catch (Exception e) {
 														logger.error("Error on process call api " + e.getMessage());
 													}
@@ -1016,7 +1029,10 @@ public class CampaignController {
 																		isValidCount++;
 																		//                                                                if (campaignService.checkContactIsHangUp(surveyContactDetDto.getActionId(), surveyContactDetDto.getPhone())) {
 																	}
-																	logger.info("InProgress Count for New list : "+isValidCount);
+
+																	logger.info("InProgress Count for New list : " + isValidCount);
+
+
 																}
 																//                                                        }
 															} catch (Exception e) {
@@ -1060,8 +1076,8 @@ public class CampaignController {
 
 	private boolean validContact(Date campaignStartdate, Date campaignEndDate, Date weekStartDate, Date
 			weekEndDate, String weekDay, DateFormat dateformat, DateFormat dateTimeformat, Date currentDate, DateFormat
-			weekDayFormat, DateFormat time, DateFormat WeekDaytimeFormat, boolean isMaxAdvTime, SurveyContactDetDto surveycontDetDto, CampaignDetRequest
-			campaignDetRequest, long retryDifference) {
+										 weekDayFormat, DateFormat time, DateFormat WeekDaytimeFormat, boolean isMaxAdvTime, SurveyContactDetDto surveycontDetDto, CampaignDetRequest
+										 campaignDetRequest, long retryDifference) {
 		boolean isValid = false;
 		logger.info("Action Id : " + surveycontDetDto.getActionId() + " : call_status :: " + surveycontDetDto.getCall_status() + ", retry COunt :: " + surveycontDetDto.getRetryCount() + "Campaign Retry count : " + campaignDetRequest.getRetryCount() + ", Contact last retry time : " + surveycontDetDto.getRec_update_time() + ", Current time : " + currentDate);
 		try {
@@ -1100,7 +1116,7 @@ public class CampaignController {
 							if (weekStartDate != null && (WeekDaytimeFormat.parse(WeekDaytimeFormat.format(currentDate))
 									.after(weekStartDate))
 									&& weekEndDate != null && (WeekDaytimeFormat.parse(WeekDaytimeFormat.format(currentDate))
-											.before(weekEndDate))) {
+									.before(weekEndDate))) {
 								isValid = true;
 								logger.info(
 										"**** All Conditions are satisfied going to make call For the Action ID : " + surveycontDetDto.getActionId() + "****");
@@ -1147,8 +1163,8 @@ public class CampaignController {
 			campaignStatus.setCampaignId(campaignDetRequest.getCampaignId());
 			boolean campStatus = campaignService.getCampaignStatus(campaignStatus);
 			String frontCampStatus = null;
-			String dialingMode=campaignDetRequest.getDailingMode();
-			String dialingOption=campaignDetRequest.getDailingoption();
+			String dialingMode = campaignDetRequest.getDailingMode();
+			String dialingOption = campaignDetRequest.getDailingoption();
 			try {
 				frontCampStatus = campaignService.getFrontCampStatus(campaignStatus);
 			} catch (Exception e) {
@@ -1157,18 +1173,18 @@ public class CampaignController {
 			logger.info("New :: Campaign status :" + campStatus);
 			if (campStatus) {
 				if (frontCampStatus != null && frontCampStatus.equalsIgnoreCase("running")) {
-					
-					String request=null;
-					if(dialingOption!=null && dialingOption.equalsIgnoreCase("agentbased")) {
-						String agentExtn=campaignService.getExtn();
-						 request = getAgentBasedString(surveycontDetDto, campaignName, Queue, dateTimeformat,agentExtn);
-					}else {
-						 request = getString(surveycontDetDto, campaignName, Queue, dateTimeformat);	
+					String request = null;
+					if (dialingOption != null && dialingOption.equalsIgnoreCase("agentbased")) {
+						String agentExtn = campaignService.getExtn();
+						request = getAgentBasedString(surveycontDetDto, campaignName, Queue, dateTimeformat, agentExtn);
+					} else {
+						request = getString(surveycontDetDto, campaignName, Queue, dateTimeformat);
 					}
-					
+
 					String actionId = surveycontDetDto.getActionId();
 					logger.info("Campaign Name :" + campaignName + "It's Request :" + request);
-					
+
+					logger.info("Campaign Name :" + campaignName + "It's Request :" + request);
 					HttpResponse<String> response = Unirest.post(callApiAutoCall)
 							.header("Content-Type", "application/json")
 							.body(request)
@@ -1176,8 +1192,6 @@ public class CampaignController {
 					logger.info("**** Inside Thread API Thread API response****");
 					logger.info("OutBound API Response :" + response.getBody());
 					responseValue = response.getBody();
-					
-					
 				} else {
 					logger.info("Front Camp Status is in " + frontCampStatus + " state, hence not invoking API");
 				}
@@ -1193,12 +1207,7 @@ public class CampaignController {
 		}
 		return responseValue;
 	}
-	
-	
-	
-	
-	
-	
+
 
 	//    private void processCallApi(SurveyContactDetDto surveycontDetDto, String campaignName, String Queue) {
 	//        logger.info(
@@ -1256,39 +1265,37 @@ public class CampaignController {
 		Long dueUnixTime = dueDate.getTime() / 1000;
 
 		return "{\r\n    \"outcallerid\": \"044288407\",\r\n    \"siptrunk\": \"Avaya\",\r\n  "
-		+ "  \"phone\": \"" + surveycontDetDto.getPhone() + "\",\r\n   "
-		+ "\"language\": \"" + surveycontDetDto.getSurvey_Lang() + "\",\r\n "
-		+ "  \"productid\": \"" + productID + "\",\r\n   "
-		+ " \"amount\": \"" + surveycontDetDto.getMinPayment() + "\",\r\n    "
-		+ " \"last4digit\": \"" + surveycontDetDto.getLastFourDigits() + "\",\r\n "
-		+ "   \"duedate\": \"" + surveycontDetDto.getDueDate() + "\",\r\n   "
-		+ " \"campaingnname\": \"" + campaignName + "\",\r\n"
-		+ "  \"unixtime\": \"" + dueUnixTime + "\",\r\n    \"timezone\": \"GST\",\r\n    \"dialplan\": \"" + Queue + "\",\r\n   "
-		+ " \"actionid\": \"" + surveycontDetDto.getActionId() + "\"\r\n}";
+				+ "  \"phone\": \"" + surveycontDetDto.getPhone() + "\",\r\n   "
+				+ "\"language\": \"" + surveycontDetDto.getSurvey_Lang() + "\",\r\n "
+				+ "  \"productid\": \"" + productID + "\",\r\n   "
+				+ " \"amount\": \"" + surveycontDetDto.getMinPayment() + "\",\r\n    "
+				+ " \"last4digit\": \"" + surveycontDetDto.getLastFourDigits() + "\",\r\n "
+				+ "   \"duedate\": \"" + surveycontDetDto.getDueDate() + "\",\r\n   "
+				+ " \"campaingnname\": \"" + campaignName + "\",\r\n"
+				+ "  \"unixtime\": \"" + dueUnixTime + "\",\r\n    \"timezone\": \"GST\",\r\n    \"dialplan\": \"" + Queue + "\",\r\n   "
+				+ " \"actionid\": \"" + surveycontDetDto.getActionId() + "\"\r\n}";
 
 	}
-	
-	
-	
-	private static String getAgentBasedString(SurveyContactDetDto surveycontDetDto, String campaignName, String Queue, DateFormat dateTimeformat,String extn) throws ParseException {
+
+
+	private static String getAgentBasedString(SurveyContactDetDto surveycontDetDto, String campaignName, String Queue, DateFormat dateTimeformat, String extn) throws ParseException {
 		String productID = surveycontDetDto.getSurvey_Lang() + "_" + surveycontDetDto.getSubSkillset();
 		Date dueDate = dateTimeformat.parse(surveycontDetDto.getDueDate());
 		Long dueUnixTime = dueDate.getTime() / 1000;
-		
-		String data="{\r\n \"actionid\":\""+surveycontDetDto.getActionId()+"\",\r\n"
+
+		String data = "{\r\n \"actionid\":\"" + surveycontDetDto.getActionId() + "\",\r\n"
 				+ "\"outcallerid\":\"044288407\",\r\n"
 				+ "\"siptrunk\":\"Avaya\",\r\n"
 				+ "\"trunktype\":\"pjsip\",\r\n"
-				+ "\"phone\":\""+surveycontDetDto.getPhone()+"\",\r\n"
+				+ "\"phone\":\"" + surveycontDetDto.getPhone() + "\",\r\n"
 				+ "\"dialplan\":\"direct-customer\",\r\n"
-				+ "\"agent\":\""+extn+"\",\r\n"
+				+ "\"agent\":\"" + extn + "\",\r\n"
 				+ "\"callmode\":\"progressive\",\r\n"
 				+ "\"campaingnname\":\"progressive_data\",\r\n"
 				+ "}";
-		
+
 		return data;
 	}
-
 
 	@PostMapping("/createCampaign")
 	public ResponseEntity<GenericResponse> createCampaign(@RequestBody CampaignDetRequest campaignDetRequest)
@@ -1370,8 +1377,8 @@ public class CampaignController {
 	//    }
 	@PostMapping("/updateCallDetail")
 	public ResponseEntity<GenericResponse> updateCallDetail(@RequestBody UpdateAutoCallRequest
-			updateAutoCallRequest)
-					throws ParseException, JsonParseException, JsonMappingException, IOException {
+																	updateAutoCallRequest)
+			throws ParseException, JsonParseException, JsonMappingException, IOException {
 
 		logger.info("**********UPDATE CALL DETAILS INPUT**********");
 		UpdateCallDetRequest updateCallDetRequest = new UpdateCallDetRequest();
@@ -1391,18 +1398,18 @@ public class CampaignController {
 		updateCallDetRequest.setSurveyrating(updateCallDetRequest.getSurveyrating());
 		updateCallDetRequest.setCalltalktime(updateAutoCallRequest.getCalltalktime());
 		String actionID = updateAutoCallRequest.getActionid();
-		if(remListforRetry.contains(actionID)){
+		if (remListforRetry.contains(actionID)) {
 			remListforRetry.remove(actionID);
-			logger.info("This ActionId : {} is updated in database and remove from rem List for Retry",actionID);
-		}else {
-			logger.info("This Action Id not in retry contact list : {}",actionID);
+			logger.info("This ActionId : {} is updated in database and remove from rem List for Retry", actionID);
+		} else {
+			logger.info("This Action Id not in retry contact list : {}", actionID);
 		}
 
-		if(newRemList.contains(actionID)){
+		if (newRemList.contains(actionID)) {
 			newRemList.remove(actionID);
-			logger.info("This ActionId : {} is updated in database and remove from remove List for New",actionID);
-		}else {
-			logger.info("This Action Id not in New contact list : {}",actionID);
+			logger.info("This ActionId : {} is updated in database and remove from remove List for New", actionID);
+		} else {
+			logger.info("This Action Id not in New contact list : {}", actionID);
 		}
 
 		return campaignService.updateCallDetail(updateCallDetRequest);
@@ -1445,7 +1452,7 @@ public class CampaignController {
 	@PostMapping("/downloadsmsReport")
 	public ResponseEntity<InputStreamResource>
 	downloadsmsReport(@RequestBody ReportRequest reportRequest) throws
-	ParseException, JsonParseException, JsonMappingException, IOException {
+			ParseException, JsonParseException, JsonMappingException, IOException {
 		return campaignService.downloadsmsReport(reportRequest);
 	}
 
@@ -1478,74 +1485,75 @@ public class CampaignController {
 	@PostMapping("/deleteContactByHistory")
 	public ResponseEntity<GenericResponse> deleteContactByHistory(
 			@RequestBody UpdateCallDetRequest updateCallDetRequest)
-					throws ParseException, JsonParseException, JsonMappingException, IOException {
+			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		return campaignService.deleteContactByHistory(updateCallDetRequest);
 	}
+
 	@PostMapping("/uploadContactDetail")
-    public ResponseEntity<GenericResponse> uploadContactDetail(@RequestParam("file") MultipartFile file,
-                                                               @RequestParam(name = "campaignId", required = false) String campaignId,
-                                                               @RequestParam(name = "campaignName", required = false) String campaignName)
-            throws ParseException, JsonParseException, JsonMappingException, IOException {
-        String message = null;
-        CSVPrinter csvPrinter = null;
-        boolean isUploaded = true;
-        List<ContactDetDto> failureList = null;
-        if ("text/csv".equalsIgnoreCase(file.getContentType()) || file.getOriginalFilename().endsWith(".csv")) {
-            try {
-                failureList = new ArrayList<>();
-                CampaignDetRequest campaignDetRequest = new CampaignDetRequest();
-                campaignDetRequest.setCampaignId(campaignId);
-                campaignDetRequest.setCampaignName(campaignName);
-                List<CampaignDetRequest> campaignDetList = campaignService.getCampaignDetList("default");
-                BigInteger historyId = getUploadHistoryid(campaignDetRequest, file.getOriginalFilename());
-                List<ContactDetDto> contactDetList = csvToData(file.getInputStream(), historyId, isFTP, fileDirectory,
-                        new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()), failureDirectory, campaignDetList,
-                        failureList, campaignId, campaignName);
-                ContactDetDto commonDetail = contactDetList.stream()
-                        .filter(x -> campaignId.equalsIgnoreCase(x.getCampaignId())).findAny().orElse(null);
-                logger.info("****Converted CSV DATA to Object****");
-                if (contactDetList.isEmpty()) {
-                    message = "Upload failed! Invalid data or Contact details already exist for same Appointment date and time ";
-                    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
-                            .body(new GenericResponse(message, "Failed"));
-                }
-                if (commonDetail != null) {
-                    List<String> dncList = null;
-                    String dncID = campaignService.getDNCIDusingCampaignID(campaignId);
-                    logger.info("Dnc ID : " + dncID);
-                    if (dncID != null) {
-                        dncList = campaignService.getDNSDetList(dncID);
-                        logger.info("Dnc list : " + dncList);
-                    }
-                    logger.info("****Inserting contact details to DB Table****");
+	public ResponseEntity<GenericResponse> uploadContactDetail(@RequestParam("file") MultipartFile file,
+															   @RequestParam(name = "campaignId", required = false) String campaignId,
+															   @RequestParam(name = "campaignName", required = false) String campaignName)
+			throws ParseException, JsonParseException, JsonMappingException, IOException {
+		String message = null;
+		CSVPrinter csvPrinter = null;
+		boolean isUploaded = true;
+		List<ContactDetDto> failureList = null;
+		if ("text/csv".equalsIgnoreCase(file.getContentType()) || file.getOriginalFilename().endsWith(".csv")) {
+			try {
+				failureList = new ArrayList<>();
+				CampaignDetRequest campaignDetRequest = new CampaignDetRequest();
+				campaignDetRequest.setCampaignId(campaignId);
+				campaignDetRequest.setCampaignName(campaignName);
+				List<CampaignDetRequest> campaignDetList = campaignService.getCampaignDetList("default");
+				BigInteger historyId = getUploadHistoryid(campaignDetRequest, file.getOriginalFilename());
+				List<ContactDetDto> contactDetList = csvToData(file.getInputStream(), historyId, isFTP, fileDirectory,
+						new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()), failureDirectory, campaignDetList,
+						failureList, campaignId, campaignName);
+				ContactDetDto commonDetail = contactDetList.stream()
+						.filter(x -> campaignId.equalsIgnoreCase(x.getCampaignId())).findAny().orElse(null);
+				logger.info("****Converted CSV DATA to Object****");
+				if (contactDetList.isEmpty()) {
+					message = "Upload failed! Invalid data or Contact details already exist for same Appointment date and time ";
+					return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+							.body(new GenericResponse(message, "Failed"));
+				}
+				if (commonDetail != null) {
+					List<String> dncList = null;
+					String dncID = campaignService.getDNCIDusingCampaignID(campaignId);
+					logger.info("Dnc ID : " + dncID);
+					if (dncID != null) {
+						dncList = campaignService.getDNSDetList(dncID);
+						logger.info("Dnc list : " + dncList);
+					}
+					logger.info("****Inserting contact details to DB Table****");
 
-                    CampaignStatus campaignStatus = new CampaignStatus();
-                    campaignStatus.setCampaignId(campaignDetRequest.getCampaignId());
-                    String status = campaignService.getFrontCampStatus(campaignStatus);
-                    if (status.equalsIgnoreCase("Completed") || status.equalsIgnoreCase("Stop")) {
-                        campaignService.updateNTCStatus(campaignDetRequest.getCampaignId());
-                    } else {
-                        logger.info("NO UpdateNTC status is required");
-                    }
-                    for (ContactDetDto contactDetDto : contactDetList) {
-                        if (dncList != null && dncList.contains(contactDetDto.getCustomerMobileNumber())) {
-                            contactDetDto.setCallStatus("DNC");
+					CampaignStatus campaignStatus = new CampaignStatus();
+					campaignStatus.setCampaignId(campaignDetRequest.getCampaignId());
+					String status = campaignService.getFrontCampStatus(campaignStatus);
+					if (status.equalsIgnoreCase("Completed") || status.equalsIgnoreCase("Stop")) {
+						campaignService.updateNTCStatus(campaignDetRequest.getCampaignId());
+					} else {
+						logger.info("NO UpdateNTC status is required");
+					}
+					for (ContactDetDto contactDetDto : contactDetList) {
+						if (dncList != null && dncList.contains(contactDetDto.getCustomerMobileNumber())) {
+							contactDetDto.setCallStatus("DNC");
 //							isUploaded = campaignService.createContact(contactDetDto);
-                            logger.info("**** This contact is in DNC List :" + contactDetDto.getCustomerMobileNumber() + "Hence setting status as DNC****");
-                        } else {
-                            contactDetDto.setCallStatus("NEW");
-                        }
+							logger.info("**** This contact is in DNC List :" + contactDetDto.getCustomerMobileNumber() + "Hence setting status as DNC****");
+						} else {
+							contactDetDto.setCallStatus("NEW");
+						}
 
-                        isUploaded = campaignService.createContact(contactDetDto);
+						isUploaded = campaignService.createContact(contactDetDto);
 
-                        if (!isUploaded) {
-                            contactDetDto.setFailureReason(
-                                    "Contact details already exist for same Appointment Date and Time");
-                            failureList.add(contactDetDto);
-                        }
+						if (!isUploaded) {
+							contactDetDto.setFailureReason(
+									"Contact details already exist for same Appointment Date and Time");
+							failureList.add(contactDetDto);
+						}
 
-                    }
-                    message = "Uploaded the file successfully: " + file.getOriginalFilename();
+					}
+					message = "Uploaded the file successfully: " + file.getOriginalFilename();
 //				if (commonDetail != null) {
 //					logger.info("****Inserting contact details to DB Table****");
 //					for (ContactDetDto contactDetDto : contactDetList) {
@@ -1563,46 +1571,46 @@ public class CampaignController {
 //						}
 //					}
 //					message = "Uploaded the file successfully: " + file.getOriginalFilename();
-                    campaignService.updateCampaignStatusUploadContact(campaignId);
-                    logger.info(message);
-                    logger.info(failureList.toString());
-                    if (!failureList.isEmpty()) {
-                        csvPrinter = failureCsvData(new SimpleDateFormat("yyyy-MM-dd-hhmmss").format(new Date()),
-                                failureList, failureDirectory);
-                        message = "One or more Contacts not uploaded due to some invalid data!";
-                        logger.info(message);
-                    }
-                    logger.info("2");
-                    return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(message, "Success"));
-                } else if (commonDetail == null && !contactDetList.isEmpty()) {
-                    message = "Upload failed. Identified incorrect Campaign id, expected Id is " + campaignId;
-                    logger.info(message);
-                    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
-                            .body(new GenericResponse(message, "Failed"));
-                }
-            } catch (Exception e) {
-                message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-                logger.error("Error occured in uploadContactDetail:: " + e.getMessage());
-                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
-                        .body(new GenericResponse(message, "Failed"));
-            } finally {
-                if (csvPrinter != null)
-                    csvPrinter.close();
-            }
-        }
+					campaignService.updateCampaignStatusUploadContact(campaignId);
+					logger.info(message);
+					logger.info(failureList.toString());
+					if (!failureList.isEmpty()) {
+						csvPrinter = failureCsvData(new SimpleDateFormat("yyyy-MM-dd-hhmmss").format(new Date()),
+								failureList, failureDirectory);
+						message = "One or more Contacts not uploaded due to some invalid data!";
+						logger.info(message);
+					}
+					logger.info("2");
+					return ResponseEntity.status(HttpStatus.OK).body(new GenericResponse(message, "Success"));
+				} else if (commonDetail == null && !contactDetList.isEmpty()) {
+					message = "Upload failed. Identified incorrect Campaign id, expected Id is " + campaignId;
+					logger.info(message);
+					return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+							.body(new GenericResponse(message, "Failed"));
+				}
+			} catch (Exception e) {
+				message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+				logger.error("Error occured in uploadContactDetail:: " + e.getMessage());
+				return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+						.body(new GenericResponse(message, "Failed"));
+			} finally {
+				if (csvPrinter != null)
+					csvPrinter.close();
+			}
+		}
 
-        message = "Please upload a csv file!";
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).
+		message = "Please upload a csv file!";
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).
 
-                body(new GenericResponse(message, "Failed"));
-    }
+				body(new GenericResponse(message, "Failed"));
+	}
 
 
 	@PostMapping("/dynamicuploadContactDetail")
 	public ResponseEntity<GenericResponse> dynamicuploadContactDetail(@RequestParam("file") MultipartFile file,
-			@RequestParam(name = "campaignId", required = false) String campaignId,
-			@RequestParam(name = "campaignName", required = false) String campaignName)
-					throws ParseException, JsonParseException, JsonMappingException, IOException {
+																	  @RequestParam(name = "campaignId", required = false) String campaignId,
+																	  @RequestParam(name = "campaignName", required = false) String campaignName)
+			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		String message = null;
 		CSVPrinter csvPrinter = null;
 		boolean isUploaded = true;
@@ -1628,8 +1636,8 @@ public class CampaignController {
 						failureList, campaignId, campaignName);
 				DynamicContactDetDto commonDetail = dynamiccontactDetList.stream()
 						.filter(x -> campaignId.equalsIgnoreCase(x.getCampaignId())).findAny().orElse(null);
-				
-				
+
+
 				logger.info("****Converted CSV DATA to Object****");
 				if (dynamiccontactDetList.isEmpty()) {
 					message = "Upload failed! Invalid data or Contact details already exist for same Appointment date and time ";
@@ -1889,9 +1897,9 @@ public class CampaignController {
 
 	@PostMapping("/uploadDncDetail")
 	public ResponseEntity<GenericResponse> uploadDNCDetail(@RequestParam("file") MultipartFile file,
-			@RequestParam(name = "dncid", required = false) String dncId,
-			@RequestParam(name = "dncName", required = false) String dncName)
-					throws ParseException, JsonParseException, JsonMappingException, IOException {
+														   @RequestParam(name = "dncid", required = false) String dncId,
+														   @RequestParam(name = "dncName", required = false) String dncName)
+			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		GenericResponse response = new GenericResponse();
 
 		CSVPrinter csvPrinters = null;
@@ -1964,7 +1972,7 @@ public class CampaignController {
 
 	private List<DncContactDto> csvToDataconverter(DNCDetRequest dncDetRequest, InputStream inputStream, BigInteger
 			historyId, List<DncContactDto> failureList, List<DNCDetRequest> dncDetRequestList, String dncId, String
-			dncName) {
+														   dncName) {
 		List<DncContactDto> contactList = new ArrayList<>();
 		CSVPrinter csvPrinter = null;
 		CSVParser csvParser = null;
@@ -2010,7 +2018,7 @@ public class CampaignController {
 	}
 
 	private static boolean validateFileDataDNC(CSVRecord csvRecord, StringBuilder reason,
-			List<DNCDetRequest> campaignDetList, DncContactDto contactDet) {
+											   List<DNCDetRequest> campaignDetList, DncContactDto contactDet) {
 		boolean isValid = true;
 
 		if (csvRecord.get("contactNumber") == null || csvRecord.get("contactNumber").isEmpty()) {
@@ -2028,7 +2036,7 @@ public class CampaignController {
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		return campaignService.getDummySurveyResponse();
 	}
-	
+
 	@GetMapping("/getDynamicContactDet")
 	public ResponseEntity<GenericResponse> getDynamicContactDet(@RequestParam String campaignId)
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
@@ -2259,31 +2267,34 @@ public class CampaignController {
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		return campaignService.stopCampaignStatus(campaignId, "Stop");
 	}
+
 	@PostMapping("/pauseCampaign")
 	public ResponseEntity<GenericResponse> pauseCampaign(@RequestParam String campaignId)
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		return campaignService.stopPauseCampaignStatus(campaignId, "Pause");
 	}
+
 	@PostMapping("/updateAgentDynamicContact")
-	public ResponseEntity<GenericResponse> updateAgentDynamicContact( @RequestBody List<DynamicContactDetDto> dynamiccontactDet)
+	public ResponseEntity<GenericResponse> updateAgentDynamicContact(@RequestBody List<DynamicContactDetDto> dynamiccontactDet)
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		logger.info("Updating Agent ans contact Detail");
 		return campaignService.updateAgentDynamicContact(dynamiccontactDet);
 	}
+
 	@PostMapping("/updateAssignedAgentDynamicContact")
-	public ResponseEntity<GenericResponse> updateAssignedAgentDynamicContact( @RequestBody List<DynamicContactDetDto> dynamiccontactDet)
+	public ResponseEntity<GenericResponse> updateAssignedAgentDynamicContact(@RequestBody List<DynamicContactDetDto> dynamiccontactDet)
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		logger.info("Updating Agent ans contact Detail");
 		return campaignService.updateAssignedAgentDynamicContact(dynamiccontactDet);
 	}
-	
+
 
 	@GetMapping("/getAgentBasedContactDetail")
 	public ResponseEntity<GenericResponse> getAgentBasedContactDetail(@RequestParam String campaignId)
-	throws ParseException, JsonParseException, JsonMappingException, IOException {
+			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		logger.info("Get agent based dynamic contact detail");
 		GenericResponse genericResponse = new GenericResponse();
-		 Map<String,List<DynamicContactDetDto>> mapcampaignDetList=null;
+		Map<String, List<DynamicContactDetDto>> mapcampaignDetList = null;
 		List<DynamicContactDetDto> campaignDetList = null;
 		try {
 			mapcampaignDetList = campaignService.getAgentBasedContactDetail(campaignId);
@@ -2320,10 +2331,10 @@ public class CampaignController {
 	 */
 	@GetMapping("/getPreviewAgentBasedContactDetail")
 	public ResponseEntity<GenericResponse> getPreviewAgentBasedContactDetail(@RequestParam String agent_userid)
-	throws ParseException, JsonParseException, JsonMappingException, IOException {
+			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		logger.info("Get agent based dynamic contact detail");
 		GenericResponse genericResponse = new GenericResponse();
-		 Map<String,List<DynamicContactDetDto>> mapcampaignDetList=null;
+		Map<String, List<DynamicContactDetDto>> mapcampaignDetList = null;
 		List<DynamicContactDetDto> campaignDetList = null;
 		try {
 			mapcampaignDetList = campaignService.getPreviewAgentBasedContactDetail(agent_userid);
@@ -2339,6 +2350,8 @@ public class CampaignController {
 
 		return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
 	}
+
+
 	@GetMapping("/getCustomerDetail")
 	public ResponseEntity<GenericResponse> getCustomerDetail(@RequestParam String customerNumber)
 			throws ParseException, JsonParseException, JsonMappingException, IOException {
@@ -2360,13 +2373,13 @@ public class CampaignController {
 
 		return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/getSupervisorAgentContactDet")
 	public ResponseEntity<GenericResponse> getPreviewSupervisorBasedContactDetail(@RequestParam String Supervisor)
-	throws ParseException, JsonParseException, JsonMappingException, IOException {
+			throws ParseException, JsonParseException, JsonMappingException, IOException {
 		logger.info("Get agent based dynamic contact detail");
 		GenericResponse genericResponse = new GenericResponse();
-		 Map<String,List<DynamicContactDetDto>> mapcampaignDetList=null;
+		Map<String, List<DynamicContactDetDto>> mapcampaignDetList = null;
 		List<DynamicContactDetDto> campaignDetList = null;
 		try {
 			mapcampaignDetList = campaignService.getSupervisorAgentContactDet(Supervisor);
@@ -2382,7 +2395,6 @@ public class CampaignController {
 
 		return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
 	}
-
 
 
 }

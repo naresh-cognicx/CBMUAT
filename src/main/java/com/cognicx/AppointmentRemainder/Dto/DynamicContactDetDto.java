@@ -4,8 +4,6 @@ import java.math.BigInteger;
 import java.util.Map;
 
 public class DynamicContactDetDto {
-
-	
 	private String contactId;
 	private String campaignId;
 	private String campaignName;
@@ -20,6 +18,7 @@ public class DynamicContactDetDto {
 	private BigInteger historyId;
 	private Map<String,String> mapDynamicFields;
 	private String agent_userid;
+
 	public String getAgent_userid() {
 		return agent_userid;
 	}
@@ -32,6 +31,7 @@ public class DynamicContactDetDto {
 	public void setMapDynamicFields(Map<String, String> mapDynamicFields) {
 		this.mapDynamicFields = mapDynamicFields;
 	}
+
 	public String getContactId() {
 		return contactId;
 	}
@@ -104,8 +104,5 @@ public class DynamicContactDetDto {
 	public void setHistoryId(BigInteger historyId) {
 		this.historyId = historyId;
 	}
-	
 
-	
-	
 }

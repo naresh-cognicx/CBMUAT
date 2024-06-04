@@ -164,7 +164,10 @@ public class CampaignServiceImpl implements CampaignService {
 				;
 				campaignDetRequest.setQueue(String.valueOf(obj[18]));
 				campaignDetRequest.setDispositionID(String.valueOf(obj[19]));
+
 				campaignDetRequest.setDailingoption(String.valueOf(obj[20]));
+
+				campaignDetRequest.setPreviewOption(String.valueOf(obj[20]));
 				if (campainWeekDetList != null && campainWeekDetList.containsKey(campaignDetRequest.getCampaignId()))
 					campaignDetRequest.setWeekDaysTime(campainWeekDetList.get(campaignDetRequest.getCampaignId()));
 				campaignDetList.add(campaignDetRequest);
@@ -215,6 +218,7 @@ public class CampaignServiceImpl implements CampaignService {
 				campaignDetRequest.setQueue(String.valueOf(obj[18]));
 				campaignDetRequest.setDispositionID(String.valueOf(obj[19]));
 				campaignDetRequest.setDailingoption(String.valueOf(obj[20]));
+
 				if (campainWeekDetList != null && campainWeekDetList.containsKey(campaignDetRequest.getCampaignId()))
 					campaignDetRequest.setWeekDaysTime(campainWeekDetList.get(campaignDetRequest.getCampaignId()));
 				campaignDetList.add(campaignDetRequest);
@@ -2325,6 +2329,7 @@ public class CampaignServiceImpl implements CampaignService {
 			}
 			Integer Totalcount = busyCount + answerCount + noAnswerCount + failedCount;
 			Integer Totalduration = (busyCount * 7) + (noAnswerCount * 15) + answerduration + (failedCount * 30);
+
 			mapETCDuration.put("TotalCount", Totalcount);
 			mapETCDuration.put("Totalduration", Totalduration);
 		} catch (Exception e) {
@@ -3086,7 +3091,6 @@ public class CampaignServiceImpl implements CampaignService {
 		}
 		return dynamicContListMap;
 	}
-
 
 	@Override
 	public  Map<String,List<DynamicContactDetDto>> getSupervisorAgentContactDet(String Supervisor) {

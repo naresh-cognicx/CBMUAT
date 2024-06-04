@@ -18,6 +18,7 @@ public class UserManagementDetRequest {
 	private String agent;
 
 	private List<SkillSetDetail> skillSetDetails;
+
 	private List<AgentDetail> agentDetails;
 
 	private String status;

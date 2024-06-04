@@ -26,8 +26,6 @@ public class UserPrinciple implements UserDetails {
 	private String status;
 	public String autogenUsersDetailsId;
 	private String usergroupName;
-	
-
 	private Set<Roles> roles = new HashSet<>();
 	private Collection<? extends GrantedAuthority> authorities;
 	private List<String> rolesList;
@@ -66,13 +64,6 @@ public class UserPrinciple implements UserDetails {
 		this.pbxExt = pbxExt;
 	}
 
-	public String getSkillSet() {
-		return skillSet;
-	}
-
-	public void setSkillSet(String skillSet) {
-		this.skillSet = skillSet;
-	}
 
 	public String getDisposition() {
 		return disposition;
@@ -88,6 +79,7 @@ public class UserPrinciple implements UserDetails {
 
 	public void setUsergrouptype(String usergrouptype) {
 		this.usergrouptype = usergrouptype;
+
 	}
 
 	public static UserPrinciple build(UserDto userDto) {
@@ -248,6 +240,13 @@ public class UserPrinciple implements UserDetails {
 
 	public void setUsergroupName(String usergroupName) {
 		this.usergroupName = usergroupName;
+	}
+	public String getSkillSet() {
+		return skillSet;
+	}
+
+	public void setSkillSet(String skillSet) {
+		this.skillSet = skillSet;
 	}
 
 }

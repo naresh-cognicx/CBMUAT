@@ -18,7 +18,7 @@ import com.cognicx.AppointmentRemainder.service.SkillSetService;
 public class SkillSetServiceImpl implements SkillSetService{
 	@Autowired
 	SkillsetDao skillSetDao;
-	private Logger logger = LoggerFactory.getLogger(SkillSetServiceImpl.class);
+	private final Logger logger = LoggerFactory.getLogger(SkillSetServiceImpl.class);
 	
 	@Override
 	public ResponseEntity<GenericResponse> createSkillset(SkillsetRequest skillSetRequest) {
@@ -111,7 +111,6 @@ public class SkillSetServiceImpl implements SkillSetService{
 				skillsetRequest.setShortAbandonedThreshold(String.valueOf(obj[10]));
 				skillsetRequest.setCountAbandonedSLA(String.valueOf(obj[11]));
 				skillsetRequest.setDisposition(String.valueOf(obj[12]));
-
 				skillsetRequest.setForceACW(Boolean.parseBoolean(String.valueOf(obj[13])));
 				skillsetRequest.setForceACWSec(String.valueOf(obj[14]));
 				skillsetRequest.setAutoanswer(Boolean.parseBoolean(String.valueOf(obj[15])));
@@ -119,6 +118,7 @@ public class SkillSetServiceImpl implements SkillSetService{
 				skillsetRequest.setVdnQueueId(String.valueOf(obj[17]));
 				skillsetRequest.setRoutingStrategy(String.valueOf(obj[18]));
 				skillsetRequest.setNoAnswer(String.valueOf(obj[19]));
+
 				skillSetDetList.add(skillsetRequest);
 				logger.info("Skill set Details :"+skillsetRequest.toString());
 			}

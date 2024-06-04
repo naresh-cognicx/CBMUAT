@@ -1,11 +1,11 @@
 package com.cognicx.AppointmentRemainder.service;
 
-import com.cognicx.AppointmentRemainder.Request.AgentRequest;
-import com.cognicx.AppointmentRemainder.Request.CallBackScheduleRequest;
-import com.cognicx.AppointmentRemainder.Request.MusicAddRequest;
+import com.cognicx.AppointmentRemainder.Request.*;
 import com.cognicx.AppointmentRemainder.response.GenericResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 public interface AgentService {
@@ -26,4 +26,17 @@ public interface AgentService {
     ResponseEntity<GenericResponse> getCampaignbyDialplan(String dialplan);
 
     ResponseEntity<GenericResponse> agentAsteriskMultiLogin(AgentRequest agentRequest);
+
+    //CustomerRequest createCustomer(CustomerRequest customerRequest);
+    AgentStatusUpdateRequest updateAgentStatus(AgentStatusUpdateRequest userStatusRequest) throws Exception;
+
+    List<AgentStatusRequest> getAgentStatusList();
+
+    List<NotReadyRequest> getNotReadyStatusList();
+
+    AgentInteractionRequest saveAgentInteraction(AgentInteractionRequest agentInteraction) throws Exception;
+
+    List<AgentInteractionRequest> getAgentInteractionList(String agentId);
+
+    String updateDispositonInagentInteraction(String sipId, String disposition);
 }

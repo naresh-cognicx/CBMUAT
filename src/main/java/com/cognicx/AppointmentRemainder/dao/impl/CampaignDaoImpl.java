@@ -98,7 +98,11 @@ public class CampaignDaoImpl implements CampaignDao {
 			queryObj.setParameter("Queue", campaignDetRequest.getQueue());
 			queryObj.setParameter("dispositionID", campaignDetRequest.getDispositionID());
 			queryObj.setParameter("groupname", campaignDetRequest.getUserGroup());
+
 			queryObj.setParameter("Dailingoption", campaignDetRequest.getDailingoption());
+
+			queryObj.setParameter("previewOption", campaignDetRequest.getPreviewOption());
+
 			if (!"".equalsIgnoreCase(campaignDetRequest.getFtpUsername())
 					&& !"".equalsIgnoreCase(campaignDetRequest.getFtpPassword()))
 				queryObj.setParameter("ftpCredentials",
@@ -272,6 +276,8 @@ public class CampaignDaoImpl implements CampaignDao {
 			queryObj.setParameter("dispositionID", campaignDetRequest.getDispositionID());
 			queryObj.setParameter("groupname", campaignDetRequest.getUserGroup());
 			queryObj.setParameter("Dailingoption", campaignDetRequest.getDailingoption());
+			queryObj.setParameter("previewOption", campaignDetRequest.getPreviewOption());
+
 
 			if (!"".equalsIgnoreCase(campaignDetRequest.getFtpUsername())
 					&& !"".equalsIgnoreCase(campaignDetRequest.getFtpPassword()))
@@ -1285,7 +1291,10 @@ public class CampaignDaoImpl implements CampaignDao {
 			queryObj.executeUpdate();
 			updateStatus = true;
 			logger.error("Updated Campaign Status successfully for the Campaign ID :" + campDetRequest.getCampaignId()
+
 					+ " and It' Status " + campDetRequest.getCampaignActive());
+
+
 		} catch (Exception e) {
 			logger.error("Error occured in CampaignDaoImpl:: Update Campaign Status" + e);
 			logger.error("campaign_id" + campDetRequest.getCampaignId());
@@ -1472,7 +1481,9 @@ public class CampaignDaoImpl implements CampaignDao {
 			queryObj.setParameter("campaignname", campaignName);
 			queryObj.executeUpdate();
 			updateStatus = true;
+
 			logger.info("Updated Active Contact Details for the Product ID :" + productid);
+
 		} catch (Exception e) {
 			StringWriter str = new StringWriter();
 			e.printStackTrace(new PrintWriter(str));
@@ -1918,7 +1929,6 @@ public class CampaignDaoImpl implements CampaignDao {
 			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_DYANMIC_CONTACT_DET_CT);
 			queryObj.setParameter("campaign_id", campaign_id);
 			resultList = queryObj.getResultList();
-			// logger.info("List :"+ resultList);
 			if (resultList != null && !resultList.isEmpty()) {
 				String preVal = "";
 				for (Object[] obj : resultList) {
@@ -1940,7 +1950,9 @@ public class CampaignDaoImpl implements CampaignDao {
 					// surveyConDto.setMapDynamicFields(dynField);
 					surveyConDto.setMapDynamicFields(dynField);
 					campaignDetlist.add(surveyConDto);
+
 					logger.info("list :: " + dynField);
+
 					// logger.info("TO DELETE --- Campaign Survey Contact Map:" + campaignDetMap);
 				}
 			}
@@ -2173,7 +2185,9 @@ public class CampaignDaoImpl implements CampaignDao {
 		Integer answerCount = 0;
 		Integer noanswerCount = 0;
 		Integer answeredDuration = 0;
+
 		Integer failedCount = 0;
+
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		try {
 			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_BUSY_COUNT);
@@ -2217,7 +2231,9 @@ public class CampaignDaoImpl implements CampaignDao {
 		map.put("answerCount", answerCount);
 		map.put("noanswerCount", noanswerCount);
 		map.put("answeredDuration", answeredDuration);
+
 		map.put("failedCount",failedCount);
+
 
 		return map;
 	}
@@ -2812,6 +2828,7 @@ public class CampaignDaoImpl implements CampaignDao {
 					+ customer_mobile_number + " :: Campaign ID :" + campaign_id);
 			Query queryObj = firstEntityManager
 					.createNativeQuery(CampaignQueryConstant.UPDATE_ASSIGNED_DYANMIC_CONTACT_DET_CT);
+
 			queryObj.setParameter("actionId", actionId);
 			queryObj.setParameter("customer_mobile_number", customer_mobile_number);
 			queryObj.setParameter("agent_userid", agent_userid);
@@ -2864,6 +2881,7 @@ public class CampaignDaoImpl implements CampaignDao {
 	 * e); return campaignDetlist; } return campaignDetlist; }
 	 */
 
+
 	@Override
 	public Map<String, List<DynamicContactDetDto>> getcampBasedAssignedContactDetail(
 			Map<String, String> mapDynamicFields, String campaign_id) {
@@ -2874,7 +2892,6 @@ public class CampaignDaoImpl implements CampaignDao {
 			// Query queryObj =
 			// firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_SURVEY_CONTACT_DET);
 			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_CAMPAIGN_BASED_CONTACT_DET);
-
 			queryObj.setParameter("campaign_id", campaign_id);
 			// queryObj.executeUpdate();
 			resultList = queryObj.getResultList();
@@ -2923,8 +2940,8 @@ public class CampaignDaoImpl implements CampaignDao {
 	}
 
 	@Override
-	public Map<String, List<DynamicContactDetDto>> getPreviewAgentBasedContactDetail(
-			Map<String, String> mapDynamicFields, String agent_userid) {
+	public Map<String, List<DynamicContactDetDto>> getPreviewAgentBasedContactDetail(Map<String, String> mapDynamicFields, String agent_userid) {
+
 		List<Object[]> resultList;
 		List<DynamicContactDetDto> campaignDetlist = new ArrayList<>();
 		Map<String, List<DynamicContactDetDto>> mapCampBasedAgCont = new LinkedHashMap<>();
@@ -2932,7 +2949,6 @@ public class CampaignDaoImpl implements CampaignDao {
 			// Query queryObj =
 			// firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_SURVEY_CONTACT_DET);
 			Query queryObj = firstEntityManager.createNativeQuery(CampaignQueryConstant.GET_AGENT_BASED_CONTACT_DET);
-
 			queryObj.setParameter("agent_userid", agent_userid);
 			// queryObj.executeUpdate();
 			resultList = queryObj.getResultList();
@@ -3003,7 +3019,7 @@ public class CampaignDaoImpl implements CampaignDao {
 	    return supervisorContactDetails;
 	}
 
-	@Override
+
 	public DynamicContactDetDto getCustomerDetail(String customerNumber) {
 		DynamicContactDetDto dynamicContactDetDto = new DynamicContactDetDto();
 		List<DynamicContactDetDto> dynamicContactDetDtoList = new ArrayList<>();
@@ -3075,6 +3091,4 @@ public class CampaignDaoImpl implements CampaignDao {
 	    }
 	    return mapCampBasedAgCont;
 	}
-
-
 }

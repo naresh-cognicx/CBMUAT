@@ -1,14 +1,17 @@
 package com.cognicx.AppointmentRemainder.dao.impl;
 
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
 import java.util.List;
 
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 
 import okhttp3.*;
 import org.apache.http.HttpEntity;
@@ -22,6 +25,10 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +41,7 @@ import com.cognicx.AppointmentRemainder.dao.SkillsetDao;
 @Repository("SkillsetDao")
 @Transactional
 public class SkillsetDaoImpl implements SkillsetDao {
+
     private final Logger logger = LoggerFactory.getLogger(SkillsetDaoImpl.class);
     @PersistenceContext(unitName = ApplicationConstant.FIRST_PERSISTENCE_UNIT_NAME)
     public EntityManager firstEntityManager;
@@ -291,6 +299,4 @@ public class SkillsetDaoImpl implements SkillsetDao {
         }
         return false;
     }
-
-
 }

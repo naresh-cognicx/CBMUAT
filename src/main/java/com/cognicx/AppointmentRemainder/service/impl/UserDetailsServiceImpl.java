@@ -72,6 +72,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		logger.info("User DTO Object :"+userDto.toString());
 
 		userDto.setAuthorities(getAuthorities(userDto.getRoles()));
+
 		return UserPrinciple.build(new UserDto(userDto));
 	}
 

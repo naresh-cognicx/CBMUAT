@@ -1,7 +1,9 @@
 package com.cognicx.AppointmentRemainder.dao.impl;
 
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -13,6 +15,7 @@ import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 
 import com.cognicx.AppointmentRemainder.Request.CampaignWeekDetRequest;
 import com.cognicx.AppointmentRemainder.model.SkillSetDetail;
@@ -27,6 +30,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+
+import com.cognicx.AppointmentRemainder.response.FeatureResponse;
+import com.cognicx.AppointmentRemainder.util.FileDecryptor;
+import com.cognicx.AppointmentRemainder.util.LicenseUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +72,6 @@ public class UserManagementDaoImpl implements UserManagementDao {
     private String createAgent;
     @Value("${updateAgent}")
     private String updateAgent;
-    ;
 
 
     public UserManagementDaoImpl(LicenseUtil licenseUtil, FileDecryptor fileDecryptor) {
@@ -75,6 +82,7 @@ public class UserManagementDaoImpl implements UserManagementDao {
 
     @Override
     public String createUser(UserManagementDetRequest userDetRequest) {
+
         String userKey = null;
         boolean isInserted;
         int insertVal;
@@ -104,50 +112,53 @@ public class UserManagementDaoImpl implements UserManagementDao {
                     boolean success = createPbxExtinAsterisk(userDetRequest.getPbxExtn());
                     if (success && createSkillSetforAgent(userDetRequest)) {
 //                        createSkillSetforAgent(userDetRequest)
-                            Query queryUserMapObj = firstEntityManager.createNativeQuery(UserManagementQueryConstant.INSERT_AGENT_DET);
-                            queryUserMapObj.setParameter("Agent", userDetRequest.getUserId());
-                            queryUserMapObj.executeUpdate();
+                        Query queryUserMapObj = firstEntityManager.createNativeQuery(UserManagementQueryConstant.INSERT_AGENT_DET);
+                        queryUserMapObj.setParameter("Agent", userDetRequest.getUserId());
+                        queryUserMapObj.executeUpdate();
 //                            String skillset = userDetRequest.getSkillSet();
-                        }
-                    } else {
-                        logger.info("Pbx Ext is not created for Agent");
                     }
-                } else if (userDetRequest.getRole() != null && userDetRequest.getRole().equalsIgnoreCase("Supervisor")) {
-                    boolean success = createPbxExtinAsterisk(userDetRequest.getPbxExtn());
-                    if (success) {
-                        String agentDetails = userDetRequest.getAgent();
-                        String[] agentDetArr = agentDetails.split("\\,");
-                        for (String agentID : agentDetArr) {
-                            Query queryUserMapObj = firstEntityManager.createNativeQuery(UserManagementQueryConstant.UPDATE_AGENT_DET);
-                            queryUserMapObj.setParameter("Agent", agentID);
-                            queryUserMapObj.setParameter("Supervisor", userDetRequest.getUserId());
-                            queryUserMapObj.executeUpdate();
-                        }
-                    } else {
-                        logger.info("Pbx Ext is not created for Supervisor");
-                    }
+                } else {
+                    logger.info("Pbx Ext is not created for Agent");
                 }
-                return userKey;
+            } else if (userDetRequest.getRole() != null && userDetRequest.getRole().equalsIgnoreCase("Supervisor")) {
+                boolean success = createPbxExtinAsterisk(userDetRequest.getPbxExtn());
+                if (success) {
+                    String agentDetails = userDetRequest.getAgent();
+                    String[] agentDetArr = agentDetails.split("\\,");
+                    for (String agentID : agentDetArr) {
+                        Query queryUserMapObj = firstEntityManager.createNativeQuery(UserManagementQueryConstant.UPDATE_AGENT_DET);
+                        queryUserMapObj.setParameter("Agent", agentID);
+                        queryUserMapObj.setParameter("Supervisor", userDetRequest.getUserId());
+                        queryUserMapObj.executeUpdate();
+                    }
+                } else {
+                    logger.info("Pbx Ext is not created for Supervisor");
+                }
+            }
+
+            return userKey;
         } catch (Exception e) {
             logger.error("Error occured in UserManagementDaoImpl::createuser" + e);
             return null;
         }
+
+
     }
 
     public boolean createSkillSetforAgent(UserManagementDetRequest userDetRequest) {
         int insertValue = 0;
         boolean isCreated = false;
-        try{
+        try {
             Query queryObj = firstEntityManager.createNativeQuery("INSERT INTO [appointment_remainder].[agent_skillset_mapping] ([SkillSet],[Proficency],[QueueId],[Agent],[PbxExt])VALUES (:SkillSet,:Proficency,:QueueId,:Agent,:PbxExt)");
             for (SkillSetDetail skillSetDetail : userDetRequest.getSkillSetDetails()) {
                 queryObj.setParameter("SkillSet", skillSetDetail.getSkillSetName());
-                queryObj.setParameter("Proficency",skillSetDetail.getProficiency());
-                queryObj.setParameter("QueueId",skillSetDetail.getQueueId());
-                queryObj.setParameter("Agent",userDetRequest.getUserId());
-                queryObj.setParameter("PbxExt",userDetRequest.getPbxExtn());
+                queryObj.setParameter("Proficency", skillSetDetail.getProficiency());
+                queryObj.setParameter("QueueId", skillSetDetail.getQueueId());
+                queryObj.setParameter("Agent", userDetRequest.getUserId());
+                queryObj.setParameter("PbxExt", userDetRequest.getPbxExtn());
                 insertValue = queryObj.executeUpdate();
-                if (insertValue>0){
-                    isCreated= true;
+                if (insertValue > 0) {
+                    isCreated = true;
                 }
             }
         } catch (Exception e) {
@@ -233,7 +244,6 @@ public class UserManagementDaoImpl implements UserManagementDao {
         }
         return resultList;
     }
-
 
     @Override
     public List<Object[]> getAgentDetail() {
@@ -582,9 +592,11 @@ public class UserManagementDaoImpl implements UserManagementDao {
                     }
                     userDto.setAutogenUsersDetailsId(objects[9].toString());
                     userDto.setGroupName(objects[8].toString());
+
                     userDto.setPbxExt(CommonUtil.nullRemove(objects[9].toString()));
                     userDto.setSkillSet(CommonUtil.nullRemove(objects[10].toString()));
                     userDto.setDisposition(CommonUtil.nullRemove(objects[13].toString()));
+
 
                     Set<Roles> roleset = new HashSet<>();
                     Roles roles = new Roles();
@@ -595,10 +607,12 @@ public class UserManagementDaoImpl implements UserManagementDao {
                     rolesList.add(roles.getRolesName());
                     userDto.setRolesList(rolesList);
 
+                    userOptional = Optional.ofNullable(userDto);
+                    logger.info(userDto.toString());
+                    userDto.setSkillSet(objects[10].toString());
+                    userOptional = Optional.ofNullable(userDto);
                 }
             }
-            userOptional = Optional.ofNullable(userDto);
-            logger.info(userDto.toString());
         } catch (Exception e) {
             logger.error("Exception findByUsername() : {}", e.getMessage());
         } finally {
@@ -606,6 +620,7 @@ public class UserManagementDaoImpl implements UserManagementDao {
         }
         return userOptional;
     }
+
 
     public String getUserGroupType(String userGroupName) {
         String type = "";
@@ -620,7 +635,7 @@ public class UserManagementDaoImpl implements UserManagementDao {
     }
 
 
-    @Override
+
     public List<Object[]> getAgentDetail(String userID) {
         List<Object[]> resultList = null;
         try {
