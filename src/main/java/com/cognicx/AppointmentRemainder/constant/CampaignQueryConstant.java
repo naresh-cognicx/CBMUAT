@@ -319,9 +319,9 @@ public class CampaignQueryConstant {
 	public static final String INPROGRESS_LIST = "select contact_id,customer_mobile_number,call_retry_count,actionId from appointment_remainder.contact_det where campaign_id=:campaign_id and call_status='InProgress' and rec_upt_date < DATEADD(minute, -2, GETDATE())";
 	public static final String GET_CAMPAIGN_START_TIME_RT = "SELECT TOP 1 rec_add_dt FROM [appointment_remainder].[call_retry_det] WHERE campaign_id = :campaign_id AND campaign_stopstatus != 'NTC' ORDER BY rec_add_dt ASC";
 	public static final String GET_CONT_MAP_DET = "SELECT [number_of_field],[reserve_1],[reserve_2],[reserve_3],[reserve_4],[reserve_5],[reserve_6],[reserve_7],[reserve_8],[reserve_9],[reserve_10],[reserve_11] FROM [appointment_remainder_db].[appointment_remainder].[contact_mapping_det] where account=:account";
-	public static final String GET_DYANMIC_CONTACT_DET_CT = "select campaign_id,campaign_name,customer_mobile_number,actionId,agent_userid,[reserve_1],[reserve_2],[reserve_3],[reserve_4],[reserve_5],[reserve_6],[reserve_7],[reserve_8],[reserve_9],[reserve_10],[reserve_11] FROM [appointment_remainder_db].[appointment_remainder].[contact_det_new_1] where campaign_id=:campaign_id ";
+	public static final String GET_DYANMIC_CONTACT_DET_CT = "select campaign_id,campaign_name,customer_mobile_number,actionId,agent_userid,call_status,call_retry_count,language,rec_upt_date,[reserve_1],[reserve_2],[reserve_3],[reserve_4],[reserve_5],[reserve_6],[reserve_7],[reserve_8],[reserve_9],[reserve_10],[reserve_11] FROM [appointment_remainder_db].[appointment_remainder].[contact_det_new_1] where campaign_id=:campaign_id ";
 	
-	public static final String GET_DYANMIC_CONTACT_RETRY = "select campaign_id,campaign_name,customer_mobile_number,actionId,agent_userid,[reserve_1],[reserve_2],[reserve_3],[reserve_4],[reserve_5],[reserve_6],[reserve_7],[reserve_8],[reserve_9],[reserve_10],[reserve_11] FROM [appointment_remainder_db].[appointment_remainder].[contact_det_new_1] where campaign_id = :campaignId AND call_retry_count <= :retryCount AND call_status!='New' AND call_status!='ANSWERED' AND call_status!='InProgress' AND call_status!='INVALID NO' and call_status!='DNC' and campaign_stopstatus!='NTC'";
+	public static final String GET_DYANMIC_CONTACT_RETRY = "select campaign_id,campaign_name,customer_mobile_number,actionId,agent_userid,call_status,call_retry_count,language,rec_upt_date,   [reserve_1],[reserve_2],[reserve_3],[reserve_4],[reserve_5],[reserve_6],[reserve_7],[reserve_8],[reserve_9],[reserve_10],[reserve_11] FROM [appointment_remainder_db].[appointment_remainder].[contact_det_new_1] where campaign_id = :campaignId AND call_retry_count <= :retryCount AND call_status!='New' AND call_status!='ANSWERED' AND call_status!='InProgress' AND call_status!='INVALID NO' and call_status!='DNC' and campaign_stopstatus!='NTC'";
 
 	
 	public static final String UPDATE_DYANMIC_CONTACT_DET_CT ="update appointment_remainder.contact_det_new_1 set agent_userid=:agent_userid where actionId =:actionId and customer_mobile_number=:customer_mobile_number and campaign_id=:campaign_id";
@@ -346,7 +346,7 @@ public class CampaignQueryConstant {
 	public static final String UPDATE_QUEUE_AGENT_DET = "update appointment_remainder.new_agent_status_det set agent_status=:agent_status,queue_name=:queue_name,loginTime=:loginTime,rec_upt_date=GETDATE() where agentID=:agentID";
 
 	public static final String GET_AVAIL_AGENT_FROM_QUEUE ="select top(1) agentID from [appointment_remainder_db].[appointment_remainder].[new_agent_status_det]  where [agent_status]='1'  and queue_name=:queue order by rec_upt_date";
-	public static final String GET_COUNT_AVAIL_AGENT_FROM_QUEUE ="select  count(*) from [appointment_remainder_db].[appointment_remainder].[new_agent_status_det]  where [agent_status]='1'  and queue_name=:queue";
+	public static final String GET_COUNT_AVAIL_AGENT_FROM_QUEUE ="select  count(*) from [appointment_remainder_db].[appointment_remainder].[new_agent_status_det]  where ([agent_status]='1' or [agent_status]='5')   and queue_name=:queue";
 	
 	
 }

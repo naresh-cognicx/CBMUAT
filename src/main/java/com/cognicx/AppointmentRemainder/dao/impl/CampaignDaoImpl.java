@@ -100,6 +100,7 @@ public class CampaignDaoImpl implements CampaignDao {
 			queryObj.setParameter("Queue", campaignDetRequest.getQueue());
 			queryObj.setParameter("dispositionID", campaignDetRequest.getDispositionID());
 			queryObj.setParameter("groupname", campaignDetRequest.getUserGroup());
+			queryObj.setParameter("queueName", campaignDetRequest.getQueueName());
 			queryObj.setParameter("Dailingoption", campaignDetRequest.getDailingoption());
 			queryObj.setParameter("forceacw", campaignDetRequest.getForceacw());
 			queryObj.setParameter("acwseconds", campaignDetRequest.getAcwseconds());
@@ -279,6 +280,7 @@ public class CampaignDaoImpl implements CampaignDao {
 			queryObj.setParameter("dispositionID", campaignDetRequest.getDispositionID());
 			queryObj.setParameter("groupname", campaignDetRequest.getUserGroup());
 			queryObj.setParameter("Dailingoption", campaignDetRequest.getDailingoption());
+			queryObj.setParameter("queueName", campaignDetRequest.getQueueName());
 			queryObj.setParameter("forceacw", campaignDetRequest.getForceacw());
 			queryObj.setParameter("acwseconds", campaignDetRequest.getAcwseconds());
 			queryObj.setParameter("autoanswer", campaignDetRequest.getAutoanswer());
@@ -1940,12 +1942,17 @@ public class CampaignDaoImpl implements CampaignDao {
 					surveyConDto.setCustomerMobileNumber(String.valueOf(obj[2]));
 					surveyConDto.setActionId(String.valueOf(obj[3]));
 					surveyConDto.setAgent_userid(String.valueOf(obj[4]));
+					surveyConDto.setCallStatus(String.valueOf(obj[5]));
+					surveyConDto.setCallRetryCount(String.valueOf(obj[6]));
+					surveyConDto.setLanguage(String.valueOf(obj[7]));
+					surveyConDto.setUpdatedDate(String.valueOf(obj[8]));
+					
 					// surveyConDto.setCampaignId(preVal);
 					Map<String, String> dynField = new LinkedHashMap<>();
 
 					for (int i = 1; i <= mapDynamicFields.size(); i++) {
 						String key = mapDynamicFields.get("reserve_" + i);
-						String value = (String) obj[i + 4];
+						String value = (String) obj[i + 8];
 						dynField.put(key, value);
 					}
 					// surveyConDto.setMapDynamicFields(dynField);
@@ -3187,12 +3194,17 @@ public class CampaignDaoImpl implements CampaignDao {
 					surveyConDto.setCustomerMobileNumber(String.valueOf(obj[2]));
 					surveyConDto.setActionId(String.valueOf(obj[3]));
 					surveyConDto.setAgent_userid(String.valueOf(obj[4]));
+					surveyConDto.setCallStatus(String.valueOf(obj[5]));
+					surveyConDto.setCallRetryCount(String.valueOf(obj[6]));
+					surveyConDto.setLanguage(String.valueOf(obj[7]));
+					surveyConDto.setUpdatedDate(String.valueOf(obj[8]));
+					
 					// surveyConDto.setCampaignId(preVal);
 					Map<String, String> dynField = new LinkedHashMap<>();
 
 					for (int i = 1; i <= mapDynamicFields.size(); i++) {
 						String key = mapDynamicFields.get("reserve_" + i);
-						String value = (String) obj[i + 4];
+						String value = (String) obj[i + 8];
 						dynField.put(key, value);
 					}
 					// surveyConDto.setMapDynamicFields(dynField);

@@ -970,8 +970,9 @@ public class CampaignController {
 
 							String dialingMode=campaignDetRequest.getDailingMode();
 							String dialingOption=campaignDetRequest.getDailingoption();
-
+							logger.info(" dialingMode and dialingOption for the campaign : "+ campaignDetRequest.getCampaignId()+" is "+dialingMode + " " +dialingOption);
 							if(dialingMode!=null && dialingOption!=null && dialingMode.equalsIgnoreCase("progressive") && dialingOption.equalsIgnoreCase("agentbased")) {
+								logger.info(" dialingMode  for the campaign : "+ campaignDetRequest.getCampaignId()+" is "+dialingMode );
 								try {
 									if (contactDetListRetry != null && !contactDetListRetry.isEmpty()) {
 										for (DynamicContactDetDto surveyContactDetDto : contactDetListRetry) {
@@ -979,7 +980,7 @@ public class CampaignController {
 											if (!remListforRetry.contains(surveyContactDetDto.getActionId())) {
 												boolean isValid = validContact(campaignStartdate, campaignEndDate, weekStartDate, weekEndDate, weekDay, dateformat, dateTimeformat, currentDate, weekDayFormat, time, WeekDaytimeFormat, isMaxAdvTime, surveyContactDetDto, campaignDetRequest, retryDifference);
 												if (isValid) {
-													int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+													int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueueName());
 													if (availableAgent < 0) {
 														try {
 															logger.info("Current ActionID : " + surveyContactDetDto.getActionId() + ", In Retry Count : " + retryCallCount);
@@ -1030,7 +1031,7 @@ public class CampaignController {
 														boolean isValid = validContact(campaignStartdate, campaignEndDate, weekStartDate, weekEndDate, weekDay, dateformat, dateTimeformat, currentDate, weekDayFormat, time, WeekDaytimeFormat, isMaxAdvTime, surveyContactDetDto, campaignDetRequest, retryDifference);
 														isValidCount = campaignService.getinProgressCallCount(campaignDetRequest.getCampaignId());
 														if (isValid) {
-															int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+															int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueueName());
 															if (availableAgent<0) {
 																logger.info("All Conditions Satisfied for this ContactId : " + surveyContactDetDto.getActionId() + ", Current Call In : " + isValidCount);
 																try {
@@ -1062,9 +1063,10 @@ public class CampaignController {
 									logger.error("Error in New api process list : " + e.getMessage());
 								}
 							}else if(dialingMode!=null && dialingOption!=null && dialingMode.equalsIgnoreCase("predictive")) {
+								logger.info(" dialingMode  for the campaign : "+ campaignDetRequest.getCampaignId()+" is "+dialingMode );
 								try {
 									int numberOfCalls=0;
-									int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+									int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueueName());
 									if(availableAgent>0) {
 										if(dialingOption.equalsIgnoreCase("1:2")) {
 											numberOfCalls=2;
@@ -1097,7 +1099,7 @@ public class CampaignController {
 															logger.error("Error on process call api " + e.getMessage());
 														}
 													}else {
-														availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+														availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueueName());
 
 														if(availableAgent>0) {
 															if(dialingOption.equalsIgnoreCase("1:2")) {
@@ -1137,7 +1139,7 @@ public class CampaignController {
 								}
 
 								try {
-									int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+									int availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueueName());
 									int numberOfCalls=0;
 									if(availableAgent>0) {
 										if(dialingOption.equalsIgnoreCase("1:2")) {
@@ -1146,8 +1148,8 @@ public class CampaignController {
 											numberOfCalls=3;
 										}
 									}
-									if (surveyContactDet != null && surveyContactDet.containsKey(campaignDetRequest.getCampaignName())) {
 										List<DynamicContactDetDto> surveyContDetList = campaignService.getDynamicContactDet(campaignDetRequest.getCampaignId());
+										
 										logger.info("**** To Delete Survey Contact List for the campaign : " + campaignDetRequest.getCampaignName() + " and the contacts :" + surveyContDetList.toString());
 										if (surveyContDetList != null && !surveyContDetList.isEmpty()) {
 											logger.info("Total Contact: " + surveyContDetList.size());
@@ -1158,9 +1160,9 @@ public class CampaignController {
 														logger.info("Contact Detail is null");
 													} else {
 														boolean isValid = validContact(campaignStartdate, campaignEndDate, weekStartDate, weekEndDate, weekDay, dateformat, dateTimeformat, currentDate, weekDayFormat, time, WeekDaytimeFormat, isMaxAdvTime, surveyContactDetDto, campaignDetRequest, retryDifference);
-														isValidCount = campaignService.getinProgressCallCount(campaignDetRequest.getCampaignId());
 														if (isValid) {
 															//availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+															logger.info("NumberofCalls count:"+numberOfCalls);
 															if (numberOfCalls >0) {
 																logger.info("All Conditions Satisfied for this ContactId : " + surveyContactDetDto.getActionId() + ", Current Call In : " + isValidCount);
 																try {
@@ -1168,14 +1170,15 @@ public class CampaignController {
 																	if (response.contains("Success")) {
 																		newRemList.add(surveyContactDetDto.getActionId());
 																		numberOfCalls--;
-																		logger.info("Valid Count : " + isValidCount);
 																	}
 																} catch (Exception e) {
 																	logger.error("Error on process call api " + e.getMessage());
 																}
 															} else {
-																availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueue());
+																availableAgent=campaignService.getAgentAvailableCount(campaignDetRequest.getQueueName());
+																logger.info("Available Agent "+availableAgent);
 																if(availableAgent>0) {
+																	logger.info("Agent Available in Predictive");
 																	if(dialingOption.equalsIgnoreCase("1:2")) {
 																		numberOfCalls=2;
 																	}else if(dialingOption.equalsIgnoreCase("1:3")) {
@@ -1187,7 +1190,6 @@ public class CampaignController {
 																		if (response.contains("Success")) {
 																			newRemList.add(surveyContactDetDto.getActionId());
 																			numberOfCalls--;
-																			logger.info("Valid Count : " + isValidCount);
 																		}
 																	} catch (Exception e) {
 																		logger.error("Error on process call api " + e.getMessage());
@@ -1206,9 +1208,7 @@ public class CampaignController {
 										} else {
 											logger.info("Contact List is Null or Empty");
 										}
-									} else {
-										logger.info("Survey contact Det is Null , No contact for this campaign Name : " + campaignDetRequest.getCampaignName());
-									}
+									
 								} catch (Exception e) {
 									logger.error("Error in New api process list : " + e.getMessage());
 								}
@@ -1257,7 +1257,6 @@ public class CampaignController {
 
 
 								try {
-									if (surveyContactDet != null && surveyContactDet.containsKey(campaignDetRequest.getCampaignName())) {
 										List<DynamicContactDetDto> surveyContDetList = campaignService.getDynamicContactDet(campaignDetRequest.getCampaignId());
 										logger.info("**** To Delete Survey Contact List for the campaign : " + campaignDetRequest.getCampaignName() + " and the contacts :" + surveyContDetList.toString());
 										if (surveyContDetList != null && !surveyContDetList.isEmpty()) {
@@ -1300,9 +1299,6 @@ public class CampaignController {
 										} else {
 											logger.info("Contact List is Null or Empty");
 										}
-									} else {
-										logger.info("Survey contact Det is Null , No contact for this campaign Name : " + campaignDetRequest.getCampaignName());
-									}
 								} catch (Exception e) {
 									logger.error("Error in New api process list : " + e.getMessage());
 								}
@@ -1394,8 +1390,9 @@ public class CampaignController {
 				return false;
 			}
 		} catch (Exception e) {
-
-			logger.error("Error occur on the valid contact " + e.getMessage());
+			StringWriter str=new StringWriter();
+			e.printStackTrace(new PrintWriter(str));
+			logger.error("Error occur on the valid contact " + str.toString());
 			return false;
 		}
 		return isValid;
@@ -1428,7 +1425,7 @@ public class CampaignController {
 					if(dialingMode!=null && dialingOption!=null && dialingMode.equalsIgnoreCase("progressive") && dialingOption.equalsIgnoreCase("agentbased")) {
 						String agentExtn=getProgressiveExtn(campaignDetRequest.getQueue());
 						request = getAgentBasedString(surveycontDetDto,campaignDetRequest,campaignName, Queue, dateTimeformat,agentExtn);
-					}else if(dialingMode!=null && dialingMode.equalsIgnoreCase("predicitve")){
+					}else if(dialingMode!=null && dialingMode.equalsIgnoreCase("predictive")){
 						String agentExtn=getProgressiveExtn(campaignDetRequest.getQueue());
 						request = getPredictiveString(surveycontDetDto,campaignDetRequest,campaignName, Queue, dateTimeformat,agentExtn);
 					}
@@ -1550,9 +1547,9 @@ public class CampaignController {
 				+ "\"siptrunk\":\"callanywhere-cognicx\",\r\n"
 				+ "\"trunktype\":\"sip\",\r\n"
 				+ "\"phone\":\""+surveycontDetDto.getCustomerMobileNumber()+"\",\r\n"
-				+ "\"dialplan\""+campaigndetRequest.getDailingMode()+"\",\r\n"
+				+ "\"dialplan\":\""+campaigndetRequest.getDailingMode()+"\",\r\n"
 				+ "\"agent\":\""+extn+"\",\r\n"
-				+ "\"callmode\""+campaigndetRequest.getDailingMode()+"\",\r\n"
+				+ "\"callmode\":\""+campaigndetRequest.getDailingMode()+"\",\r\n"
 				+ " \"campaingnname\": \"" + campaigndetRequest.getCampaignName() + "\",\r\n"
 				+ "}";
 
@@ -1569,9 +1566,9 @@ public class CampaignController {
 				+ "\"siptrunk\":\"callanywhere-cognicx\",\r\n"
 				+ "\"trunktype\":\"sip\",\r\n"
 				+ "\"phone\":\""+surveycontDetDto.getCustomerMobileNumber()+"\",\r\n"
-				+ "\"dialplan\""+campaigndetRequest.getDailingMode()+"\",\r\n"
+				+ "\"dialplan\":\""+campaigndetRequest.getDailingMode()+"\",\r\n"
 				+ "\"agent\":\""+campaigndetRequest.getQueueName()+"\",\r\n"
-				+ "\"callmode\""+campaigndetRequest.getDailingMode()+"\",\r\n"
+				+ "\"callmode\":\""+campaigndetRequest.getDailingMode()+"\",\r\n"
 				+ " \"campaingnname\": \"" + campaigndetRequest.getCampaignName() + "\",\r\n"
 				+"\"var1\":{\"element1\":\""+mapDynamicFields+"\"}\r\n"
 				+ "}";
@@ -2629,29 +2626,6 @@ public class CampaignController {
 
 		return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
 	}
-
-	@GetMapping("/getCustomerDetail")
-	public ResponseEntity<GenericResponse> getCustomerDetail(@RequestParam String customerNumber)
-			throws ParseException, JsonParseException, JsonMappingException, IOException {
-		logger.info("Get agent based dynamic contact detail");
-		GenericResponse genericResponse = new GenericResponse();
-//		Map<String,List<DynamicContactDetDto>> mapcampaignDetList=null;
-//		List<DynamicContactDetDto> campaignDetList = null;
-		try {
-			DynamicContactDetDto mapcampaignDetList = campaignService.getCustomerDetail(customerNumber);
-			genericResponse.setStatus(200);
-			genericResponse.setValue(mapcampaignDetList);
-			genericResponse.setMessage("Success");
-		} catch (Exception e) {
-			logger.error("Error in getCustomerDetail controller " + e);
-			genericResponse.setStatus(400);
-			genericResponse.setValue("Failure");
-			genericResponse.setMessage("No data Found");
-		}
-
-		return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
-	}
-
 
 	@GetMapping("/getSupervisorAgentContactDet")
 	public ResponseEntity<GenericResponse> getPreviewSupervisorBasedContactDetail(@RequestParam String Supervisor)
