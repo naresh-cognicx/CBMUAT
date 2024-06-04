@@ -557,4 +557,46 @@ public class AgentDaoImpl implements AgentDao {
         }
         return agentInteractionRequestList;
     }
+    public Integer getActivityId() {
+        String maxVal;
+        try {
+            Query queryObj = firstEntityManager.createNativeQuery(AgentInteractionQueryConstant.GET_ACT_ID);
+            maxVal = (String) queryObj.getSingleResult();
+            if (maxVal == null || maxVal.isEmpty()) {
+                maxVal = "0";
+            }
+        } catch (Exception e) {
+            logger.error("Error occured in UserManagementDaoImpl::getUserKey" + e);
+            return 1;
+        }
+        return Integer.valueOf(maxVal) + 1;
+    }
+    @Override
+    public AgentActivityRequest saveAgentActToInteraction(AgentActivityRequest agentActivityRequest) {
+        int insertVal;
+        try{
+            int id = getActivityId();
+            Query queryObj = firstEntityManager.createNativeQuery(AgentInteractionQueryConstant.INSERT_AGENT_ACTIVITY);
+            queryObj.setParameter("id", id);
+            queryObj.setParameter("sipId", agentActivityRequest.getAgentId());
+            queryObj.setParameter("agentId", agentActivityRequest.getSipId());
+            queryObj.setParameter("dins", agentActivityRequest.getDins());
+            queryObj.setParameter("callStatus",agentActivityRequest.getCallStatus());
+            queryObj.setParameter("activity", agentActivityRequest.getActivity());
+            queryObj.setParameter("direction", agentActivityRequest.getDirection());
+            LocalDateTime now = LocalDateTime.now();
+            Timestamp timestamp = Timestamp.valueOf(now);
+            agentActivityRequest.setDate(timestamp);
+            queryObj.setParameter("created_date",agentActivityRequest.getDate());
+            insertVal = queryObj.executeUpdate();
+            if (insertVal > 0) {
+                return agentActivityRequest;
+            }
+        } catch (Exception e) {
+            logger.error("Error occured in AgentDaoImpl::saveAgentActToInteraction" + e);
+            throw new ApplicationException(e.toString(), Response.Status.INTERNAL_SERVER_ERROR);
+
+        }
+        return agentActivityRequest;
+    }
 }

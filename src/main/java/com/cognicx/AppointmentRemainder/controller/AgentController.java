@@ -1,6 +1,7 @@
 package com.cognicx.AppointmentRemainder.controller;
 
 
+import com.cognicx.AppointmentRemainder.Exception.ApplicationException;
 import com.cognicx.AppointmentRemainder.Request.AgentRequest;
 import com.cognicx.AppointmentRemainder.Request.AgentStatusUpdateRequest;
 import com.cognicx.AppointmentRemainder.Request.CallBackScheduleRequest;
@@ -11,7 +12,7 @@ import com.cognicx.AppointmentRemainder.response.GenericResponse;
 import com.cognicx.AppointmentRemainder.service.AgentService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import org.omg.CORBA.portable.ApplicationException;
+
 
 import com.cognicx.AppointmentRemainder.Request.*;
 import com.cognicx.AppointmentRemainder.constant.ApplicationConstant;
@@ -250,31 +251,24 @@ public class AgentController {
         return response;
     }
 
-  /*  @PostMapping("/createCustomer")
-    public GenericAgentResponse<CustomerRequest> createCustomer(@RequestBody CustomerRequest customerRequest){
-        GenericAgentResponse<CustomerRequest> response = new GenericAgentResponse<>();
+    @PostMapping("/activity")
+    public GenericAgentResponse<AgentActivityRequest> SaveAgentActivitytoInteractiontable(@RequestBody AgentActivityRequest activityDetails) {
+        GenericAgentResponse<AgentActivityRequest> response = new GenericAgentResponse<>();
         try {
-            CustomerRequest customerDetail = agentService.createCustomer(customerRequest);
-            if (customerDetail == null) {
-                throw new ApplicationException(ApplicationConstants.MOBILE_NUMBER_NOT_FOUND, Response.Status.NOT_FOUND);
-            }
-            response.setData(customerDetail);
+            AgentActivityRequest agentActivity = new AgentActivityRequest();
+            agentActivity = agentService.saveAgentActToInteraction(activityDetails);
             response.setStatus(Response.Status.OK);
-            response.setMessage("Successfully Created");
-        } catch (ApplicationException exception) {
-            logger.error(exception.getMessage());
-            response.setMessage("Failed to Create");
+            response.setData(agentActivity);
+            response.setStatusCode(200);
+            response.setMessage("Activity updated in agent interaction table");
+        } catch (ApplicationException e) {
+            logger.error("{}:activity:ApplicationException:", activityDetails, e);
+            response.setErrorMessages(Arrays.asList(e.getMessage()));
             response.setStatus(Response.Status.BAD_REQUEST);
-            response.setErrorMessages(Collections.singletonList(exception.getMessage()));
         } catch (Exception e) {
-            logger.error("{}:saveuserDisposition:Exception:",
-                    null != customerDetails.getCustomerId() ? customerDetails.getCustomerId()
-                            : customerDetails.getMobileNumber(),
-                    e);
-            response.setErrorMessages(Arrays.asList(ApplicationConstants.FAILED_TO_SAVE_CUSTOMER_DETAILS));
-            response.setMessage(ApplicationConstants.FAILED_TO_SAVE_CUSTOME_DETAILS_PLEASE_CONTACT_YOUR_SYSTEM_ADMIN);
-            response.setStatus(Response.Status.INTERNAL_SERVER_ERROR);
+            logger.error("{}:activity:Exception:", activityDetails, e);
+            throw new RuntimeException(e);
         }
         return response;
-    }*/
+    }
 }

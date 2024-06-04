@@ -300,5 +300,9 @@ public class AgentServiceImpl implements AgentService {
     public String updateDispositonInagentInteraction(String sipId, String disposition) {
         return agentDao.updateDispositonInagentInteraction(sipId,disposition);
     }
+    @Override
+    public AgentActivityRequest saveAgentActToInteraction(AgentActivityRequest activityDetails) {
+        return agentDao.saveAgentActToInteraction(activityDetails);
+    }
 
 }
