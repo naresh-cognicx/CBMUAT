@@ -2630,6 +2630,29 @@ public class CampaignController {
 		return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
 	}
 
+	@GetMapping("/getCustomerDetail")
+	public ResponseEntity<GenericResponse> getCustomerDetail(@RequestParam String customerNumber)
+			throws ParseException, JsonParseException, JsonMappingException, IOException {
+		logger.info("Get agent based dynamic contact detail");
+		GenericResponse genericResponse = new GenericResponse();
+//		Map<String,List<DynamicContactDetDto>> mapcampaignDetList=null;
+//		List<DynamicContactDetDto> campaignDetList = null;
+		try {
+			DynamicContactDetDto mapcampaignDetList = campaignService.getCustomerDetail(customerNumber);
+			genericResponse.setStatus(200);
+			genericResponse.setValue(mapcampaignDetList);
+			genericResponse.setMessage("Success");
+		} catch (Exception e) {
+			logger.error("Error in getCustomerDetail controller " + e);
+			genericResponse.setStatus(400);
+			genericResponse.setValue("Failure");
+			genericResponse.setMessage("No data Found");
+		}
+
+		return new ResponseEntity<GenericResponse>(new GenericResponse(genericResponse), HttpStatus.OK);
+	}
+
+
 	@GetMapping("/getSupervisorAgentContactDet")
 	public ResponseEntity<GenericResponse> getPreviewSupervisorBasedContactDetail(@RequestParam String Supervisor)
 			throws ParseException, JsonParseException, JsonMappingException, IOException {

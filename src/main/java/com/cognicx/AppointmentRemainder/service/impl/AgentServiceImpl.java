@@ -24,7 +24,7 @@ import java.util.Optional;
 @Service
 public class AgentServiceImpl implements AgentService {
 //    private static final Logger logger = LogManager.getLogger(AgentServiceImpl.class);
-    private static Logger logger = LoggerFactory.getLogger(AgentServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(AgentServiceImpl.class);
 
     @Autowired
     AgentDao agentDao;
@@ -53,51 +53,29 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
-    public ResponseEntity<GenericResponse> agentAsteriskLogin(AgentRequest agentRequest) {
+    public ResponseEntity<GenericResponse> agentAsteriskCampaignbasedLogin(AgentRequest agentRequest) {
         GenericResponse genericResponse = new GenericResponse();
+        String status = agentRequest.getAction();
         try {
             boolean isCreated = agentDao.agentAsterisk(agentRequest);
             if (isCreated) {
                 genericResponse.setStatus(200);
                 genericResponse.setValue("Success");
-                genericResponse.setMessage("Agent Login Successfully");
+                genericResponse.setMessage("Agent "+status+" Successfully");
             } else {
                 genericResponse.setStatus(400);
                 genericResponse.setValue("Failure");
-                genericResponse.setMessage("Error occurred while logout the agent from Asterisk");
+                genericResponse.setMessage("Error occurred while "+status+" the agent from Asterisk");
             }
         } catch (Exception e) {
             logger.error("Error in AgentServiceImpl::agent Asterisk: ", e);
             genericResponse.setStatus(400);
             genericResponse.setValue("Failure");
-            genericResponse.setMessage("Error occurred while login the agent from Asterisk");
+            genericResponse.setMessage("Error occurred while "+status+" the agent from Asterisk");
         }
         return new ResponseEntity<>(genericResponse, HttpStatus.OK);
     }
 
-
-    @Override
-    public ResponseEntity<GenericResponse> agentAsteriskLogout(AgentRequest agentRequest) {
-        GenericResponse genericResponse = new GenericResponse();
-        try {
-            boolean isCreated = agentDao.agentAsterisk(agentRequest);
-            if (isCreated) {
-                genericResponse.setStatus(200);
-                genericResponse.setValue("Success");
-                genericResponse.setMessage("Agent Logout Successfully");
-            } else {
-                genericResponse.setStatus(400);
-                genericResponse.setValue("Failure");
-                genericResponse.setMessage("Error occurred while logout the agent from Asterisk");
-            }
-        } catch (Exception e) {
-            logger.error("Error in AgentServiceImpl::logout agent Asterisk: ", e);
-            genericResponse.setStatus(400);
-            genericResponse.setValue("Failure");
-            genericResponse.setMessage("Error occurred while logout the agent from Asterisk");
-        }
-        return new ResponseEntity<>(genericResponse, HttpStatus.OK);
-    }
 
     @Override
     public ResponseEntity<GenericResponse> holdMusicAdd(MusicAddRequest musicAddRequest) {
@@ -223,7 +201,7 @@ public class AgentServiceImpl implements AgentService {
                 AgentCampaignDetRequest agentCampaignDetRequest = new AgentCampaignDetRequest();
                 agentCampaignDetRequest.setCampaignId(String.valueOf(obj[0]));
                 agentCampaignDetRequest.setCampaignName(String.valueOf(obj[1]));
-
+                agentCampaignDetRequest.setVdnQueueId(String.valueOf(obj[2]));
                 campaignDetListforAgent.add(agentCampaignDetRequest);
             }
         }

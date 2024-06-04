@@ -72,6 +72,7 @@ public class AgentDaoImpl implements AgentDao {
 
     @PersistenceContext(unitName = ApplicationConstant.FIRST_PERSISTENCE_UNIT_NAME)
     public EntityManager firstEntityManager;
+
     @Override
     public boolean createCallbackSchedule(CallBackScheduleRequest callBackScheduleRequest) {
         int insertVal;
@@ -87,7 +88,7 @@ public class AgentDaoImpl implements AgentDao {
             queryObj.setParameter("Agent", callBackScheduleRequest.getAgent());
 
             insertVal = queryObj.executeUpdate();
-            logger.info("Update value : "+insertVal);
+            logger.info("Update value : " + insertVal);
             if (insertVal > 0) {
                 isCreated = true;
             }
@@ -100,7 +101,18 @@ public class AgentDaoImpl implements AgentDao {
 
     @Override
     public boolean agentAsterisk(AgentRequest agentRequest) {
-        boolean isUpdate;
+        boolean isDone = false;
+        try {
+            boolean success = logoutFromAllAsterisk(agentRequest);
+            if (success) {
+                isDone = loginToAsterisk(agentRequest);
+            }
+        } catch (Exception e) {
+            logger.info("An error occurred: " + e.getMessage());
+        }
+        return isDone;
+    }
+    private boolean loginToAsterisk(AgentRequest agentRequest) {
 
         String jsonPayload = "{\n" +
                 "    \"queue\": \"" + agentRequest.getQueueId() + "\",\n" +
@@ -111,6 +123,11 @@ public class AgentDaoImpl implements AgentDao {
                 "    \"actionid\": \"" + agentRequest.getPbxExt() + "\"\n" +
                 "}";
 
+        return agentApi(jsonPayload);
+    }
+
+    private boolean agentApi(String jsonPayload) {
+        boolean isUpdate;
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(agentStatusApi);
             httpPost.setHeader("Content-Type", "application/json");
@@ -145,26 +162,51 @@ public class AgentDaoImpl implements AgentDao {
         return isUpdate;
     }
 
-    @Override
-    public boolean holdMusicAdd(MusicAddRequest musicAddRequest) {
+    private boolean logoutFromAllAsterisk(AgentRequest agentRequest) {
+        boolean isUpdate;
 
-        boolean isUpdate = false;
-
-        String actionId = getActionSequence();
-        boolean success = createHoldMusicAddinDB(musicAddRequest,actionId);
-
-        if (success){
-            logger.info("Success");
-        }else {
-            logger.info("Failure");
+        String jsonPayload = null;
+        List<String> queueList = new ArrayList<>();
+        try {
+            Query queryObj1 = firstEntityManager.createNativeQuery("SELECT QueueId from appointment_remainder.agent_skillset_mapping where PbxExt=:PbxExt");
+            queryObj1.setParameter("PbxExt", agentRequest.getPbxExt());
+            queueList = queryObj1.getResultList();
+        } catch (Exception e) {
+            logger.info("Error on getting Queue Id for this Agent pbxExt : " + agentRequest.getPbxExt());
         }
 
+        logger.info("Queue List for this "+agentRequest.getAction()+" Agent PbxExt : " + agentRequest.getPbxExt() + " is " + queueList);
+        for (String queueId : queueList) {
+            jsonPayload = "{\n" +
+                    "    \"queue\": \"" + queueId + "\",\n" +
+                    "    \"agent\": \"" + agentRequest.getPbxExt() + "\",\n" +
+                    "    \"agentname\": \"" + agentRequest.getAgentName() + "\",\n" +
+                    "    \"reason\": \"" + agentRequest.getReason() + "\",\n" +
+                    "    \"action\": \"" + agentRequest.getAction() + "\",\n" +
+                    "    \"actionid\": \"" + agentRequest.getPbxExt() + "\"\n" +
+                    "}";
+            logger.info("Queue : " + jsonPayload);
+        }
+
+        return agentApi(jsonPayload);
+    }
+
+    @Override
+    public boolean holdMusicAdd(MusicAddRequest musicAddRequest) {
+        boolean isUpdate = false;
+        String actionId = getActionSequence();
+        boolean success = createHoldMusicAddinDB(musicAddRequest, actionId);
+        if (success) {
+            logger.info("Success");
+        } else {
+            logger.info("Failure");
+        }
         String jsonPayload = "{\n" +
-                "    \"actionid\":\""+actionId+"\",\n" +
-                "    \"name\":\""+musicAddRequest.getName()+"\",\n" +
-                "    \"mode\":\""+musicAddRequest.getMode()+"\",\n" +
-                "    \"entry\":\""+musicAddRequest.getUrl()+"\",\n" +
-                "    \"customer_code\":\""+"tenantID"+"\"\n" +
+                "    \"actionid\":\"" + actionId + "\",\n" +
+                "    \"name\":\"" + musicAddRequest.getName() + "\",\n" +
+                "    \"mode\":\"" + musicAddRequest.getMode() + "\",\n" +
+                "    \"entry\":\"" + musicAddRequest.getUrl() + "\",\n" +
+                "    \"customer_code\":\"" + "tenantID" + "\"\n" +
                 "}";
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -201,17 +243,17 @@ public class AgentDaoImpl implements AgentDao {
         return isUpdate;
     }
 
-    private boolean createHoldMusicAddinDB(MusicAddRequest musicAddRequest,String actionId) {
+    private boolean createHoldMusicAddinDB(MusicAddRequest musicAddRequest, String actionId) {
         boolean isCreated = false;
         int insert = 0;
         try {
             Query queryObj = firstEntityManager.createNativeQuery("");
 
             insert = queryObj.executeUpdate();
-            if (insert>0) {
+            if (insert > 0) {
                 isCreated = true;
-            }else {
-                isCreated=false;
+            } else {
+                isCreated = false;
             }
         } catch (Exception e) {
             StringWriter str = new StringWriter();
@@ -266,20 +308,19 @@ public class AgentDaoImpl implements AgentDao {
 
     @Override
     public boolean agentAsteriskMultiaction(AgentRequest agentRequest) {
-        boolean isUpdate = false;
         String jsonPayload = null;
         List<String> queueList = new ArrayList<>();
         try {
             Query queryObj1 = firstEntityManager.createNativeQuery("SELECT QueueId from appointment_remainder.agent_skillset_mapping where PbxExt=:PbxExt");
             queryObj1.setParameter("PbxExt", agentRequest.getPbxExt());
             queueList = queryObj1.getResultList();
-        }catch (Exception e){
-            logger.info("Error on getting Queue Id for this Agent pbxExt : " +agentRequest.getPbxExt());
+        } catch (Exception e) {
+            logger.info("Error on getting Queue Id for this Agent pbxExt : " + agentRequest.getPbxExt());
         }
 
-        logger.info("Queue List for this Agent PbxExt : "+agentRequest.getPbxExt()+" is "+queueList);
-        for (String queueId : queueList){
-             jsonPayload= "{\n" +
+        logger.info("Queue List for this "+agentRequest.getAction()+"of Agent PbxExt : " + agentRequest.getPbxExt() + " is " + queueList);
+        for (String queueId : queueList) {
+            jsonPayload = "{\n" +
                     "    \"queue\": \"" + queueId + "\",\n" +
                     "    \"agent\": \"" + agentRequest.getPbxExt() + "\",\n" +
                     "    \"agentname\": \"" + agentRequest.getAgentName() + "\",\n" +
@@ -287,41 +328,9 @@ public class AgentDaoImpl implements AgentDao {
                     "    \"action\": \"" + agentRequest.getAction() + "\",\n" +
                     "    \"actionid\": \"" + agentRequest.getPbxExt() + "\"\n" +
                     "}";
-             logger.info("Queue : "+jsonPayload);
-    }
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost httpPost = new HttpPost(agentStatusApi);
-            httpPost.setHeader("Content-Type", "application/json");
-            StringEntity requestEntity = new StringEntity(jsonPayload);
-            httpPost.setEntity(requestEntity);
-            logger.info("Request : " + " URL : " + httpPost + " payload : " + requestEntity + " request payload : " + jsonPayload);
-            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-                HttpEntity responseEntity = response.getEntity();
-                int responseCode = response.getStatusLine().getStatusCode();
-                if (responseCode == 200) {
-                    isUpdate = true;
-                } else {
-                    isUpdate = false;
-                }
-                logger.info("Response Status Code: " + response.getStatusLine().getStatusCode());
-                if (responseEntity != null) {
-                    String responseBody = EntityUtils.toString(responseEntity);
-                    logger.info(responseBody);
-                }
-            } catch (Exception e) {
-                StringWriter str = new StringWriter();
-                e.printStackTrace(new PrintWriter(str));
-                logger.error("Exception :" + str.toString());
-                isUpdate = false;
-            }
-        } catch (Exception e) {
-            StringWriter str = new StringWriter();
-            e.printStackTrace(new PrintWriter(str));
-            logger.error("Exception :" + str.toString());
-            isUpdate = false;
+            logger.info("Queue : " + jsonPayload);
         }
-        return isUpdate;
+        return agentApi(jsonPayload);
     }
 
     @Override
@@ -335,6 +344,7 @@ public class AgentDaoImpl implements AgentDao {
         }
         return resultList;
     }
+
     public AgentStatusUpdateRequest updateAgentStatus(AgentStatusUpdateRequest userStatusRequest) {
         int insertVal;
         try {
@@ -502,6 +512,7 @@ public class AgentDaoImpl implements AgentDao {
         }
         return Integer.valueOf(maxVal) + 1;
     }
+
     @Override
     public String updateDispositonInagentInteraction(String sipId, String disposition) {
         String status = null;

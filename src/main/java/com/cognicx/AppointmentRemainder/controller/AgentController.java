@@ -62,12 +62,7 @@ public class AgentController {
     @PostMapping("/agentAsteriskCampaignbasedLogin")
     public ResponseEntity<GenericResponse> agentAsteriskCampaignbasedLogin(@RequestBody AgentRequest agentRequest) {
         logger.info("Invoking the Agent Asterisk Login : " + agentRequest.toString());
-        return agentService.agentAsteriskLogin(agentRequest);
-    }
-    @PostMapping("/agentAsteriskMultiLogin")
-    public ResponseEntity<GenericResponse> agentAsteriskMultiLogin(@RequestBody AgentRequest agentRequest) {
-        logger.info("Invoking the Agent Asterisk Login : " + agentRequest.toString());
-        return agentService.agentAsteriskMultiLogin(agentRequest);
+        return agentService.agentAsteriskCampaignbasedLogin(agentRequest);
     }
 
     @PostMapping("/holdMusicAdd")
